@@ -1,0 +1,53 @@
+{
+  "name": "firemon",
+  "version": "1.0.0",
+  "description": "Monitors public wildfire data (unofficial - not for safety/emergency purposes)",
+  "main": "index.js",
+  "repository": "https://github.com/publicdocs-platform/firemon",
+  "author": "Advay Mengle <source@madvay.com>",
+  "license": "SEE LICENSE IN LICENSE",
+  "private": true,
+  "scripts": {
+    "cleanpubs": "mkdir -p output; rm -rf output",
+    "clean": "yarn cleanpubs; rm -rf persist.yaml",
+    "start": "node main.js",
+    "debug": "node --inspect main.js",
+    "cleanstart": "yarn clean; node main.js",
+    "test": "mocha './{,!(node_modules)/**/}test/*.js'"
+  },
+  "dependencies": {
+    "@turf/bearing": "^6.0.1",
+    "@turf/distance": "^6.0.1",
+    "deep-diff": "^1.0.2",
+    "dotenv": "^6.0.0",
+    "express": "^4.16.3",
+    "fair-semaphore": "^1.0.3",
+    "ip": "^1.1.5",
+    "js-yaml": "^3.12.0",
+    "lodash": "^4.17.10",
+    "mkdirp": "^0.5.1",
+    "nearby-cities": "^1.1.0",
+    "numeral": "^2.0.6",
+    "ol-helpers": "https://github.com/publicdocs-platform/ol-helpers",
+    "pug": "^2.0.3",
+    "puppeteer": "^1.8.0",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2",
+    "requizzle": "^0.2.1",
+    "rimraf": "^2.6.2",
+    "serve-index": "^1.9.1",
+    "sharp": "^0.20.8",
+    "sprintf-js": "^1.1.1",
+    "staticmaps": "^0.7.8",
+    "title-case": "^2.1.1",
+    "twit": "^2.2.11",
+    "us-cities-db": "https://github.com/publicdocs-platform/us-cities-db",
+    "yargs": "^12.0.2"
+  },
+  "devDependencies": {
+    "mocha": "^5.2.0"
+  },
+  "resolutions": {
+    "all-the-cities": "https://github.com/publicdocs-platform/us-cities-db"
+  }
+}

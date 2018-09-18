@@ -1,0 +1,206 @@
+html {
+    font-family: 'DejaVu Sans', sans-serif;
+    background-color: white;
+    zoom: 186%;
+}
+
+
+html.perim {
+    zoom: 200%;
+}
+
+.content {
+    margin: auto auto;
+}
+
+.perimDate {
+    font-size: 60%;
+    padding-left: 15px;
+}
+
+.perimCenter {
+    background: red;
+    color: white;
+    font-size: 65%;
+}
+
+.perim .content {
+    margin: 0;
+}
+
+.ol-scale-line { 
+    left: auto;
+    right: 8px;
+    background: rgba(0,60,136,1);
+    border-radius: 0;
+}
+
+.ol-overviewmap-box {
+    border: 2px dotted rgba(255,60,136,.7);
+}
+.ol-overviewmap:not(.ol-collapsed) {
+    background: rgba(255,255,255,0);
+}
+
+
+h1 {
+    color: red;
+    background-color: rgb(162, 255, 182);
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.perim h1 {
+    background-color: white;
+    font-size: 150%;
+}
+
+body {
+    font-size: 150%;
+    text-align: center;
+    border:5px solid rgb(85, 215, 255);
+}
+
+.perim body {
+    border: none;
+    margin: 0;
+    font-size: 80%;
+    padding: 0;
+    height: 100%;
+}
+
+html.perim {
+    height: 100%;
+    margin: 0
+}
+
+.perim .content {
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+}
+
+.perim .banner, .perim .warn {
+    flex: 0 1 auto;
+}
+.perim .map {
+    flex: 1 1 auto;
+}
+.update .map {
+    width: 400px;
+    height: 400px;
+}
+
+
+.bigMap {
+    width: 100%;
+}
+
+.smallMap {
+    width: 100%;
+    margin: auto;
+}
+
+table {
+    width: 100%;
+}
+
+.important {
+    font-size: 125%;
+}
+
+.data tr:nth-child(even) {
+    background: #eee;
+}
+
+.previous {
+    color: #666;
+    padding-left: 10px;
+    font-size: 60%;
+}
+
+.deltaUp {
+    color: green;
+    padding-right: 5px;
+}
+
+.deltaDown {
+    color: red;
+    padding-right: 5px;
+}
+
+.warn {
+    background-color: black;
+    color: white;
+    padding: 5px;
+    width: 98%;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 67.5%;
+    margin-top: 5px;
+    margin-bottom: 0;
+    font-weight: 600;
+    padding: 5px;
+}
+
+.perim .warn {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    font-size: 85%;
+}
+
+.upd, .fireid {
+    font-size: 70%;
+    color: black;
+}
+
+.cite {
+    font-family: 'Roboto', sans-serif;
+    font-size: 45%;
+    width: 95%;
+    margin: 13px auto;
+}
+
+.perim .cite {
+    font-size: 75%;
+    width: 98%;
+    padding: 1px;
+    margin: 0;
+    font-weight: normal;
+}
+
+.innerWarn {
+    padding: 5px;
+}
+
+.data td {
+    text-align: left;
+}
+.data th {
+    text-align: right;
+}
+.data td, th {
+    padding: 5px;
+}
+
+.data .details {
+    font-size: 70%;
+    text-align: center;
+}
+
+.data .detailsRow {
+    margin-top: 20px;
+}
+
+.data .detail {
+    white-space: nowrap;
+}
+
+.detail + .detail:before {
+    content: " — ";
+}
+
+.cite p {
+    margin: 3px;
+}
