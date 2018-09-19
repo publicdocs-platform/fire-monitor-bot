@@ -247,10 +247,12 @@ exports.handler = argv => {
 
                   let perim = [];
                   let perimDateTime = null;
+                  let inciWeb = null;
 
                   if (cur.UniqueFireIdentifier in perims) {
                     perim = perims[cur.UniqueFireIdentifier].geometry.coords || [];
                     perimDateTime = perims[cur.UniqueFireIdentifier].attributes.perimeterdatetime;
+                    inciWeb = perims[cur.UniqueFireIdentifier].attributes.inciwebid;
                   }
                   const children = _.values(perims)
                     .filter(fire => {
@@ -258,6 +260,7 @@ exports.handler = argv => {
                       if (b) {
                         if (!perimDateTime || perimDateTime < fire.attributes.perimeterdatetime) {
                           perimDateTime = fire.attributes.perimeterdatetime;
+                          inciWeb = fire.attributes.inciwebid;
                         }
                       }
                       return b;
@@ -343,6 +346,16 @@ exports.handler = argv => {
                       const perimWebpageUrl = 'http://localhost:8080/updates/img/WEB-PERIM-' + updateId + '.html';
                       const terrainMapImg = tmpdir + '/img/src/terrain/MAP-TERRAIN-' + updateId + '.png';
                       const detailMapImg = tmpdir + '/img/src/detail/MAP-DETAIL-' + updateId + '.png';
+
+                      if (inciWeb) {
+                        let u = 'https://web.archive.org/save/https://inciweb.nwcg.gov/incident/' + inciWeb + '/';
+                        rp(u).then(() => {
+                          console.log('   ~~ Archived to web.archive.org: ' + u);
+                        }).catch((err) => {
+                          console.log('   ~~ ERROR Archiving to web.archive.org: ' + u );
+                          console.log(err);
+                        });
+                      }
 
                       const capture = (center, zoom, terrainPath) => {
 
