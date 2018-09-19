@@ -312,7 +312,7 @@ exports.handler = argv => {
                     x[i].PerimDateTime = perimDateTime;
                     cur = x[i];
                     // Only skip the update if perimeter is ALSO not up to date.
-                    if (!perimDateTime || (last[i].PerimDateTime && last[i].PerimDateTime < perimDateTime)) {
+                    if (!perimDateTime || (last[i].PerimDateTime && last[i].PerimDateTime >= perimDateTime)) {
                       return;
                     }
                   }
