@@ -349,8 +349,8 @@ exports.handler = argv => {
 
                       if (inciWeb) {
                         let u = 'https://web.archive.org/save/https://inciweb.nwcg.gov/incident/' + inciWeb + '/';
-                        rp(u).then(() => {
-                          console.log('   ~~ Archived to web.archive.org: ' + u);
+                        rp({uri: u, resolveWithFullResponse: true}).then((r) => {
+                          console.log('   ~~ Archived to web.archive.org: %s', r.headers ? r.headers['content-location'] : 'unknown');
                         }).catch((err) => {
                           console.log('   ~~ ERROR Archiving to web.archive.org: ' + u );
                           console.log(err);
