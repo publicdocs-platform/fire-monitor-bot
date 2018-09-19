@@ -53,6 +53,10 @@ exports.builder = {
     string: true,
     desc: 'Render middle zoom map'
   },
+  realFireNames: {
+    boolean: true,
+    desc: 'Use real fire names not hashtags'
+  },
   perimAfter: {
     string: true,
     default:'2017-12-31',
@@ -356,6 +360,10 @@ exports.handler = argv => {
 
                   console.log('   # Before intensiveProcessingSemaphore ' + updateId);
                   outstanding++;
+
+                  if (argv.realFireNames) {
+                    cur.Hashtag = util.fireName(cur.Name);
+                  }
 
                   intensiveProcessingSemaphore.take(function () {
                     try {
