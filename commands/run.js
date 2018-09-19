@@ -63,6 +63,7 @@ exports.builder = {
 exports.handler = argv => {
 
   const os = require('os');
+  const path = require('path');
   const rp = require('request-promise');
   const _ = require('lodash');
   const yaml = require('js-yaml');
@@ -150,24 +151,24 @@ exports.handler = argv => {
   };
 
 
-  const htmlTemplate = pug.compileFile('fireUpdateRender.pug');
+  const htmlTemplate = pug.compileFile(path.join(__dirname, '../templates/fireUpdateRender.pug'));
   const genHtml = function (entry) {
     return htmlTemplate({ config: config, data: entry, curdir: process.cwd() });
   };
 
-  const perimeterTemplate = pug.compileFile('firePerimeterRender.pug');
+  const perimeterTemplate = pug.compileFile(path.join(__dirname, '../templates/firePerimeterRender.pug'));
   const perimeterHtml = function (entry) {
     return perimeterTemplate({ config: config, data: entry, curdir: process.cwd() });
   };
 
 
 
-  const centerTemplate = pug.compileFile('fireVicinityRender.pug');
+  const centerTemplate = pug.compileFile(path.join(__dirname, '../templates/fireVicinityRender.pug'));
   const centerHtml = function (entry) {
     return centerTemplate({ config: config, data: entry, curdir: process.cwd() });
   };
 
-  const tweetTemplate = pug.compileFile('fireUpdateTweet.pug');
+  const tweetTemplate = pug.compileFile(path.join(__dirname, '../templates/fireUpdateTweet.pug'));
 
   const genTweet = function (entry) {
     return tweetTemplate({ config: config, data: entry, curdir: process.cwd() });
@@ -181,7 +182,32 @@ exports.handler = argv => {
   const REMOVE_forceDeltaDebug = argv.debug;
   const periodSeq = argv.debug ? 5 : 65;
 
-  const mainLoop = function (first, last) {
+
+  const dailyMap = (() => {
+    let ranBeforeDaily = false;
+    return async function() {
+      return;
+      const t = new Date();
+      const time = Date.parse(argv.dailyMapTime);
+      if (!ranBeforeDaily) {
+        ranBeforeDaily = t.getTime() < time.getTime();
+        return;
+      }
+
+      if (!ranBeforeDaily || t.getTime() < time.getTime()) {
+        return;
+      }
+
+      ranBeforeDaily = false;
+
+
+      
+      
+    };
+  })();
+
+  function internalLoop(first, last) {
+
     const process = function (layers) {
       //console.log(' >> received data');
       let outstanding = 0;
@@ -350,7 +376,7 @@ exports.handler = argv => {
                       if (inciWeb) {
                         let u = 'https://web.archive.org/save/https://inciweb.nwcg.gov/incident/' + inciWeb + '/';
                         rp({uri: u, resolveWithFullResponse: true}).then((r) => {
-                          console.log('   ~~ Archived to web.archive.org: %s', r.headers ? r.headers['content-location'] : 'unknown');
+                          console.log('   ~~ Archived to web.archive.org: %s', r.headers ? ('https://web.archive.org/' + r.headers['content-location']) : 'unknown');
                         }).catch((err) => {
                           console.log('   ~~ ERROR Archiving to web.archive.org: ' + u );
                           console.log(err);
@@ -613,7 +639,12 @@ exports.handler = argv => {
       process(
         [{layerConfigs:{featureCollection:{featureSet:{features:[]}}}}]);
     });
+  }
 
+  const mainLoop = function (first, last) {
+    dailyMap().then(() => {
+      internalLoop(first, last);
+    })
   }
 
   let persist = undefined;

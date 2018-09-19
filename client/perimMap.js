@@ -15,7 +15,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-function showMap(centerX, centerY, zoom, detail, cities0) {
+function showMap(centerX, centerY, zoom, style, cities0) {
+  let detail = style == 'perim';
   let cities = cities0 || { closest: [], biggest: [] };
   let showAll = 'show:';
 
@@ -62,6 +63,10 @@ function showMap(centerX, centerY, zoom, detail, cities0) {
         TransportNotInCensus: {
           url: 'https://carto.nationalmap.gov/arcgis/rest/services/transportation/MapServer/',
           params: { layers: 'show:13,18,19,25,26,29,30,31,32,33,34,35,36', FORMAT: 'PNG' }
+        },
+        TransportNotInCensusMediumScale: {
+          url: 'https://carto.nationalmap.gov/arcgis/rest/services/transportation/MapServer/',
+          params: { layers: 'show:13,18,25,26,29,30,31,32,33,34,35,36', FORMAT: 'PNG' }
         },
         GovUnits: {
           url: 'https://carto.nationalmap.gov/arcgis/rest/services/govunits/MapServer/',
@@ -150,7 +155,7 @@ function showMap(centerX, centerY, zoom, detail, cities0) {
     const baseUrl = 'https://wildfire.cr.usgs.gov/arcgis/rest/services/geomac_dyn/MapServer/2'
     function styles(feat) {
       let sclr = 'rgba(255,0,0,1)';
-      let fclr = 'rgba(255,0,0,0.03)';
+      let fclr = 'rgba(255,0,0,0.01)';
       let sclr2 = 'rgba(255,160,0,1)';
       return [new ol.style.Style({
         fill: new ol.style.Fill({
@@ -232,21 +237,75 @@ function showMap(centerX, centerY, zoom, detail, cities0) {
 
   }
 
+
+  const namedTextStyle = function (feature) {
+
+    const title = feature.get('gaz_name');
+    const geom = feature.getGeometry();
+    if (!title || !geom) {
+      return null;
+    }
+
+    const featCenter = ol.extent.getCenter(geom.getExtent());
+
+    // TODO: Doesn't work at dateline or poles.
+    let align = 'left';
+    offsetX = 0;
+    if (featCenter[0] > centerX) {
+      align = 'right';
+      offsetX = -0;
+    }
+
+    let baseline = 'bottom';
+    let offsetY = -5;
+    if (featCenter[1] > centerY) {
+      baseline = 'top';
+      offsetY = 5;
+    }
+
+    return new ol.style.Text({
+      textAlign: align,
+      textBaseline: baseline,
+      font: '13px Roboto',
+      text: title,
+      fill: new ol.style.Fill({ color: '#000000' }),
+      stroke: new ol.style.Stroke({ color: '#ffffff', width: 3 }),
+      offsetX: offsetX,
+      offsetY: offsetY,
+    });
+  };
+
+
+  const greenDot = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAAXNSR0IArs4c6QAAAAlwSFlzAAAhOAAAITgBRZYxYAAAA99JREFUaAXtWU1rE1EUPZMvIymVGrWtKBRCRbrya+FacOFS3LhwIbrS/+DK36H4D/wBontF0Y1FKkVBsVYs1Wo0bdqM9yQ2mXm5d5I0M2MjPTDJfLx3z7lv3te9A+xhrwWGagFvqNqdyiVUMjdR8y+jhhNylLHh57GJlv0cfBS8OopYkWMBRe8hFhv3pHq1Y+JfnFVwFVOZ18hhS+j9gY681GFd2kgds7iCsrc8kOAoB2mLNhPHBA5gOvtceBqxie841mjaJkciqOACxrxfCQgPdz1ykCtWVHAdhR30807rhkX2uk8ucvaB3rMQDb3HfTEZXZZPpzLAZBaYkIuSnBf+KtiQ/6r0ulXxY1nG+2c5p0tRyEqJGdzAIh5EFYsWxVf5AY+wAVFjIC/3Z3NARY590ebaFtZF/eIm8FaOevtu90lBxtpxXBQnnnQ/bN2xGTmY6t4Sfvr7rco4Jq19Sjwo2mbMunxQE0deiQcfOQsbGPN+I+9PYxXftRJ2yxazjyPFnxbh56WP7FQ81bAubdCWBTYgtRjQHeCcvLR1xqjTImWXiQu0RUcsUIuxTujvfsL7IgPusGqPrRWn+CAJx8VLY1CURdOKPxkszvPuN8Cl3RLPPp+UeKqhbXJoWPGPaNuObgeqmTtafbCbcsAmDXJYNIo214ESvjZOqho5VQ4zYFWjyk1ykEvDSlNbKfgo7AC3xJtKt+JISbLrBBXxnFza6KyLNmoMIOwA9/MauML2u0hp9Qe9Ry5yanA0hksxGNHA7UHasDgdja4DZVUn9zZpw+JktBdA2AGGgRq4MUsbFqejMaxsO4Z1xUYskm7R2K4tTkdj2IHY2NMzFHaA2QMN3M+nDYvT0Rh2gKkPDQxG0obF6WgMO8C8jQZGUmnD4nQ0ug4sqDoZBqYNi5OJsQAcByRjpoExLMPAtEAucmpgVi8Ad4UqyU5wTeLUsGOsMCf7kzl9mQjYi+d0XobivMQGLvISI9cxLrfbKUlXaBXlzBu3XvOaAThj2KRBDnJpaGlri2cR1wFJhzTuanWb2QMG4EmDHBaNos3tQi15Ix1S0oVD/i351fsLY9aoNEirCQb/pU0rHqaWg/5tzaj+BliSSdylrbNapea9OIP7qGC+peWFaDmnabEdGJHElh2p1LCOGTzFD1wz86Jr0sveyYzBKXtc5oOc3R6h1uM8vyD1nsmG55veU5vlmVo8ikv4BH1mlEK9GXd5cjfUMObFLk6vm5q7Hoz0B45tb0b6E9O2E/xnopWLXa8vLf0+py0jeRukjf98mM+s/DQbw2fW3rNQf26P6Ifu/pzbK/Vft8Af9uH7DWvWvj0AAAAASUVORK5CYII=';
+  function geoNamesVectorLayer(l) {
+    
+    function style(feat) {
+      return new ol.style.Style({
+        zIndex: feat.getGeometry().getPoints()[0][0],
+        geometry: feat.getGeometry().getPoints()[0],
+        text: namedTextStyle(feat),
+        image:
+          new ol.style.Circle({
+            radius: 3,
+            fill: new ol.style.Fill({
+              color: 'rgba(0, 0, 0, 1)'
+            }),
+          })
+      });
+    }
+
+    const baseUrl = Library.USGS.NatlMap.Names.url + '/' + l;
+    
+    let source = tiledVectorLayer(baseUrl, 1024);
+    return new ol.layer.Vector({
+      source: source,
+      style: style,
+      declutter: true,
+    });
+  }
+
   function fireVectorLayer(l) {
 
-    const textStyle = function (feature) {
-      return new ol.style.Text({
-        textAlign: 'center',
-        textBaseline: 'bottom',
-        font: '15px Roboto',
-        text: feature.get('incidentname'),
-        fill: new ol.style.Fill({ color: '#000000' }),
-        stroke: new ol.style.Stroke({ color: '#ff0000', width: 3 }),
-        offsetX: 0,
-        offsetY: 0,
-      });
-    };
-    
     function style(feat) {
       return new ol.style.Style({
         image:
@@ -277,7 +336,7 @@ function showMap(centerX, centerY, zoom, detail, cities0) {
       return {
         'type': 'Feature',
         'properties': {
-          'name': city.name,
+          'gaz_name': city.name,
           'population': city.population,
         },
         'geometry': {
@@ -305,7 +364,7 @@ function showMap(centerX, centerY, zoom, detail, cities0) {
     function style(feat) {
       return new ol.style.Style({
         zIndex: -feat.get('population'),
-        text: textStyle(feat),
+        text: namedTextStyle(feat),
         image:
           new ol.style.Circle({
             radius: 3,
@@ -329,20 +388,21 @@ function showMap(centerX, centerY, zoom, detail, cities0) {
   let perimLayers = [
     // Library.Census.Tiger.USLandmass,
     Library.USGS.NatlMap.Blank,
-    Alpha(Library.USGS.NatlMap.ImageryTiled, 0.1),
-    Alpha(Library.USGS.ProtectedAreas.SimpleDesignations, 0.1),
+    //Alpha(Library.USGS.NatlMap.ImageryTiled, 0.0),
+    Alpha(Library.USGS.ProtectedAreas.SimpleDesignations, 0.2),
     //Library.USGS.NatlMap.Polygons,
     Library.Census.Tiger.States,
     Library.Census.Tiger.HydroBodies,
     //Alpha(Library.Census.Tiger.HydroPaths, 0.2),
     ZoomedRoads,
+    //Alpha(Library.USGS.NatlMap.TransportNotInCensusMediumScale, 0.3),
     'Perim',
     'VIIRS',
     'MODIS',
     Library.USGS.NatlMap.GovUnits,
     Library.Census.Tiger.Roads,
     Library.USGS.NatlMap.GovUnitsSelectedLabels,
-    Library.USGS.NatlMap.Names,
+    zoom > 10.5 ? Library.USGS.NatlMap.Names : 'Cities',
   ];
   let overviewLayers = [
     Library.Census.Tiger.USLandmass,
@@ -380,6 +440,8 @@ function showMap(centerX, centerY, zoom, detail, cities0) {
       return fireVectorLayer(0);
     } else if (config === 'Complexes') {
       return fireVectorLayer(1);
+    } else if (config === 'TNM-Cities') {
+      return geoNamesVectorLayer(18);
     }
     if (config.tiled) {
       ltype = ol.layer.Tile;

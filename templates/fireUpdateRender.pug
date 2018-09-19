@@ -12,9 +12,9 @@ html.update
         script(src="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.2.0/build/ol.js")
 
         script
-            include ./node_modules/ol-helpers/index.js
+            include ../node_modules/ol-helpers/index.js
         script
-            include perimMap.js
+            include ../client/perimMap.js
         style
             include style.css
     body
@@ -127,4 +127,4 @@ html.update
                     | US Forest Service.
                     | *Containment may represent objective completion rather than perimeter containment.
         script
-            | showMap(#{data.lon}, #{data.lat}, #{data.zoom}, false, !{JSON.stringify(data.cities ? data.cities.all : [])});
+            | showMap(#{data.lon}, #{data.lat}, #{data.zoom}, 'update', !{JSON.stringify(data.cities ? data.cities.all : [])});
