@@ -125,6 +125,10 @@ function showMap(centerX, centerY, zoom, style, cities0) {
           url: 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Hydro/MapServer',
           params: { layers: 'show:1,2', FORMAT: 'PNG' }
         },
+        Urban: {
+          url: 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Urban/MapServer',
+          params: { layers: '', FORMAT: 'PNG' }
+        },
       }
     },
   }
@@ -198,6 +202,49 @@ function showMap(centerX, centerY, zoom, style, cities0) {
     });
   }
 
+
+
+  function cityAreasLayer() {
+    const baseUrl = Library.USGS.NatlMap.GovUnits.url + '/19';
+    function style(feat) {
+      let fclr = 'rgba(255,220,255,1)';
+      let sclr = 'rgba(255,255,120,1)';
+      return new ol.style.Style({
+        fill: new ol.style.Fill({
+          color: fclr
+        }),
+        //stroke: new ol.style.Stroke({ color: sclr, width: 1 }),
+      });
+    }
+    let source = tiledVectorLayer(baseUrl, 1024);
+    return new ol.layer.Vector({
+      source: source,
+      style: style,
+      declutter: false,
+    });
+  }
+
+
+  function unincAreasLayer() {
+    const baseUrl = Library.USGS.NatlMap.GovUnits.url + '/20';
+    function style(feat) {
+      let fclr = 'rgba(255,230,255,1)';
+      let sclr = 'rgba(255,255,120,1)';
+      return new ol.style.Style({
+        fill: new ol.style.Fill({
+          color: fclr
+        }),
+        //stroke: new ol.style.Stroke({ color: sclr, width: 1 }),
+      });
+    }
+    let source = tiledVectorLayer(baseUrl, 1024);
+    return new ol.layer.Vector({
+      source: source,
+      style: style,
+      declutter: false,
+    });
+  }
+  
   function satelliteVectorLayer(l) {
     const baseUrl = 'https://wildfire.cr.usgs.gov/arcgis/rest/services/geomac_dyn/MapServer/' + l;
     function style(feat) {
@@ -257,10 +304,10 @@ function showMap(centerX, centerY, zoom, style, cities0) {
     }
 
     let baseline = 'bottom';
-    let offsetY = -5;
+    let offsetY = -3;
     if (featCenter[1] > centerY) {
       baseline = 'top';
-      offsetY = 5;
+      offsetY = 7;
     }
 
     return new ol.style.Text({
@@ -390,6 +437,8 @@ function showMap(centerX, centerY, zoom, style, cities0) {
     Library.USGS.NatlMap.Blank,
     //Alpha(Library.USGS.NatlMap.ImageryTiled, 0.0),
     Alpha(Library.USGS.ProtectedAreas.SimpleDesignations, 0.2),
+    'UnincAreas',
+    'CityAreas',
     //Library.USGS.NatlMap.Polygons,
     Library.Census.Tiger.States,
     Library.Census.Tiger.HydroBodies,
@@ -442,6 +491,10 @@ function showMap(centerX, centerY, zoom, style, cities0) {
       return fireVectorLayer(1);
     } else if (config === 'TNM-Cities') {
       return geoNamesVectorLayer(18);
+    } else if (config === 'CityAreas') {
+      return cityAreasLayer();
+    } else if (config === 'UnincAreas') {
+      return unincAreasLayer();
     }
     if (config.tiled) {
       ltype = ol.layer.Tile;
