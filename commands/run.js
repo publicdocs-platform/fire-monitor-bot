@@ -65,7 +65,15 @@ exports.builder = {
     string: true,
     default:'2017-12-31',
     desc: 'Only display a update because of a perimeter change after this timestamp'
-  }
+  },
+  twitterAuthPath: {
+    string: true,
+    desc: 'Path to twitter profiles'
+  },
+  twitterAccountsPath: {
+    string: true,
+    desc: 'Path to twitter accounts per state'
+  },
 }
 
 exports.handler = argv => {
@@ -184,7 +192,11 @@ exports.handler = argv => {
 
   if (argv.twitter) {
     const t = require('../lib/twitter');
-    t.launchDaemon(argv.outputdir + '/postqueue/', util.namedSemaphore(processingSemaphore, 'twitter'));
+    t.launchDaemon(argv.outputdir + '/postqueue/',
+                   util.namedSemaphore(processingSemaphore, 'twitter'),
+                   argv.twitterAuthPath,
+                   argv.twitterAccountsPath
+                  );
   }
 
   const REMOVE_forceDeltaDebug = argv.debug;
@@ -497,6 +509,7 @@ exports.handler = argv => {
                                 image2: detailRender,
                                 image3AltText: 'Vicnity map',
                                 image3: centerImg,
+                                selectors: [key.substr(5, 2) , 'other']
                               };
                               if (center) {
                                 saved.coords = { lat: lat, lon: lon };
