@@ -57,6 +57,10 @@ exports.builder = {
     boolean: true,
     desc: 'Use real fire names not hashtags'
   },
+  archiveInciweb: {
+    boolean: true,
+    desc: 'Save InciWeb updates to web.archive.org'
+  },
   perimAfter: {
     string: true,
     default:'2017-12-31',
@@ -381,7 +385,7 @@ exports.handler = argv => {
                       const terrainMapImg = tmpdir + '/img/src/terrain/MAP-TERRAIN-' + updateId + '.png';
                       const detailMapImg = tmpdir + '/img/src/detail/MAP-DETAIL-' + updateId + '.png';
 
-                      if (inciWeb) {
+                      if (inciWeb && argv.archiveInciweb) {
                         let u = 'https://web.archive.org/save/https://inciweb.nwcg.gov/incident/' + inciWeb + '/';
                         rp({uri: u, resolveWithFullResponse: true}).then((r) => {
                           console.log('   ~~ Archived to web.archive.org: %s', r.headers ? ('https://web.archive.org/' + r.headers['content-location']) : 'unknown');
