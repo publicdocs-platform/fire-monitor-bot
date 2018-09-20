@@ -74,6 +74,11 @@ exports.builder = {
     string: true,
     desc: 'Path to twitter accounts per state'
   },
+  twitterPeriodSec: {
+    number: true,
+    default: 60 * 5 + 11,
+    desc: 'Seconds between twitter posts'
+  },
 }
 
 exports.handler = argv => {
@@ -195,7 +200,8 @@ exports.handler = argv => {
     t.launchDaemon(argv.outputdir + '/postqueue/',
                    util.namedSemaphore(processingSemaphore, 'twitter'),
                    argv.twitterAuthPath,
-                   argv.twitterAccountsPath
+                   argv.twitterAccountsPath,
+                   argv.twitterPeriodSec * 1000
                   );
   }
 
