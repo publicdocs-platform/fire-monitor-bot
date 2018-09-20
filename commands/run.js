@@ -509,7 +509,7 @@ exports.handler = argv => {
                                 image2: detailRender,
                                 image3AltText: 'Vicnity map',
                                 image3: centerImg,
-                                selectors: [key.substr(5, 2) , 'other']
+                                selectors: [cur.state || cur.State || key.substr(5, 2) , 'other']
                               };
                               if (center) {
                                 saved.coords = { lat: lat, lon: lon };
