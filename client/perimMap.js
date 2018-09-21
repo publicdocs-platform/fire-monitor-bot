@@ -166,10 +166,10 @@ function showMap(centerX, centerY, zoom, style, cities0) {
           color: fclr
         }),
 
-        stroke: new ol.style.Stroke({ color: sclr2, width: 3 }),
+        stroke: new ol.style.Stroke({ color: sclr2, width: 2 }),
 
       }), new ol.style.Style({
-        stroke: new ol.style.Stroke({ color: sclr, width: 2 }),
+        stroke: new ol.style.Stroke({ color: sclr, width: 1 }),
       })];
     }
     let source = tiledVectorLayer(baseUrl, 1024);
@@ -313,7 +313,7 @@ function showMap(centerX, centerY, zoom, style, cities0) {
     return new ol.style.Text({
       textAlign: align,
       textBaseline: baseline,
-      font: '13px Roboto',
+      font: '11px Roboto',
       text: title,
       fill: new ol.style.Fill({ color: '#000000' }),
       stroke: new ol.style.Stroke({ color: '#ffffff', width: 3 }),
