@@ -103,6 +103,11 @@ function showMap(centerX, centerY, zoom, style, cities0) {
           attribution: 'USGS TNM: GNIS',
           params: { layers: ''/*'show:0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22'*/, FORMAT: 'PNG' }
         },
+        NamesPhysical: {
+          url: 'https://carto.nationalmap.gov/arcgis/rest/services/geonames/MapServer/',
+          attribution: 'USGS TNM: GNIS',
+          params: { layers: 'show:1', FORMAT: 'PNG' }
+        },
       },
       ProtectedAreas: {
         SimpleDesignations: {
@@ -343,7 +348,7 @@ function showMap(centerX, centerY, zoom, style, cities0) {
     let offsetY = -3;
     if (featCenter[1] > centerY) {
       baseline = 'top';
-      offsetY = 7;
+      offsetY = 5;
     }
 
     return new ol.style.Text({
@@ -359,31 +364,26 @@ function showMap(centerX, centerY, zoom, style, cities0) {
   };
 
 
-  const greenDot = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAAXNSR0IArs4c6QAAAAlwSFlzAAAhOAAAITgBRZYxYAAAA99JREFUaAXtWU1rE1EUPZMvIymVGrWtKBRCRbrya+FacOFS3LhwIbrS/+DK36H4D/wBontF0Y1FKkVBsVYs1Wo0bdqM9yQ2mXm5d5I0M2MjPTDJfLx3z7lv3te9A+xhrwWGagFvqNqdyiVUMjdR8y+jhhNylLHh57GJlv0cfBS8OopYkWMBRe8hFhv3pHq1Y+JfnFVwFVOZ18hhS+j9gY681GFd2kgds7iCsrc8kOAoB2mLNhPHBA5gOvtceBqxie841mjaJkciqOACxrxfCQgPdz1ykCtWVHAdhR30807rhkX2uk8ucvaB3rMQDb3HfTEZXZZPpzLAZBaYkIuSnBf+KtiQ/6r0ulXxY1nG+2c5p0tRyEqJGdzAIh5EFYsWxVf5AY+wAVFjIC/3Z3NARY590ebaFtZF/eIm8FaOevtu90lBxtpxXBQnnnQ/bN2xGTmY6t4Sfvr7rco4Jq19Sjwo2mbMunxQE0deiQcfOQsbGPN+I+9PYxXftRJ2yxazjyPFnxbh56WP7FQ81bAubdCWBTYgtRjQHeCcvLR1xqjTImWXiQu0RUcsUIuxTujvfsL7IgPusGqPrRWn+CAJx8VLY1CURdOKPxkszvPuN8Cl3RLPPp+UeKqhbXJoWPGPaNuObgeqmTtafbCbcsAmDXJYNIo214ESvjZOqho5VQ4zYFWjyk1ykEvDSlNbKfgo7AC3xJtKt+JISbLrBBXxnFza6KyLNmoMIOwA9/MauML2u0hp9Qe9Ry5yanA0hksxGNHA7UHasDgdja4DZVUn9zZpw+JktBdA2AGGgRq4MUsbFqejMaxsO4Z1xUYskm7R2K4tTkdj2IHY2NMzFHaA2QMN3M+nDYvT0Rh2gKkPDQxG0obF6WgMO8C8jQZGUmnD4nQ0ug4sqDoZBqYNi5OJsQAcByRjpoExLMPAtEAucmpgVi8Ad4UqyU5wTeLUsGOsMCf7kzl9mQjYi+d0XobivMQGLvISI9cxLrfbKUlXaBXlzBu3XvOaAThj2KRBDnJpaGlri2cR1wFJhzTuanWb2QMG4EmDHBaNos3tQi15Ix1S0oVD/i351fsLY9aoNEirCQb/pU0rHqaWg/5tzaj+BliSSdylrbNapea9OIP7qGC+peWFaDmnabEdGJHElh2p1LCOGTzFD1wz86Jr0sveyYzBKXtc5oOc3R6h1uM8vyD1nsmG55veU5vlmVo8ikv4BH1mlEK9GXd5cjfUMObFLk6vm5q7Hoz0B45tb0b6E9O2E/xnopWLXa8vLf0+py0jeRukjf98mM+s/DQbw2fW3rNQf26P6Ifu/pzbK/Vft8Af9uH7DWvWvj0AAAAASUVORK5CYII=';
-  function geoNamesVectorLayer(l) {
+  const whiteTri = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAtdJREFUaAXtWCuMWlEUhFLSTTEYDDXgkJiG1GGq0ARHLZq6JpVUo1FNqEUjqnCkDtOGtKKGBoLBtKQhcDtzck+W3X37eHzeh+ZNcvZwz2dmONk1m0jEiC8QXyC+QHyB+AL+XeAdqGcI5qtDBY53CGMz31eDJJyOETSvwTfrV4EmXKrx/cx65JGBw18IMV4oFPa/AP8e2I80PsCdmM7n82Y+nxtmrSGzH1kU4WyNEMP9ft8QzFqzfc5FEgO4ErOVSsXsdjv5Asx8aw+Zc5FDFY7EZDKZNOPxWMzrD75Z1xlkzkcGKTiZIMRgs9lU33cy6zpj57kXCbTgQsxlMhkzm83uGNcH6+zrLDL3QkcWDpYIMdbpdNSvY2ZfZ+0e90NFF+piqlgsmvV67Whci+xzTneQuR8aSlDeIMTQYDBQn66Zc7pj98kTCoZQFTPVatXV9P0m53UXmTyBowZFMZFKpcxkMrnv0fXNee4pBzL5AkMaSlOEGGi1Wq5mH2tyTzksH3kDwVuoiHg2mzXL5fIxj6517nFfuZDJ6ztyUFghRLjb7bqaPNTkvnJZXvL7ih7YRbRUKpnNZnPIo2uf++RRTmTy+4YymLcIERwOh67mvDbJo5yWnzq+YARWEavVal79eZojn3IjU+fiqINRRNLptJlOp56MeR0iH3lVA5l6F8MNmH4iRKDdbnv1ddQceVXD6lH3IngPFiHP5XJmtVodZczrMHnJr1rI1D0bL8DwGyHEvV7Pq5+T5sivWlaX+mfhE7aFtFwum+12e5Ixr0vkp45qIlP/ZLzCpv53zYxGI68+zpqjDnQ1qE8fRyOJjS8IIarX62eZOnaZeqptfdDPAzx9ULktvMHHl/pcLBaJRqOhT98z9fZAH/Tzca928OM3TOxfIezPX50cP3Eq2tp3l14YrR9Ooo6/V3bwOfJrxDOnxYBrf6H3GfEnYN1YLr5AfIH4Av/7Bf4Bjm9OkYzIpvwAAAAASUVORK5CYII=';
+  const whiteDot = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAylJREFUaAXtmb2O2kAQxw0RBVxxIKWBLlddkAgPELoUKfIM6XiDdLzLSVT0IOVqKPIESChVdNElkAqSBhqEMz+EDbJ314sx+Czxl0Y2s7PzsbvenR0c54rrCJw0ArmTeqs714R9L3QndCtUFFoJ/RP6IfRdaCr0YvBKPPko9CD0JORaEHLI04/+qeBGrH4R+i1k47RO5tdOD/ouhs9i6Y+Qzqk4fPSh96x4LdofheI4aNsH/dhJHO9EI9Nt68gpcs9iB3uRsN2F3oumr0LsKkbk83mn0Wg49XrdqVarTqlUcpbLpTObzZzJZOKMx2Nns9kYdewa2bU+CX2zETbJMBJ/hYwj2mq13G636y4WC9eE+Xy+lUM+SufOrtVMiKwSrEXjsmk2m+5oNDL5rG0bDocu/cWGiVhOsb8J7Qeby+XcTqfjrtdrrYM2DfRHD/oMgeDH0WBLUyotFApur9ez8c9aBn3o1dkU/lFbLIeKcp9npJJ23osSvYaZwB/rw44TVjkaTPc5gX6dbeHjVyTITZTpAR/cqWs+Knj0Gz5sNpTI3IkESzkKcXebKKeD7exOOh+Ej39GPEhrSAH79iVhOCfwz0fef9u/fNi/7t/a7fb+xwXeDPaU/nkucRkJjb6kB5EnbNKzw4mNXZU/wsPPLYIz8NZrOHyS25TL5UPW2d8rlco2p9IYuvf4wQDeeA2HTxKzNGCwy3V1i2AAymyzVvNnzOt3kafBru9nMAAu4CEUi0p2SC5phsGu71AwAKoHIaxWSnZILmkG9wgNfIeCAXCJCGE6TacKwiVIA9/PYADUbULgJpUGDHaVfuJj5s8B1srP4Ghzh+33+0H2WX8PBgPd3Rn/jGs6U7mQahRTz0bJesUxHUVmo5m/DzArmb6REUDm78QEQRVAuQ6zUJUgAJDpuhABZL4yRxAvujZ61uo0+TwpMdksCWFa1WlmATATxkKvtCs/+hj85509eSQLvgnthy1tSQSA/tjVaNtw2WKVtdMTgkAfei8GDrvM/kt5OErkTiRYZLFPQjbLCDnk6Uf/2LDdhY4xwKWIus2dUCb+qT8muKtscAT+A8FCHrHOcDhMAAAAAElFTkSuQmCC';
+  function geoNamesVectorLayer(l, args, img, tint) {
     
     function style(feat) {
       return new ol.style.Style({
         zIndex: feat.getGeometry().getPoints()[0][0],
         geometry: feat.getGeometry().getPoints()[0],
         text: namedTextStyle(feat),
-        image:
-          new ol.style.Circle({
-            radius: 3,
-            fill: new ol.style.Fill({
-              color: 'rgba(0, 0, 0, 1)'
-            }),
-          })
+        image: new ol.style.Icon({size: [48,48], src:img || whiteDot, color: tint || '#66ff66', scale:1.0/6.0}),
       });
     }
 
     const baseUrl = Library.USGS.NatlMap.Names.url + '/' + l;
     
-    let source = tiledVectorLayer(baseUrl, 1024, Library.USGS.NatlMap.Names.attribution);
+    let source = tiledVectorLayer(baseUrl, 1024, Library.USGS.NatlMap.Names.attribution, args);
     return new ol.layer.Vector({
       source: source,
       style: style,
-      declutter: true,
+      declutter: img ? true : true,
     });
   }
 
@@ -411,6 +411,10 @@ function showMap(centerX, centerY, zoom, style, cities0) {
     });
 
 
+  }
+
+  function summitsVectorLayer() {
+    return geoNamesVectorLayer('1', {where: 'gaz_featureclass=\'Summit\''}, whiteTri, '#dddd22');
   }
 
   function citiesVectorLayer() {
@@ -448,13 +452,7 @@ function showMap(centerX, centerY, zoom, style, cities0) {
       return new ol.style.Style({
         zIndex: -feat.get('population'),
         text: namedTextStyle(feat),
-        image:
-          new ol.style.Circle({
-            radius: 3,
-            fill: new ol.style.Fill({
-              color: 'rgba(0, 0, 0, 1)'
-            }),
-          })
+        image: new ol.style.Icon({src:whiteDot, color: '#66ff66', scale:1.0/6.0}),
       });
     }
     return new ol.layer.Vector({
@@ -489,6 +487,7 @@ function showMap(centerX, centerY, zoom, style, cities0) {
     Library.USGS.NatlMap.GovUnits,
     Library.Census.Tiger.Roads,
     Library.USGS.NatlMap.GovUnitsSelectedLabels,
+    // 'Summits',
     zoom > 10.5 ? Library.USGS.NatlMap.Names : 'Cities',
   ];
   let overviewLayers = [
@@ -533,6 +532,8 @@ function showMap(centerX, centerY, zoom, style, cities0) {
       return cityAreasLayer();
     } else if (config === 'UnincAreas') {
       return unincAreasLayer();
+    } else if (config === 'Summits') {
+      return summitsVectorLayer();
     }
     let opts = {
       hidpi: true,

@@ -18,6 +18,10 @@ html.perim {
     padding-left: 15px;
 }
 
+.perim .perimDate {
+    padding-left: 5px;
+}
+
 .perimCenter {
     background: red;
     color: white;
@@ -35,9 +39,18 @@ html.perim {
     border-radius: 0;
 }
 
+.mapTitle {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    display: inline-block;
+    z-index: 1000000;
+}
+
 .perim .ol-scale-line {
     bottom: unset;
     top: 8px;
+    transform-origin: 100% 100% 0;
 }
 
 .ol-overviewmap-box {
@@ -69,6 +82,10 @@ html.perim {
     border-radius: 0;
 }
 
+.ol-attribution:not(.ol-collapsed) {
+    background: rgba(255,255,255,0.7);
+}
+
 
 h1 {
     color: red;
@@ -80,6 +97,12 @@ h1 {
 .perim h1 {
     background-color: white;
     font-size: 150%;
+}
+
+.perim .mapTitle h1 {
+    background-color: rgba(255,255,255,0.7);
+    padding: 3px;
+    color:black;
 }
 
 body {

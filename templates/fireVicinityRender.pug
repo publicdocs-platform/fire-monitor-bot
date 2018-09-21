@@ -2,11 +2,13 @@
 doctype html
 html.perim
     head
-        link(rel="stylesheet",type="text/css",href="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.2.0/css/ol.css")
+
+        meta(charset="UTF-8")
+        link(rel="stylesheet",href="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.2.0/css/ol.css",integrity="sha384-C7SzZySesoxngSK5V0BaD1DUap0LPZGWZpnXQGoIwvBXFc8G21y4s1QYvyr84FNa",crossorigin="anonymous")
 
         script(src='https://code.jquery.com/jquery-3.3.1.min.js',
             integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=",crossorigin="anonymous")
-        script(src="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.2.0/build/ol.js")
+        script(src="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.2.0/build/ol.js",                integrity="sha384-yaIgZleEnDCw26CwitrCKE9Jl4wLWEBw7moR6IF7CXoeMpRVWmOc0NDk222RUhBU",                crossorigin="anonymous")
 
         script
             include ../node_modules/ol-helpers/index.js
