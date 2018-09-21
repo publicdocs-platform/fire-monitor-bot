@@ -29,61 +29,85 @@ function showMap(centerX, centerY, zoom, style, cities0) {
       NatlMap: {
         Blank: {
           url: 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSTNMBlank/MapServer',
+          attribution: 'USGS The National Map (TNM)',
+          params: { layers: '', FORMAT: 'PNG' }
+        },
+        Hydro: {
+          url: 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSHydroCached/MapServer',
+          attribution: [
+            'USGS TNM: NHD',
+            'EPA: NHDPlus Med. Res.',
+            'USGS TNM: Small-Scale hydrography',
+            'NOAA NCEI: ETOPO1 Global Relief',
+          ],
           params: { layers: '', FORMAT: 'PNG' }
         },
         Imagery: {
           url: 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer',
+          attribution: 'USGS TNM: Orthoimagery',
           params: { layers: '', FORMAT: 'PNG' }
         },
         ImageryTiled: {
           tiled: true,
           url: 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}',
+          attribution: 'USGS TNM: Orthoimagery',
           params: {}
         },
         ImageryTopo: {
           url: 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryTopo/MapServer',
+          attribution: 'USGS TNM: Orthoimagery and US Topo',
           params: { layers: '', FORMAT: 'PNG' }
         },
         Polygons: {
           url: 'https://carto.nationalmap.gov/arcgis/rest/services/selectable_polygons/MapServer',
+          attribution: 'USGS',
           params: { layers: '', FORMAT: 'PNG' }
         },
         Roads: {
           url: 'https://carto.nationalmap.gov/arcgis/rest/services/transportation/MapServer/',
+          attribution: ['USGS TNM: NTD', 'U.S. Census Bureau – TIGER/Line', 'U.S. Forest Service'],
           params: { layers: 'show:13,18,21,22,23,25,26,27,28,29,30,31,32,33,34,35,36', FORMAT: 'PNG' }
         },
         RoadsMediumScale: {
           url: 'https://carto.nationalmap.gov/arcgis/rest/services/transportation/MapServer/',
+          attribution: ['USGS TNM: NTD', 'U.S. Census Bureau – TIGER/Line', 'U.S. Forest Service'],
           params: { layers: 'show:13,18,25,26,27,28,29,30,31,32,33,34,35,36', FORMAT: 'PNG' }
         },
         RoadsLowScale: {
           url: 'https://carto.nationalmap.gov/arcgis/rest/services/transportation/MapServer/',
+          attribution: ['USGS TNM: NTD', 'U.S. Census Bureau – TIGER/Line', 'U.S. Forest Service'],
           params: { layers: 'show:13,25,26,36', FORMAT: 'PNG' }
         },
         TransportNotInCensus: {
           url: 'https://carto.nationalmap.gov/arcgis/rest/services/transportation/MapServer/',
+          attribution: ['USGS TNM: NTD', 'U.S. Census Bureau – TIGER/Line', 'U.S. Forest Service'],
           params: { layers: 'show:13,18,19,25,26,29,30,31,32,33,34,35,36', FORMAT: 'PNG' }
         },
         TransportNotInCensusMediumScale: {
           url: 'https://carto.nationalmap.gov/arcgis/rest/services/transportation/MapServer/',
+          attribution: ['USGS TNM: NTD', 'U.S. Census Bureau – TIGER/Line', 'U.S. Forest Service'],
           params: { layers: 'show:13,18,25,26,29,30,31,32,33,34,35,36', FORMAT: 'PNG' }
         },
         GovUnits: {
           url: 'https://carto.nationalmap.gov/arcgis/rest/services/govunits/MapServer/',
+          attribution: 'USGS TNM: NBD',
           params: { layers: 'exclude:17', FORMAT: 'PNG' }
         },
         GovUnitsSelectedLabels: {
           url: 'https://carto.nationalmap.gov/arcgis/rest/services/govunits/MapServer/',
+          attribution: 'USGS TNM: NBD',
           params: { layers: 'show:4,5,6,7,16', FORMAT: 'PNG' }
         },
         Names: {
           url: 'https://carto.nationalmap.gov/arcgis/rest/services/geonames/MapServer/',
+          attribution: 'USGS TNM: GNIS',
           params: { layers: ''/*'show:0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22'*/, FORMAT: 'PNG' }
         },
       },
       ProtectedAreas: {
         SimpleDesignations: {
           url: 'https://gis1.usgs.gov/arcgis/rest/services/PADUS1_4/SimpleDesignationType/MapServer',
+          attribution: 'USGS GAP, PADUS',
           params: { layers: '', FORMAT: 'PNG' },
           opacity: 0.3,
         }
@@ -92,6 +116,7 @@ function showMap(centerX, centerY, zoom, style, cities0) {
     GEOMAC: {
       Fires: {
         url: 'https://wildfire.cr.usgs.gov/ArcGIS/rest/services/geomac_dyn/MapServer',
+        attribution: 'USGS GeoMAC (wildfire.cr.usgs.gov)',
         params: {
           FORMAT: 'PNG',
           layers: 'show:0,1,2',
@@ -103,30 +128,37 @@ function showMap(centerX, centerY, zoom, style, cities0) {
       Tiger: {
         States: {
           url: 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer',
+          attribution: 'U.S. Census Bureau – TIGER/Line',
           params: { layers: 'show:0,2,4,6,8,10,12,14,15,16', FORMAT: 'PNG' }
         },
         Roads: {
           url: 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Transportation/MapServer',
+          attribution: 'U.S. Census Bureau – TIGER/Line',
           params: { layers: '', FORMAT: 'PNG' }
         },
         USLandmass: {
           url: 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/USLandmass/MapServer',
+          attribution: 'U.S. Census Bureau – TIGER/Line',
           params: { layers: '', FORMAT: 'JPEG', TRANSPARENT: 'false' /* Need the blue oceans */ }
         },
         Hydro: {
           url: 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Hydro/MapServer',
+          attribution: 'U.S. Census Bureau – TIGER/Line',
           params: { layers: '', FORMAT: 'PNG' }
         },
         HydroPaths: {
           url: 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Hydro/MapServer',
+          attribution: 'U.S. Census Bureau – TIGER/Line',
           params: { layers: 'show:0', FORMAT: 'PNG' }
         },
         HydroBodies: {
           url: 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Hydro/MapServer',
+          attribution: 'U.S. Census Bureau – TIGER/Line',
           params: { layers: 'show:1,2', FORMAT: 'PNG' }
         },
         Urban: {
           url: 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Urban/MapServer',
+          attribution: 'U.S. Census Bureau – TIGER/Line',
           params: { layers: '', FORMAT: 'PNG' }
         },
       }
@@ -147,7 +179,7 @@ function showMap(centerX, centerY, zoom, style, cities0) {
       font: '14px Roboto',
       text: feature.get('name'),
       fill: new ol.style.Fill({ color: '#000000' }),
-      stroke: new ol.style.Stroke({ color: '#ffffff', width: 3 }),
+      stroke: new ol.style.Stroke({ color: '#ffffff', width: 2 }),
       offsetX: 0,
       offsetY: 0,
     });
@@ -172,7 +204,7 @@ function showMap(centerX, centerY, zoom, style, cities0) {
         stroke: new ol.style.Stroke({ color: sclr, width: 1 }),
       })];
     }
-    let source = tiledVectorLayer(baseUrl, 1024);
+    let source = tiledVectorLayer(baseUrl, 1024, Library.GEOMAC.Fires.attribution);
     return new ol.layer.Vector({
       source: source,
       style: styles,
@@ -194,7 +226,7 @@ function showMap(centerX, centerY, zoom, style, cities0) {
 
       });
     }
-    let source = tiledVectorLayer(baseUrl, 1024);
+    let source = tiledVectorLayer(baseUrl, 1024, Library.GEOMAC.Fires.attribution);
     return new ol.layer.Vector({
       source: source,
       style: style,
@@ -216,7 +248,7 @@ function showMap(centerX, centerY, zoom, style, cities0) {
         //stroke: new ol.style.Stroke({ color: sclr, width: 1 }),
       });
     }
-    let source = tiledVectorLayer(baseUrl, 1024);
+    let source = tiledVectorLayer(baseUrl, 1024, Library.USGS.NatlMap.GovUnits.attribution);
     return new ol.layer.Vector({
       source: source,
       style: style,
@@ -237,7 +269,7 @@ function showMap(centerX, centerY, zoom, style, cities0) {
         //stroke: new ol.style.Stroke({ color: sclr, width: 1 }),
       });
     }
-    let source = tiledVectorLayer(baseUrl, 1024);
+    let source = tiledVectorLayer(baseUrl, 1024, Library.USGS.NatlMap.GovUnits.attribution);
     return new ol.layer.Vector({
       source: source,
       style: style,
@@ -273,8 +305,12 @@ function showMap(centerX, centerY, zoom, style, cities0) {
 
       });
     }
+
+    const modisCredit = 'MODIS (RSAC/USFS/NASA)';
+    const viirsCredit = 'VIIRS I (NASA/NOAA S-NPP)';
+    const legend = 'Ellipses indicate satellite inferences of &ge;1 fire in area (red: active burn, orange: &le;24hrs, yellow: earlier)';
     
-    let source = tiledVectorLayer(baseUrl, 1024);
+    let source = tiledVectorLayer(baseUrl, 1024, [Library.GEOMAC.Fires.attribution, modisCredit, viirsCredit, legend]);
     return new ol.layer.Vector({
       source: source,
       style: style,
@@ -316,7 +352,7 @@ function showMap(centerX, centerY, zoom, style, cities0) {
       font: '11px Roboto',
       text: title,
       fill: new ol.style.Fill({ color: '#000000' }),
-      stroke: new ol.style.Stroke({ color: '#ffffff', width: 3 }),
+      stroke: new ol.style.Stroke({ color: '#ffffff', width: 2 }),
       offsetX: offsetX,
       offsetY: offsetY,
     });
@@ -343,7 +379,7 @@ function showMap(centerX, centerY, zoom, style, cities0) {
 
     const baseUrl = Library.USGS.NatlMap.Names.url + '/' + l;
     
-    let source = tiledVectorLayer(baseUrl, 1024);
+    let source = tiledVectorLayer(baseUrl, 1024, Library.USGS.NatlMap.Names.attribution);
     return new ol.layer.Vector({
       source: source,
       style: style,
@@ -367,7 +403,7 @@ function showMap(centerX, centerY, zoom, style, cities0) {
 
     const baseUrl = 'https://wildfire.cr.usgs.gov/arcgis/rest/services/geomac_dyn/MapServer/' + l;
     
-    let source = tiledVectorLayer(baseUrl, 1024);
+    let source = tiledVectorLayer(baseUrl, 1024, Library.GEOMAC.Fires.attribution);
     return new ol.layer.Vector({
       source: source,
       style: style,
@@ -424,6 +460,7 @@ function showMap(centerX, centerY, zoom, style, cities0) {
     return new ol.layer.Vector({
       source: new ol.source.Vector({
         features: (new ol.format.GeoJSON()).readFeatures(allFeats),
+        attributions: 'U.S. Census Bureau Gazetteer',
       }),
       style: style,
       declutter: true,
@@ -436,13 +473,14 @@ function showMap(centerX, centerY, zoom, style, cities0) {
     // Library.Census.Tiger.USLandmass,
     Library.USGS.NatlMap.Blank,
     Alpha(Library.USGS.NatlMap.Imagery, 1.0),
-    //Alpha(Library.USGS.ProtectedAreas.SimpleDesignations, 0.3),
-    //'UnincAreas',
-    //'CityAreas',
+    Alpha(Library.USGS.ProtectedAreas.SimpleDesignations, 0.1),
+    'UnincAreas',
+    'CityAreas',
     //Library.USGS.NatlMap.Polygons,
     Library.Census.Tiger.States,
     //Alpha(Library.Census.Tiger.HydroBodies, 0.5),
     //Alpha(Library.Census.Tiger.HydroPaths, 0.2),
+    Library.USGS.NatlMap.Hydro,
     ZoomedRoads,
     //Alpha(Library.USGS.NatlMap.TransportNotInCensusMediumScale, 0.3),
     'Perim',
@@ -496,22 +534,19 @@ function showMap(centerX, centerY, zoom, style, cities0) {
     } else if (config === 'UnincAreas') {
       return unincAreasLayer();
     }
+    let opts = {
+      hidpi: true,
+      ratio: 1,
+      params: config.params || {},
+      url: config.url,
+      attributions: config.attribution || null,
+    };
     if (config.tiled) {
       ltype = ol.layer.Tile;
-      source = new ol.source.XYZ({
-        hidpi: detail || true,
-        ratio: 1,
-        params: config.params || {},
-        url: config.url,
-      });
+      source = new ol.source.XYZ(opts);
     } else {
       ltype = ol.layer.Image;
-      source = new ol.source.ImageArcGISRest({
-        hidpi: detail || true,
-        ratio: 1,
-        params: config.params || {},
-        url: config.url,
-      });
+      source = new ol.source.ImageArcGISRest(opts);
     }
 
     return new ltype({
@@ -525,6 +560,14 @@ function showMap(centerX, centerY, zoom, style, cities0) {
 
   controls.push(new ol.control.ScaleLine({ units: 'us', minWidth: 70 }));
 
+  if (detail) {
+    let attribution = new ol.control.Attribution({
+      collapsible: false,
+      collapsed: false,
+    });
+    controls.push(attribution);
+  }
+
 
   let map = new ol.Map({
     controls: controls,
@@ -537,5 +580,42 @@ function showMap(centerX, centerY, zoom, style, cities0) {
       zoom: zoom
     })
   });
+
+
+  // Create the grid
+  let grid = new ol.Graticule({
+    // the style to use for the lines, optional.
+    /*strokeStyle: new Stroke({
+      color: 'rgba(255,120,0,0.9)',
+      width: 2,
+      lineDash: [0.5, 4]
+    }),*/
+    showLabels: true,
+    latLabelStyle: new ol.style.Text({
+      font: '8px Roboto',
+      textAlign: 'end',
+      fill: new ol.style.Fill({
+        color: 'rgba(0,0,0,1)'
+      }),
+      stroke: new ol.style.Stroke({
+        color: 'rgba(255,255,255,1)',
+        width: 2
+      })
+    }),
+    lonLabelStyle: new ol.style.Text({
+      font: '8px Roboto',
+      textBaseline: 'bottom',
+      fill: new ol.style.Fill({
+        color: 'rgba(0,0,0,1)'
+      }),
+      stroke: new ol.style.Stroke({
+        color: 'rgba(255,255,255,1)',
+        width: 2
+      })
+    })
+  });
+  if (detail) {
+    grid.setMap(map);
+  }
 }
 

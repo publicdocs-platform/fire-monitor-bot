@@ -31,8 +31,13 @@ html.perim {
 .ol-scale-line { 
     left: auto;
     right: 8px;
-    background: rgba(0,60,136,1);
+    background: rgba(0,60,136,0.6);
     border-radius: 0;
+}
+
+.perim .ol-scale-line {
+    bottom: unset;
+    top: 8px;
 }
 
 .ol-overviewmap-box {
@@ -40,6 +45,28 @@ html.perim {
 }
 .ol-overviewmap:not(.ol-collapsed) {
     background: rgba(255,255,255,0);
+}
+
+.ol-attribution li:not(:last-child):after {
+    content: "; ";
+}
+
+.ol-attribution li:first-child:before {
+    content: "Sources: ";
+}
+
+.ol-attribution ul {
+    line-height: initial;
+    font: 8px 'Roboto';
+    text-align: left;
+}
+
+.ol-attribution.ol-uncollapsible {
+    height: unset;
+    right: unset;
+    left: 5px;
+    bottom: 10px;
+    border-radius: 0;
 }
 
 
