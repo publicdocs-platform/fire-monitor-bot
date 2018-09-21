@@ -207,7 +207,7 @@ function showMap(centerX, centerY, zoom, style, cities0) {
   function cityAreasLayer() {
     const baseUrl = Library.USGS.NatlMap.GovUnits.url + '/19';
     function style(feat) {
-      let fclr = 'rgba(255,220,255,1)';
+      let fclr = 'rgba(255,220,255,0.2)';
       let sclr = 'rgba(255,255,120,1)';
       return new ol.style.Style({
         fill: new ol.style.Fill({
@@ -228,7 +228,7 @@ function showMap(centerX, centerY, zoom, style, cities0) {
   function unincAreasLayer() {
     const baseUrl = Library.USGS.NatlMap.GovUnits.url + '/20';
     function style(feat) {
-      let fclr = 'rgba(255,230,255,1)';
+      let fclr = 'rgba(255,230,255,0.2)';
       let sclr = 'rgba(255,255,120,1)';
       return new ol.style.Style({
         fill: new ol.style.Fill({
@@ -435,13 +435,13 @@ function showMap(centerX, centerY, zoom, style, cities0) {
   let perimLayers = [
     // Library.Census.Tiger.USLandmass,
     Library.USGS.NatlMap.Blank,
-    //Alpha(Library.USGS.NatlMap.ImageryTiled, 0.0),
-    Alpha(Library.USGS.ProtectedAreas.SimpleDesignations, 0.2),
-    'UnincAreas',
-    'CityAreas',
+    Alpha(Library.USGS.NatlMap.Imagery, 1.0),
+    //Alpha(Library.USGS.ProtectedAreas.SimpleDesignations, 0.3),
+    //'UnincAreas',
+    //'CityAreas',
     //Library.USGS.NatlMap.Polygons,
     Library.Census.Tiger.States,
-    Library.Census.Tiger.HydroBodies,
+    //Alpha(Library.Census.Tiger.HydroBodies, 0.5),
     //Alpha(Library.Census.Tiger.HydroPaths, 0.2),
     ZoomedRoads,
     //Alpha(Library.USGS.NatlMap.TransportNotInCensusMediumScale, 0.3),
