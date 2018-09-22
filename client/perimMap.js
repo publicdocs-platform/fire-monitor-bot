@@ -287,21 +287,25 @@ function showMap(centerX, centerY, zoom, style, cities0) {
     function style(feat) {
       let sclr = 'rgba(255,255,0,0.01)';
       let fclr = 'rgba(255,255,0,0)';
+      let topZindex = -100;
       const time = feat.get('load_stat');
       if (time == 'Last 24-48 hrs') {
         sclr = 'rgba(255,255,0,0.1)'
         fclr = 'rgba(255,255,0,0)'
+        topZindex = -50;
       } else if (time == 'Last 12-24 hrs') {
         sclr = 'rgba(255,165,0,0.2)'
         fclr = 'rgba(255,165,0,0.1)'
+        topZindex = -25;
       } else if (time == 'Active Burning') {
         sclr = 'rgba(255,0,0,0.4)'
         fclr = 'rgba(255,0,0,0.4)'
+        topZindex = 0;
       } else {
         return null;
       }
       return new ol.style.Style({
-        zIndex: -(feat.get('julian') * 1000000 + feat.get('gmt')),
+        zIndex: topZindex, //-(feat.get('julian') * 100000 + feat.get('gmt')),
         fill: zoom > 12.5 ? null : new ol.style.Fill({
           color: fclr
         }),
@@ -482,8 +486,8 @@ function showMap(centerX, centerY, zoom, style, cities0) {
     ZoomedRoads,
     //Alpha(Library.USGS.NatlMap.TransportNotInCensusMediumScale, 0.3),
     'Perim',
-    'VIIRS',
     'MODIS',
+    'VIIRS',
     Library.USGS.NatlMap.GovUnits,
     Library.Census.Tiger.Roads,
     Library.USGS.NatlMap.GovUnitsSelectedLabels,
