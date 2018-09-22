@@ -46,7 +46,7 @@ html.perim
                     h1
                         span #{data.current.Fire_Name} Fire
                         if data.perimDateTime
-                            span.perimDate @#{friendlyDate(data.perimDateTime)}
+                            span.perimDate Perimeter @#{friendlyDate(data.perimDateTime)}
         script
             | showMap(#{data.lon}, #{data.lat}, #{data.zoom}, 'perim', !{JSON.stringify(data.cities ? data.cities.all : [])});
 

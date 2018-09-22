@@ -281,45 +281,55 @@ function showMap(centerX, centerY, zoom, style, cities0) {
       declutter: false,
     });
   }
+
+  const whiteTri = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAtdJREFUaAXtWCuMWlEUhFLSTTEYDDXgkJiG1GGq0ARHLZq6JpVUo1FNqEUjqnCkDtOGtKKGBoLBtKQhcDtzck+W3X37eHzeh+ZNcvZwz2dmONk1m0jEiC8QXyC+QHyB+AL+XeAdqGcI5qtDBY53CGMz31eDJJyOETSvwTfrV4EmXKrx/cx65JGBw18IMV4oFPa/AP8e2I80PsCdmM7n82Y+nxtmrSGzH1kU4WyNEMP9ft8QzFqzfc5FEgO4ErOVSsXsdjv5Asx8aw+Zc5FDFY7EZDKZNOPxWMzrD75Z1xlkzkcGKTiZIMRgs9lU33cy6zpj57kXCbTgQsxlMhkzm83uGNcH6+zrLDL3QkcWDpYIMdbpdNSvY2ZfZ+0e90NFF+piqlgsmvV67Whci+xzTneQuR8aSlDeIMTQYDBQn66Zc7pj98kTCoZQFTPVatXV9P0m53UXmTyBowZFMZFKpcxkMrnv0fXNee4pBzL5AkMaSlOEGGi1Wq5mH2tyTzksH3kDwVuoiHg2mzXL5fIxj6517nFfuZDJ6ztyUFghRLjb7bqaPNTkvnJZXvL7ih7YRbRUKpnNZnPIo2uf++RRTmTy+4YymLcIERwOh67mvDbJo5yWnzq+YARWEavVal79eZojn3IjU+fiqINRRNLptJlOp56MeR0iH3lVA5l6F8MNmH4iRKDdbnv1ddQceVXD6lH3IngPFiHP5XJmtVodZczrMHnJr1rI1D0bL8DwGyHEvV7Pq5+T5sivWlaX+mfhE7aFtFwum+12e5Ixr0vkp45qIlP/ZLzCpv53zYxGI68+zpqjDnQ1qE8fRyOJjS8IIarX62eZOnaZeqptfdDPAzx9ULktvMHHl/pcLBaJRqOhT98z9fZAH/Tzca928OM3TOxfIezPX50cP3Eq2tp3l14YrR9Ooo6/V3bwOfJrxDOnxYBrf6H3GfEnYN1YLr5AfIH4Av/7Bf4Bjm9OkYzIpvwAAAAASUVORK5CYII=';
+  const whiteDot = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAylJREFUaAXtmb2O2kAQxw0RBVxxIKWBLlddkAgPELoUKfIM6XiDdLzLSVT0IOVqKPIESChVdNElkAqSBhqEMz+EDbJ314sx+Czxl0Y2s7PzsbvenR0c54rrCJw0ArmTeqs714R9L3QndCtUFFoJ/RP6IfRdaCr0YvBKPPko9CD0JORaEHLI04/+qeBGrH4R+i1k47RO5tdOD/ouhs9i6Y+Qzqk4fPSh96x4LdofheI4aNsH/dhJHO9EI9Nt68gpcs9iB3uRsN2F3oumr0LsKkbk83mn0Wg49XrdqVarTqlUcpbLpTObzZzJZOKMx2Nns9kYdewa2bU+CX2zETbJMBJ/hYwj2mq13G636y4WC9eE+Xy+lUM+SufOrtVMiKwSrEXjsmk2m+5oNDL5rG0bDocu/cWGiVhOsb8J7Qeby+XcTqfjrtdrrYM2DfRHD/oMgeDH0WBLUyotFApur9ez8c9aBn3o1dkU/lFbLIeKcp9npJJ23osSvYaZwB/rw44TVjkaTPc5gX6dbeHjVyTITZTpAR/cqWs+Knj0Gz5sNpTI3IkESzkKcXebKKeD7exOOh+Ej39GPEhrSAH79iVhOCfwz0fef9u/fNi/7t/a7fb+xwXeDPaU/nkucRkJjb6kB5EnbNKzw4mNXZU/wsPPLYIz8NZrOHyS25TL5UPW2d8rlco2p9IYuvf4wQDeeA2HTxKzNGCwy3V1i2AAymyzVvNnzOt3kafBru9nMAAu4CEUi0p2SC5phsGu71AwAKoHIaxWSnZILmkG9wgNfIeCAXCJCGE6TacKwiVIA9/PYADUbULgJpUGDHaVfuJj5s8B1srP4Ghzh+33+0H2WX8PBgPd3Rn/jGs6U7mQahRTz0bJesUxHUVmo5m/DzArmb6REUDm78QEQRVAuQ6zUJUgAJDpuhABZL4yRxAvujZ61uo0+TwpMdksCWFa1WlmATATxkKvtCs/+hj85509eSQLvgnthy1tSQSA/tjVaNtw2WKVtdMTgkAfei8GDrvM/kt5OErkTiRYZLFPQjbLCDnk6Uf/2LDdhY4xwKWIus2dUCb+qT8muKtscAT+A8FCHrHOcDhMAAAAAElFTkSuQmCC';
+  
   
   function satelliteVectorLayer(l) {
     const baseUrl = 'https://wildfire.cr.usgs.gov/arcgis/rest/services/geomac_dyn/MapServer/' + l;
     function style(feat) {
-      let sclr = 'rgba(255,255,0,0.01)';
+      let sclr = 'rgba(255,255,0,0.1)';
       let fclr = 'rgba(255,255,0,0)';
       let topZindex = -100;
       const time = feat.get('load_stat');
       if (time == 'Last 24-48 hrs') {
-        sclr = 'rgba(255,255,0,0.1)'
-        fclr = 'rgba(255,255,0,0)'
+        sclr = 'rgba(255,255,0,0.4)'
+        fclr = 'rgba(255,255,0,0.1)'
         topZindex = -50;
       } else if (time == 'Last 12-24 hrs') {
-        sclr = 'rgba(255,165,0,0.2)'
+        sclr = 'rgba(255,165,0,0.6)'
         fclr = 'rgba(255,165,0,0.1)'
         topZindex = -25;
       } else if (time == 'Active Burning') {
-        sclr = 'rgba(255,0,0,0.4)'
-        fclr = 'rgba(255,0,0,0.4)'
+        sclr = 'rgba(255,0,0,0.8)'
+        fclr = 'rgba(255,0,0,0.1)'
         topZindex = 0;
       } else {
         return null;
       }
-      return new ol.style.Style({
-        zIndex: topZindex, //-(feat.get('julian') * 100000 + feat.get('gmt')),
-        fill: zoom > 12.5 ? null : new ol.style.Fill({
-          color: fclr
+      return [
+        new ol.style.Style({
+          geometry: feat.getGeometry(),
+          zIndex: topZindex, //-(feat.get('julian') * 100000 + feat.get('gmt')),
+          fill: zoom > 12.5 ? null : new ol.style.Fill({
+            color: fclr
+          }),
+          stroke: new ol.style.Stroke({ color: sclr, width: zoom>=12.5 ? 3 : 1, lineDash:zoom>=12.5?[3,3]:[3,3] }),
         }),
-
-        stroke: new ol.style.Stroke({ color: sclr, width: zoom>=12.5 ? 3 : 1, lineDash:zoom>=12.5?[3,3]:null }),
-
-      });
+        /*new ol.style.Style({
+          zIndex: topZindex,
+          geometry: new ol.geom.Point(ol.extent.getCenter(feat.getGeometry().getExtent())),
+          image: new ol.style.Icon({size: [48,48], src:whiteTri, color: fclr, scale:1.0/6.0}),
+        })*/
+      ]
     }
 
     const modisCredit = 'MODIS (RSAC/USFS/NASA)';
     const viirsCredit = 'VIIRS I (NASA/NOAA S-NPP)';
     const legend = 'Ellipses indicate satellite inferences of &ge;1 fire in area (red: active burn, orange: &le;24hrs, yellow: earlier)';
     
-    let source = tiledVectorLayer(baseUrl, 1024, [Library.GEOMAC.Fires.attribution, modisCredit, viirsCredit, legend]);
+    let source = tiledVectorLayer(baseUrl, 1024, [Library.GEOMAC.Fires.attribution, modisCredit, viirsCredit, legend], {}, {overlaps: false});
     return new ol.layer.Vector({
       source: source,
       style: style,
@@ -367,9 +377,6 @@ function showMap(centerX, centerY, zoom, style, cities0) {
     });
   };
 
-
-  const whiteTri = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAtdJREFUaAXtWCuMWlEUhFLSTTEYDDXgkJiG1GGq0ARHLZq6JpVUo1FNqEUjqnCkDtOGtKKGBoLBtKQhcDtzck+W3X37eHzeh+ZNcvZwz2dmONk1m0jEiC8QXyC+QHyB+AL+XeAdqGcI5qtDBY53CGMz31eDJJyOETSvwTfrV4EmXKrx/cx65JGBw18IMV4oFPa/AP8e2I80PsCdmM7n82Y+nxtmrSGzH1kU4WyNEMP9ft8QzFqzfc5FEgO4ErOVSsXsdjv5Asx8aw+Zc5FDFY7EZDKZNOPxWMzrD75Z1xlkzkcGKTiZIMRgs9lU33cy6zpj57kXCbTgQsxlMhkzm83uGNcH6+zrLDL3QkcWDpYIMdbpdNSvY2ZfZ+0e90NFF+piqlgsmvV67Whci+xzTneQuR8aSlDeIMTQYDBQn66Zc7pj98kTCoZQFTPVatXV9P0m53UXmTyBowZFMZFKpcxkMrnv0fXNee4pBzL5AkMaSlOEGGi1Wq5mH2tyTzksH3kDwVuoiHg2mzXL5fIxj6517nFfuZDJ6ztyUFghRLjb7bqaPNTkvnJZXvL7ih7YRbRUKpnNZnPIo2uf++RRTmTy+4YymLcIERwOh67mvDbJo5yWnzq+YARWEavVal79eZojn3IjU+fiqINRRNLptJlOp56MeR0iH3lVA5l6F8MNmH4iRKDdbnv1ddQceVXD6lH3IngPFiHP5XJmtVodZczrMHnJr1rI1D0bL8DwGyHEvV7Pq5+T5sivWlaX+mfhE7aFtFwum+12e5Ixr0vkp45qIlP/ZLzCpv53zYxGI68+zpqjDnQ1qE8fRyOJjS8IIarX62eZOnaZeqptfdDPAzx9ULktvMHHl/pcLBaJRqOhT98z9fZAH/Tzca928OM3TOxfIezPX50cP3Eq2tp3l14YrR9Ooo6/V3bwOfJrxDOnxYBrf6H3GfEnYN1YLr5AfIH4Av/7Bf4Bjm9OkYzIpvwAAAAASUVORK5CYII=';
-  const whiteDot = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAylJREFUaAXtmb2O2kAQxw0RBVxxIKWBLlddkAgPELoUKfIM6XiDdLzLSVT0IOVqKPIESChVdNElkAqSBhqEMz+EDbJ314sx+Czxl0Y2s7PzsbvenR0c54rrCJw0ArmTeqs714R9L3QndCtUFFoJ/RP6IfRdaCr0YvBKPPko9CD0JORaEHLI04/+qeBGrH4R+i1k47RO5tdOD/ouhs9i6Y+Qzqk4fPSh96x4LdofheI4aNsH/dhJHO9EI9Nt68gpcs9iB3uRsN2F3oumr0LsKkbk83mn0Wg49XrdqVarTqlUcpbLpTObzZzJZOKMx2Nns9kYdewa2bU+CX2zETbJMBJ/hYwj2mq13G636y4WC9eE+Xy+lUM+SufOrtVMiKwSrEXjsmk2m+5oNDL5rG0bDocu/cWGiVhOsb8J7Qeby+XcTqfjrtdrrYM2DfRHD/oMgeDH0WBLUyotFApur9ez8c9aBn3o1dkU/lFbLIeKcp9npJJ23osSvYaZwB/rw44TVjkaTPc5gX6dbeHjVyTITZTpAR/cqWs+Knj0Gz5sNpTI3IkESzkKcXebKKeD7exOOh+Ej39GPEhrSAH79iVhOCfwz0fef9u/fNi/7t/a7fb+xwXeDPaU/nkucRkJjb6kB5EnbNKzw4mNXZU/wsPPLYIz8NZrOHyS25TL5UPW2d8rlco2p9IYuvf4wQDeeA2HTxKzNGCwy3V1i2AAymyzVvNnzOt3kafBru9nMAAu4CEUi0p2SC5phsGu71AwAKoHIaxWSnZILmkG9wgNfIeCAXCJCGE6TacKwiVIA9/PYADUbULgJpUGDHaVfuJj5s8B1srP4Ghzh+33+0H2WX8PBgPd3Rn/jGs6U7mQahRTz0bJesUxHUVmo5m/DzArmb6REUDm78QEQRVAuQ6zUJUgAJDpuhABZL4yRxAvujZ61uo0+TwpMdksCWFa1WlmATATxkKvtCs/+hj85509eSQLvgnthy1tSQSA/tjVaNtw2WKVtdMTgkAfei8GDrvM/kt5OErkTiRYZLFPQjbLCDnk6Uf/2LDdhY4xwKWIus2dUCb+qT8muKtscAT+A8FCHrHOcDhMAAAAAElFTkSuQmCC';
   function geoNamesVectorLayer(l, args, img, tint) {
     
     function style(feat) {

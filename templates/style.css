@@ -7,6 +7,7 @@ html {
 
 html.perim {
     zoom: 200%;
+    font-family: 'Roboto';
 }
 
 .content {
@@ -35,8 +36,21 @@ html.perim {
 .ol-scale-line { 
     left: auto;
     right: 8px;
-    background: rgba(0,60,136,0.6);
     border-radius: 0;
+    background: rgba(255,255,255,0.75);
+    text-shadow: 0 0 2px #fff;
+}
+
+.ol-scale-line-inner {
+    color: #000;
+    border-color: #000;
+}
+
+
+.perim .ol-scale-line {
+    bottom: unset;
+    top: 8px;
+    transform-origin: 100% 100% 0;
 }
 
 .mapTitle {
@@ -45,13 +59,9 @@ html.perim {
     left: 8px;
     display: inline-block;
     z-index: 1000000;
+    text-shadow: 0 0 2px #fff;
 }
 
-.perim .ol-scale-line {
-    bottom: unset;
-    top: 8px;
-    transform-origin: 100% 100% 0;
-}
 
 .ol-overviewmap-box {
     border: 2px dotted rgba(255,60,136,.7);
