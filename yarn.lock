@@ -1329,8 +1329,8 @@ object-assign@^4.0.1, object-assign@^4.1.0:
   resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-4.1.1.tgz#2109adc7965887cfc05cbbd442cac8bfbb360863"
 
 "ol-helpers@https://github.com/publicdocs-platform/ol-helpers":
-  version "1.1.0"
-  resolved "https://github.com/publicdocs-platform/ol-helpers#a7749505766beacf82b6c84f19b1c7171a7273d7"
+  version "1.2.0"
+  resolved "https://github.com/publicdocs-platform/ol-helpers#dafb89fa79d5c1acee4ec7b9be4ab0420d79245a"
 
 on-finished@~2.3.0:
   version "2.3.0"
