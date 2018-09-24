@@ -79,6 +79,10 @@ exports.builder = {
     default: 60 * 5 + 11,
     desc: 'Seconds between twitter posts'
   },
+  twitterThreadQueryPrefix: {
+    string: true,
+    desc: 'Twitter query to find posts to reply to'
+  },
 }
 
 exports.handler = argv => {
@@ -513,7 +517,8 @@ exports.handler = argv => {
           image2: detailRender,
           image3AltText: 'Vicnity map',
           image3: centerImg,
-          selectors: [cur.state || cur.State || key.substr(5, 2), 'other']
+          selectors: [cur.state || cur.State || key.substr(5, 2), 'other'],
+          threadQuery: argv.twitterThreadQueryPrefix + ' ' + cur.Hashtag,
         };
         if (center) {
           saved.coords = { lat: lat, lon: lon };
