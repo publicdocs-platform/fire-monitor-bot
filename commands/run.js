@@ -32,6 +32,7 @@ const numeral = require('numeral');
 const rimraf = require('rimraf');
 const sharp = require('sharp');
 const promisify = require('util').promisify;
+const exec = promisify(require('child_process').exec);
 const ip = require('ip');
 
 const puppeteer = require('puppeteer');
@@ -110,6 +111,10 @@ exports.builder = {
   twitterThreadQueryPrefix: {
     string: true,
     desc: 'Twitter query to find posts to reply to'
+  },
+  postPersistCmd: {
+    string: true,
+    desc: 'Command to run after peristing data'
   },
 }
 
@@ -352,6 +357,16 @@ exports.handler = argv => {
     }
 
     fs.writeFileSync(argv.db, yaml.safeDump(x,  {skipInvalid: true}));
+
+    if (argv.postPersistCmd) {
+      try {
+        await exec(argv.postPersistCmd);
+      } catch(err) {
+        console.log('### Error in post persist command: ');
+        console.log(err);
+      }
+    }
+
     if (argv.once) {
       process.exit();
       while(true) { }
@@ -474,7 +489,7 @@ exports.handler = argv => {
         };
         const htmlCenter = centerHtml(centerTemplateData);
         fs.writeFileSync(centerWebpage, htmlCenter);
-        await renderCenterImage(puppeteer);
+        await renderCenterImage();
         await perimAndSaveProcess(centerImg);
       }
       else {
@@ -529,12 +544,13 @@ exports.handler = argv => {
         fs.writeFileSync(argv.outputdir + '/postqueue/' + priority + '-TWEET-' + updateId + '.yaml', savedYaml);
         console.log('   # Exiting processing ' + updateId);
 
-        async function renderPerim() {
-          return render.renderInBrowser(1450, 1450, perimWebpageUrl, perimImg);
-        }
       }
 
-      async function renderCenterImage(puppeteer) {
+      async function renderPerim() {
+        return render.renderInBrowser(1450, 1450, perimWebpageUrl, perimImg);
+      }
+
+      async function renderCenterImage() {
         return render.renderInBrowser(1450, 1450, centerWebpageUrl, centerImg);
       }
 
