@@ -17,6 +17,34 @@ limitations under the License.
 */
 'use strict';
 
+const os = require('os');
+const path = require('path');
+const rp = require('request-promise');
+const _ = require('lodash');
+const yaml = require('js-yaml');
+const titleCase = require('title-case');
+const pug = require('pug');
+const fs = require('fs');
+const deepDiff = require('deep-diff');
+const express = require('express');
+const serveIndex = require('serve-index');
+const numeral = require('numeral');
+const rimraf = require('rimraf');
+const sharp = require('sharp');
+const promisify = require('util').promisify;
+const ip = require('ip');
+
+const puppeteer = require('puppeteer');
+
+const envconfig = require('../envconfig');
+const util = require('../lib/util');
+const dateString = util.dateString;
+const maprender = require('../lib/maprender');
+const render = require('../lib/render');
+const geocoding = require('../lib/geocoding');
+const geomac = require('../lib/geomac');
+const tileserver = require('../lib/tileserver');
+
 exports.command = 'run';
 
 exports.aliases = ['daemon'];
@@ -86,33 +114,6 @@ exports.builder = {
 }
 
 exports.handler = argv => {
-
-  const os = require('os');
-  const path = require('path');
-  const rp = require('request-promise');
-  const _ = require('lodash');
-  const yaml = require('js-yaml');
-  const titleCase = require('title-case');
-  const pug = require('pug');
-  const fs = require('fs');
-  const deepDiff = require('deep-diff');
-  const express = require('express');
-  const serveIndex = require('serve-index');
-  const numeral = require('numeral');
-  const rimraf = require('rimraf');
-  const sharp = require('sharp');
-  const promisify = require('util').promisify;
-  const ip = require('ip');
-
-  const puppeteer = require('puppeteer');
-
-  const envconfig = require('../envconfig');
-  const util = require('../lib/util');
-  const dateString = util.dateString;
-  const maprender = require('../lib/maprender');
-  const geocoding = require('../lib/geocoding');
-  const geomac = require('../lib/geomac');
-  const tileserver = require('../lib/tileserver');
 
   // This functionality is disabled.
   if (false) { tileserver.run(8081); }
@@ -529,58 +530,16 @@ exports.handler = argv => {
         console.log('   # Exiting processing ' + updateId);
 
         async function renderPerim() {
-          const browser = await puppeteer.launch({
-            defaultViewport: {
-              width: 1450, height: 1450,
-              deviceScaleFactor: 2
-            }
-          });
-          const page = await browser.newPage();
-          await page.goto(perimWebpageUrl, {
-            timeout: 60000 * 10,
-            waitUntil: 'networkidle0'
-          });
-          await page.screenshot({
-            path: perimImg, type: "jpeg", quality: 95,
-          });
-          await browser.close();
+          return render.renderInBrowser(1450, 1450, perimWebpageUrl, perimImg);
         }
       }
 
       async function renderCenterImage(puppeteer) {
-        const browser = await puppeteer.launch({
-          defaultViewport: {
-            width: 1450, height: 1450,
-            deviceScaleFactor: 2
-          }
-        });
-        const page = await browser.newPage();
-        await page.goto(centerWebpageUrl, {
-          timeout: 60000 * 10,
-          waitUntil: 'networkidle0'
-        });
-        await page.screenshot({
-          path: centerImg, type: "jpeg", quality: 95,
-        });
-        await browser.close();
+        return render.renderInBrowser(1450, 1450, centerWebpageUrl, centerImg);
       }
 
       async function renderUpdateImage() {
-        const browser = await puppeteer.launch({
-          defaultViewport: {
-            width: 2048, height: 1270,
-            deviceScaleFactor: 2
-          }
-        });
-        const page = await browser.newPage();
-        await page.goto(mainWebpageUrl, {
-          timeout: 60000 * 10,
-          waitUntil: 'networkidle0'
-        });
-        await page.screenshot({
-          path: infoImg, type: "jpeg", quality: 95,
-        });
-        await browser.close();
+        return render.renderInBrowser(2048, 1270, mainWebpageUrl, infoImg);
       }
     }
   }
