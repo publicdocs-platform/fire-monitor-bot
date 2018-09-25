@@ -519,7 +519,7 @@ exports.handler = argv => {
           image3AltText: 'Vicnity map',
           image3: centerImg,
           selectors: [cur.state || cur.State || key.substr(5, 2), 'other'],
-          threadQuery: argv.twitterThreadQueryPrefix + ' ' + cur.Hashtag,
+          threadQuery: argv.twitterThreadQueryPrefix ? (argv.twitterThreadQueryPrefix + ' ' + cur.Hashtag) : null,
         };
         if (center) {
           saved.coords = { lat: lat, lon: lon };
