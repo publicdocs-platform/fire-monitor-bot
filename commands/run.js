@@ -19,6 +19,10 @@ limitations under the License.
 
 const os = require('os');
 const path = require('path');
+
+const rimraf = require('rimraf');
+const mkdirp = require('mkdirp');
+
 const rp = require('request-promise');
 const _ = require('lodash');
 const yaml = require('js-yaml');
@@ -26,10 +30,7 @@ const titleCase = require('title-case');
 const pug = require('pug');
 const fs = require('fs');
 const deepDiff = require('deep-diff');
-const express = require('express');
-const serveIndex = require('serve-index');
 const numeral = require('numeral');
-const rimraf = require('rimraf');
 const sharp = require('sharp');
 const promisify = require('util').promisify;
 const exec = promisify(require('child_process').exec);
@@ -45,6 +46,10 @@ const render = require('../lib/render');
 const geocoding = require('../lib/geocoding');
 const geomac = require('../lib/geomac');
 const tileserver = require('../lib/tileserver');
+const server = require('../lib/server');
+const files = require('../lib/files');
+
+
 
 exports.command = 'run';
 
@@ -65,10 +70,6 @@ exports.builder = {
     string: true,
     desc: 'String to add to User-Agent',
     default: 'Bot',
-  },
-  clean: {
-    boolean: true,
-    desc: 'Whether to clear the data files and Twitter post queue before starting'
   },
   locations: {
     boolean: true,
@@ -129,27 +130,10 @@ exports.handler = argv => {
 
   const intensiveProcessingSemaphore = util.namedSemaphore(processingSemaphore, 'computation');
 
-  const webApp = express();
+  const tmpdir = files.setupDirs(argv.outputdir, argv.clean)
 
-  const mkdirp = require('mkdirp');
+  server.run(argv.port, argv.outputdir);
 
-  const tmpdir = os.tmpdir() + '/firemon/';
-
-  if (argv.clean) {
-    rimraf.sync(tmpdir, {disableGlob: true});
-    rimraf.sync(argv.outputdir, {disableGlob: true});
-  }
-
-  mkdirp.sync(tmpdir + '/img/src/terrain');
-  mkdirp.sync(tmpdir + '/img/src/detail');
-  mkdirp.sync(argv.outputdir + '/img');
-  mkdirp.sync(argv.outputdir + '/tweets');
-  mkdirp.sync(argv.outputdir + '/postqueue');
-  mkdirp.sync(argv.outputdir + '/data');
-
-
-  webApp.use('/updates', express.static(argv.outputdir + '/'), serveIndex(argv.outputdir + '/', { icons: true, view: 'details' }));
-  webApp.listen(argv.port);
   const processFire = function (entry) {
     let ret = {};
     for (let key in entry) {

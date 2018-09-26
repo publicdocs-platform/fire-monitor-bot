@@ -34,7 +34,11 @@ try {
       string: true,
       alias: 'o',
       default: './output/',
-      desc: 'Where to dump generated diffs, tweets, images, etc. Must exist.'
+      desc: 'Where to dump generated diffs, tweets, images, etc'
+    })
+    .option('clean', {
+      boolean: true,
+      desc: 'Whether to clear the data files and Twitter post queue before starting'
     })
     .option('db', {
       string: true,
