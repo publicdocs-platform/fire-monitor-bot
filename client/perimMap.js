@@ -504,6 +504,7 @@ function showMap(centerX, centerY, zoom, style, cities0) {
         'properties': {
           'gaz_name': city.name,
           'population': city.population,
+          'dist': city.distance,
         },
         'geometry': {
           'type': 'Point',
@@ -529,7 +530,7 @@ function showMap(centerX, centerY, zoom, style, cities0) {
     };
     function style(feat) {
       return new ol.style.Style({
-        zIndex: -feat.get('population'),
+        zIndex: feat.get('dist') < 10 ? (-1000000 + feat.get('dist')): -feat.get('population')/10000.0,
         text: namedTextStyle(feat),
         image: new ol.style.Icon({src:whiteDot, color: '#66ff66', scale:1.0/6.0}),
       });
