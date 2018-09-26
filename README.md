@@ -12,11 +12,11 @@ and MAY BE INCORRECT OR OUT-OF-DATE. USE AT YOUR OWN RISK.
 
 * Sources fire summary from the National Fire Situational Awareness tool and from GeoMAC
 * Sources perimeter info from GeoMAC
-* Sources satellite fire detection from MODIS and VIIRS I (NASA/NOAA/Forest Service via GeoMAC)
+* Sources satellite fire detection from MODIS and VIIRS I (NASA/NOAA via Forest Service Active Fire Mapping)
 * Creates a multi-layer base map from USGS, US Census Bureau and other federal govt data sets
 * Determines location of fire relative to named populated places from the Census Bureau
 * Monitors differences in fire information over time, and tweets out the changes (summary, perimeter, and satellite fire readings)
-
+* Includes a one-off mapping tool that displays consistent images given a lat/lon/zoom.
 
 
 ## License
