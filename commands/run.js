@@ -73,6 +73,11 @@ exports.builder = {
     boolean: true,
     desc: 'Whether to stop other daemon activities other than tweeting'
   },
+  monitorPerims: {
+    boolean: true,
+    default: true,
+    desc: 'Whether to post changes only to the perimeter.'
+  },
   userAgent: {
     string: true,
     desc: 'String to add to User-Agent',
@@ -337,7 +342,7 @@ exports.handler = argv => {
       oneDiff = _.keyBy(oneDiff, o => o.path.join('.'));
 
       if (!('DailyAcres' in oneDiff || 'PercentContained' in oneDiff)) {
-        if (!('PerimDateTime' in oneDiff)) {
+        if (!argv.monitorPerims || !('PerimDateTime' in oneDiff)) {
           // Unless acreage, perim, or containment change, we don't report it.
           continue;
         }
