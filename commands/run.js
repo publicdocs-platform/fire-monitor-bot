@@ -69,6 +69,10 @@ exports.builder = {
     boolean: true,
     desc: 'Whether to post to Twitter'
   },
+  twitterOnly: {
+    boolean: true,
+    desc: 'Whether to stop other daemon activities other than tweeting'
+  },
   userAgent: {
     string: true,
     desc: 'String to add to User-Agent',
@@ -617,19 +621,21 @@ function preDiffFireProcess(key, x, last, perims) {
   const mainLoop = function (first, last) {
     (async function() {
       let x = last;
-      try {
-        await promisify(intensiveProcessingSemaphore.take).bind(intensiveProcessingSemaphore)();
-        await afm.refreshAfmSatelliteData(argv.outputdir + '/kml/');
-        await dailyMap();
-        x = await internalLoop(first, last);
-      } catch (err) {
-        console.log('>> ERROR');
-        console.log(err);
-      } finally {
-        intensiveProcessingSemaphore.leave();
-      }
+      if (!argv.twitterOnly) {
+        try {
+            await promisify(intensiveProcessingSemaphore.take).bind(intensiveProcessingSemaphore)();
+            await afm.refreshAfmSatelliteData(argv.outputdir + '/kml/');
+            await dailyMap();
+            x = await internalLoop(first, last);
+        } catch (err) {
+          console.log('>> ERROR');
+          console.log(err);
+        } finally {
+          intensiveProcessingSemaphore.leave();
+        }
 
-      console.log('Next round');
+        console.log('Next round');
+      }
       setTimeout(function () { mainLoop(false, x); }, 1000 * periodSeq * 1);
     })();
   }
