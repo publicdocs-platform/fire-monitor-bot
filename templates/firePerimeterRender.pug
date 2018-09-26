@@ -31,7 +31,7 @@ html.perim
                             | PERIMETERS AND SATELLITE DATA ARE APPROXIMATE AND OFTEN INCORRECT AND OUT-OF-DATE
                             br
                             | UNOFFICIAL — USE AT YOUR OWN RISK — FIRES MAY BE CLOSER THAN THEY APPEAR
-                            if (data.current.NFSAType || '').includes('Emerging')
+                            if (data.current ? (data.current.NFSAType || '') : '').includes('Emerging')
                                 br
                                 | THIS IS AN EMERGING FIRE REPORT — DETAILS MAY BE ESPECIALLY UNCERTAIN
                         
