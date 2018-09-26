@@ -40,6 +40,7 @@ const puppeteer = require('puppeteer');
 
 const envconfig = require('../envconfig');
 const util = require('../lib/util');
+const afm = require('../lib/afm');
 const dateString = util.dateString;
 const maprender = require('../lib/maprender');
 const render = require('../lib/render');
@@ -583,6 +584,7 @@ function preDiffFireProcess(key, x, last, perims) {
       let x = last;
       try {
         await promisify(intensiveProcessingSemaphore.take).bind(intensiveProcessingSemaphore)();
+        await afm.refreshAfmSatelliteData(argv.outputdir + '/kml/');
         await dailyMap();
         x = await internalLoop(first, last);
       } catch (err) {

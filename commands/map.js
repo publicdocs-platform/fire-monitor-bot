@@ -21,12 +21,13 @@ limitations under the License.
 const render = require('../lib/render');
 const server = require('../lib/server');
 const files = require('../lib/files');
+const afm = require('../lib/afm');
+const rp = require('request-promise');
 
 const envconfig = require('../envconfig');
 const pug = require('pug');
 const path = require('path');
 const fs = require('fs');
-
 
 exports.command = 'map';
 
@@ -76,9 +77,12 @@ async function doIt(argv) {
 
   const tmpdir = files.setupDirs(argv.outputdir, argv.clean);
 
-  server.run(argv.port, argv.outputdir);  
+  server.run(argv.port, argv.outputdir);
 
-  const updateId = new Date()
+  const updateId = new Date();
+
+
+  await afm.refreshAfmSatelliteData(argv.outputdir + '/kml/');
 
   const file = argv.outputdir + '/img/ONEOFF-WEB-MAP-' + updateId + '.html';
   const url = 'http://localhost:8080/updates/img/ONEOFF-WEB-MAP-' + updateId + '.html';
@@ -97,5 +101,5 @@ async function doIt(argv) {
 }
 
 exports.handler = argv => {
-  doIt(argv).then(() => {process.exit()})
+  doIt(argv).then(() => {process.exit();})
 };

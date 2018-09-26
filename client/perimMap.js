@@ -428,6 +428,74 @@ function showMap(centerX, centerY, zoom, style, cities0) {
     return geoNamesVectorLayer('1', {where: 'gaz_featureclass=\'Summit\''}, whiteTri, '#dddd22');
   }
 
+
+  function infraredStyle(time) {
+    let sclr = 'rgba(255,255,0,0.1)';
+    let fclr = 'rgba(255,255,0,0)';
+    let topZindex = -100;
+    if (time == 'Last 24-48 hrs') {
+      sclr = 'rgba(255,255,0,0.4)'
+      fclr = 'rgba(255,255,0,0.1)'
+      topZindex = -50;
+    } else if (time == 'Last 12-24 hrs') {
+      sclr = 'rgba(255,165,0,0.6)'
+      fclr = 'rgba(255,165,0,0.1)'
+      topZindex = -25;
+    } else if (time == 'Last 6-12 hrs') {
+      sclr = 'rgba(255,0,0,0.8)'
+      fclr = 'rgba(255,0,0,0.1)'
+      topZindex = 0;
+    } else if (time == 'Active Burning') {
+      sclr = 'rgba(255,50,50,0.8)'
+      fclr = 'rgba(255,50,50,0.25)'
+      topZindex = 0;
+    } else {
+      return null;
+    }
+    return [
+      new ol.style.Style({
+        zIndex: topZindex,
+        fill: zoom > 12.5 ? null : new ol.style.Fill({
+          color: fclr
+        }),
+        stroke: new ol.style.Stroke({ color: sclr, width: zoom>=12.5 ? 3 : 1, lineDash:zoom>=12.5?[3,3]:[3,3] }),
+      }),
+    ]
+  }
+
+  const afmStyles = {
+    '12_to_24hr_fire': infraredStyle('Last 12-24 hrs'),
+    '06_to_12hr_fire': infraredStyle('Last 6-12 hrs'),
+    '00_to_06hr_fire': infraredStyle('Active Burning'),
+    'prev_6_days_fire': infraredStyle('Last 24-48 hrs'),
+  };
+
+  function afmKmlLayer(url) {
+
+    const modisCredit = 'MODIS (RSAC/USFS/NASA)';
+    const viirsCredit = 'VIIRS I (NASA/NOAA S-NPP)';
+    const legend = 'Rectangles indicate satellite inferences of &ge;1 fire in area (red: &le;12hrs, orange: &le;24hrs, yellow: &le;6dy)';
+    const afmCredit = 'U.S. Forest Service Active Fire Mapping';
+
+    function stylesFunc(feat) {
+      const name = feat.get('styleUrl');
+
+      const parts = name.split('/');
+      const styleName = parts[parts.length - 1];
+      return afmStyles[styleName] || null;
+    }
+    return new ol.layer.Vector({
+      style: stylesFunc,
+      source: new ol.source.Vector({
+        attributions: [modisCredit, viirsCredit, legend, afmCredit],
+        url: url,
+        format: new ol.format.KML({
+          extractStyles: false
+        }),
+      })
+    });
+  }
+
   function citiesVectorLayer() {
     function cityFeature(city) {
 
@@ -491,12 +559,14 @@ function showMap(centerX, centerY, zoom, style, cities0) {
     //Alpha(Library.Census.Tiger.HydroPaths, 0.2),
     Library.USGS.NatlMap.Hydro,
     ZoomedRoads,
+    Library.Census.Tiger.Roads,
     //Alpha(Library.USGS.NatlMap.TransportNotInCensusMediumScale, 0.3),
     'Perim',
-    'MODIS',
-    'VIIRS',
+    //'MODIS',
+    'AFM-MODIS',
+    //'VIIRS',
+    'AFM-VIIRS-I',
     Library.USGS.NatlMap.GovUnits,
-    Library.Census.Tiger.Roads,
     Library.USGS.NatlMap.GovUnitsSelectedLabels,
     // 'Summits',
     zoom > 10.5 ? Library.USGS.NatlMap.Names : 'Cities',
@@ -545,6 +615,10 @@ function showMap(centerX, centerY, zoom, style, cities0) {
       return unincAreasLayer();
     } else if (config === 'Summits') {
       return summitsVectorLayer();
+    } else if (config === 'AFM-MODIS') {
+      return afmKmlLayer('../kml/modis.kml');
+    } else if (config === 'AFM-VIIRS-I') {
+      return afmKmlLayer('../kml/viirs-i.kml');
     }
     let opts = {
       hidpi: true,

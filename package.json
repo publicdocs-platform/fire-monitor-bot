@@ -24,6 +24,7 @@
     "fair-semaphore": "^1.0.3",
     "ip": "^1.1.5",
     "js-yaml": "^3.12.0",
+    "jszip": "^3.1.5",
     "lodash": "^4.17.10",
     "mkdirp": "^0.5.1",
     "nearby-cities": "^1.1.0",
