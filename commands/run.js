@@ -23,6 +23,8 @@ const path = require('path');
 const rimraf = require('rimraf');
 const mkdirp = require('mkdirp');
 
+const proj4 = require('proj4');
+
 const rp = require('request-promise');
 const _ = require('lodash');
 const yaml = require('js-yaml');
@@ -92,6 +94,14 @@ exports.builder = {
     boolean: true,
     desc: 'Save InciWeb updates to web.archive.org'
   },
+  emergingNew: {
+    boolean: true,
+    desc: 'Include emerging wildfires <24hrs'
+  },
+  emergingOld: {
+    boolean: true,
+    desc: 'Include emerging wildfires >24hrs'
+  },
   perimAfter: {
     string: true,
     default:'2017-12-31',
@@ -135,8 +145,13 @@ exports.handler = argv => {
 
   server.run(argv.port, argv.outputdir);
 
-  const processFire = function (entry) {
+
+  const processFire = function(e, proj) {
+    let entry = e.attributes;
     let ret = {};
+    const to = proj4(proj, 'EPSG:4326', [e.geometry.x, e.geometry.y]);
+    ret.Lon = to[0];
+    ret.Lat = to[1];
     for (let key in entry) {
       ret[key] = entry[key];
       if (key.endsWith('DateTime')) {
@@ -231,11 +246,31 @@ exports.handler = argv => {
     const layers = await rp(dataOptions);
 
     let x = Object.assign({}, last);
-  
-    const layer = layers[0].layerConfigs[0 /*featureCollection.layerDefinition.name == 'Large WF'*/]
-    const data = layer.featureCollection.featureSet.features;
+
+    const dataSetName = 'Active Incidents';
+
+    const dataSet = _.find(layers, p => p.name === dataSetName);
+
+    const requiredLayerNames = ['Large WF'];
+    if (argv.emergingNew) {
+      requiredLayerNames.unshift('Emerging WF < 24 hours');
+    }
+    if (argv.emergingOld) {
+      requiredLayerNames.unshift('Emerging WF > 24 hours');
+    }
+
+    const filteredLayers = dataSet.layerConfigs.filter(f => requiredLayerNames.includes(f.featureCollection.layerDefinition.name));
+    const layerFeatures = filteredLayers.map(x => {
+      return x.featureCollection.featureSet.features.map(y => {
+        const r = processFire(y, 'EPSG:'+ x.featureCollection.featureSet.spatialReference.latestWkid);
+        r.NFSAType = x.featureCollection.layerDefinition.name;
+        return r;
+      });
+    });
+
+    const data = _.flatten(layerFeatures);
     
-    const nfsaData = _.keyBy(data.map(e => processFire(e.attributes)), o => o.UniqueFireIdentifier);
+    const nfsaData = _.keyBy(data, o => o.UniqueFireIdentifier);
     const gm = await geomac.getFires(argv.userAgent);
 
     let keys = _.union(_.keys(nfsaData), _.keys(gm));
@@ -312,8 +347,7 @@ exports.handler = argv => {
         continue;
       }
 
-
-      const updateId = 'Update-' + cur.ModifiedOnDateTime + '-PER-' + (cur.PerimDateTime || 'NONE') + '-of-' + i + '-named-' + cur.Name;
+      const updateId = 'Update-' + cur.ModifiedOnDateTime + '-PER-' + (cur.PerimDateTime || 'NONE') + '-of-' + i + '-named-' + cur.Name.replace(/[^a-z0-9]/gi,'');
 
       const diffs = yaml.safeDump(oneDiff || [],  {skipInvalid: true});
       const isNew = !(i in last);
@@ -382,13 +416,13 @@ exports.handler = argv => {
         });
       }
       let rr = null;
-      if (perim.length > 0 && argv.locations) {
-        rr = await maprender.renderMap(null, perim, 1450 / 2, 1200 / 2, 12, true);
+      if (perim.length > 1 && argv.locations) {
+        rr = await maprender.renderMap(null, perim, 1450 / 2, 1200 / 2, 15, true);
       } else {
         console.log('>> Missing perimeter - ' + updateId);
       }
-      const center = rr ? rr.center : null;
-      const zoom = rr ? rr.idealZoom : null;
+      const center = rr ? rr.center : [cur.Lon, cur.Lat];
+      const zoom = rr ? rr.zoom : 14;
       const terrainPath = perim.length > 0 ? null : '/dev/null';
 
       const lat = center ? center[1] : cur.Lat;
@@ -422,9 +456,10 @@ exports.handler = argv => {
 
       const nearPopulation = cities.reduce((a, b) => a + b.weightedPopulation, 0);
       const allPopulation = cities.reduce((a, b) => a + b.population, 0);
-      console.log('  > Fire %s is near pop. %d (all %d)', updateId, nearPopulation, allPopulation);
+      console.log('  > Fire %s is near pop. %d (all %d), %d acres, %d staff', updateId, nearPopulation, allPopulation, cur.DailyAcres, cur.TotalIncidentPersonnel);
       if ((lat && lon && nearPopulation <= 1000 || cur.state == 'AK' || cur.State == 'AK') ||
-        (!lat && !lon && cur.DailyAcres < 2 && (cur.TotalIncidentPersonnel || 0) < 15)) {
+          (!lat && !lon && (cur.DailyAcres || 0) < 1.1 && (cur.TotalIncidentPersonnel || 0) < 15) ||
+          (cur.Fire_Name.toLowerCase().includes('false') && cur.Fire_Name.toLowerCase().includes('alarm'))) {
         console.log('  > Skipping %s', updateId);
         console.log('   # Exiting Processing ' + updateId);
         return;
@@ -483,7 +518,7 @@ exports.handler = argv => {
 
 
       async function perimAndSaveProcess(centerImg) {
-        const detailImg = perim.length > 0 && !(perim.length == 1 && perim[0].length == 1 && perim[0][0].length == 2);
+        const detailImg = (lat && lon) || (perim.length > 0 && !(perim.length == 1 && perim[0].length == 1 && perim[0][0].length == 2));
         let detailRender = null;
         if (detailImg) {
           const perimTemplateData = {

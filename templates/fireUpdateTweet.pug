@@ -1,6 +1,9 @@
 - var numFormat = new Intl.NumberFormat('en-US', {maximumFractionDigits: 2});
 - var currencyFormat = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 });
-| #{data.current.Hashtag} unofficial update: #{numFormat.format(data.current.DailyAcres)} Acres. #{numFormat.format(data.current.PercentContained)}% Contained*.#{'\n'} 
+if (data.current.NFSAType || '').includes('Emerging')
+  | Unofficial emerging fire report for #{data.current.Hashtag} - details may be especially uncertain.#{'\n'} 
+else
+  | #{data.current.Hashtag} unofficial update: #{numFormat.format(data.current.DailyAcres)} Acres. #{numFormat.format(data.current.PercentContained)}% Contained*.#{'\n'} 
 if data.cities
   if data.cities.closest
     | #{data.cities.closest.directions + '. '}

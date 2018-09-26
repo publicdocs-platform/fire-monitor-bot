@@ -32,9 +32,19 @@ html.update
                             div#map(class='map', width='600', height='600')
                     td(width=hasImg?'70%':'100%')
                         table.data
+                            if (data.current.NFSAType || '').includes('Emerging')
+                                tr.important
+                                    td(colspan=2)
+                                        div.warn
+                                            | THIS IS AN EMERGING FIRE REPORT
+                                            br
+                                            | DETAILS MAY BE ESPECIALLY UNCERTAIN
                             tr.important
                                 th(width='38%')
-                                    span.current #{numFormat.format(data.current.PercentContained)}%
+                                    if data.current.PercentContained || 0 == data.current.PercentContained
+                                        span.current #{numFormat.format(data.current.PercentContained)}%
+                                    else
+                                        span.current Unknown %
                                 td(width='62%')
                                     | Contained*
                                     if !data.isNew && 'PercentContained' in data.diff
@@ -46,7 +56,10 @@ html.update
                                             | from #{numFormat.format(data.last.PercentContained)}%
                             tr.important
                                 th
-                                    span.current #{numFormat.format(data.current.DailyAcres)}
+                                    if data.current.DailyAcres || 0 == data.current.DailyAcres
+                                        span.current #{numFormat.format(data.current.DailyAcres)}
+                                    else
+                                        span.current Unknown
                                 td
                                     | Acres
                                     if !data.isNew && 'DailyAcres' in data.diff
@@ -105,7 +118,6 @@ html.update
                                             span.detail Perimeter Updated #{friendlyDate(data.current.PerimDateTime)}
                                         br
                                         span.detail Fire Id #{data.current.UniqueFireIdentifier}
-
 
             div.warn
                 | FOR INFORMATION ONLY — DO NOT USE FOR SAFETY/EMERGENCY/EVACUATION PURPOSES

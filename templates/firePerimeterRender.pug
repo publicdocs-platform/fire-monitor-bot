@@ -31,6 +31,9 @@ html.perim
                             | PERIMETERS AND SATELLITE DATA ARE APPROXIMATE AND OFTEN INCORRECT AND OUT-OF-DATE
                             br
                             | UNOFFICIAL — USE AT YOUR OWN RISK — FIRES MAY BE CLOSER THAN THEY APPEAR
+                            if (data.current.NFSAType || '').includes('Emerging')
+                                br
+                                | THIS IS AN EMERGING FIRE REPORT — DETAILS MAY BE ESPECIALLY UNCERTAIN
                         
             div.warn
                 div.innerWarn Consult local public officials for safety, emergency, and evacuation information. 
@@ -50,6 +53,8 @@ html.perim
                             span #{data.title}
                         if data.perimDateTime
                             span.perimDate Perimeter @#{friendlyDate(data.perimDateTime)}
+                        else
+                            span.perimDate General Vicinity
         script
             | showMap(#{data.lon}, #{data.lat}, #{data.zoom}, 'perim', !{JSON.stringify(data.cities ? data.cities.all : [])});
 

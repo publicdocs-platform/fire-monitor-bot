@@ -30,6 +30,7 @@
     "nearby-cities": "^1.1.0",
     "numeral": "^2.0.6",
     "ol-helpers": "https://github.com/publicdocs-platform/ol-helpers",
+    "proj4": "^2.5.0",
     "pug": "^2.0.3",
     "puppeteer": "^1.8.0",
     "request": "^2.88.0",
