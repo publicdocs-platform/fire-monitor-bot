@@ -92,10 +92,6 @@ exports.builder = {
     string: true,
     desc: 'Forces an update of a given fire ids (comma separated)'
   },
-  middleMap: {
-    string: true,
-    desc: 'Render middle zoom map'
-  },
   realFireNames: {
     boolean: true,
     desc: 'Use real fire names not hashtags'
@@ -144,7 +140,6 @@ exports.handler = argv => {
 
   // This functionality is disabled.
   if (false) { tileserver.run(8081); }
-  if (argv.middleMap) { throw 'Cannot handle middle maps.'; }
 
   const FairSemaphore = require('fair-semaphore');
   const processingSemaphore = new FairSemaphore(1);
@@ -207,11 +202,6 @@ exports.handler = argv => {
   };
 
 
-
-  const centerTemplate = pug.compileFile(path.join(__dirname, '../templates/fireVicinityRender.pug'));
-  const centerHtml = function (entry) {
-    return centerTemplate({ config: config, data: entry, curdir: process.cwd() });
-  };
 
   const tweetTemplate = pug.compileFile(path.join(__dirname, '../templates/fireUpdateTweet.pug'));
 
@@ -492,7 +482,7 @@ exports.handler = argv => {
       if (delPaths.length > 0) {
         console.log('  > Old tweets deleted: %s', delPaths.join('; '));
       }
-      
+
       const byPop = _.sortBy(cities, 'population');
       let displayCities = {
         closest: _.first(cities.filter((x) => x.useful)),
@@ -522,31 +512,11 @@ exports.handler = argv => {
       fs.writeFileSync(mainWebpage, html);
 
       await renderUpdateImage();
-      if (lat && argv.middleMap) {
-        const centerTemplateData = {
-          lat: lat,
-          lon: lon,
-          zoom: 7,
-          cities: displayCities,
-          perimDateTime: perimDateTime,
-          current: cur,
-          last: old,
-          diff: oneDiff,
-          isNew: isNew,
-          img: true,
-          imgCredit: maprender.detailedCredit,
-        };
-        const htmlCenter = centerHtml(centerTemplateData);
-        fs.writeFileSync(centerWebpage, htmlCenter);
-        await renderCenterImage();
-        await perimAndSaveProcess(centerImg);
-      }
-      else {
-        await perimAndSaveProcess(null);
-      }
+      await perimAndSaveProcess(null);
 
 
-      async function perimAndSaveProcess(centerImg) {
+
+      async function perimAndSaveProcess() {
         const detailImg = (lat && lon) || (perim.length > 0 && !(perim.length == 1 && perim[0].length == 1 && perim[0][0].length == 2));
         let detailRender = null;
         if (detailImg) {
@@ -580,8 +550,6 @@ exports.handler = argv => {
           image1: infoImg,
           image2AltText: 'Perimeter map',
           image2: detailRender,
-          image3AltText: 'Vicnity map',
-          image3: centerImg,
           selectors: [cur.state || cur.State || key.substr(5, 2), 'other'],
           threadQuery: argv.twitterThreadQueryPrefix ? (argv.twitterThreadQueryPrefix + ' ' + cur.Hashtag) : null,
         };
@@ -597,10 +565,6 @@ exports.handler = argv => {
 
       async function renderPerim() {
         return render.renderInBrowser(1450, 1450, perimWebpageUrl, perimImg);
-      }
-
-      async function renderCenterImage() {
-        return render.renderInBrowser(1450, 1450, centerWebpageUrl, centerImg);
       }
 
       async function renderUpdateImage() {
