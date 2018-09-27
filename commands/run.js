@@ -31,6 +31,7 @@ const yaml = require('js-yaml');
 const titleCase = require('title-case');
 const pug = require('pug');
 const fs = require('fs');
+const del = require('del');
 const deepDiff = require('deep-diff');
 const numeral = require('numeral');
 const sharp = require('sharp');
@@ -486,6 +487,12 @@ exports.handler = argv => {
         }
       }
 
+      // This will go through. Make sure we don't put an old update on Twitter in the mean time.
+      const delPaths = await del([argv.outputdir + '/postqueue/*-' + cur.UniqueFireIdentifier + '-*.yaml']);
+      if (delPaths.length > 0) {
+        console.log('  > Old tweets deleted: %s', delPaths.join('; '));
+      }
+      
       const byPop = _.sortBy(cities, 'population');
       let displayCities = {
         closest: _.first(cities.filter((x) => x.useful)),
