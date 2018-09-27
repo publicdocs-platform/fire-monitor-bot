@@ -403,7 +403,7 @@ exports.handler = argv => {
     return x;
 
     async function internalProcessFire(updateId, inciWeb, cur, perim, old, oneDiff, isNew, key, perimDateTime) {
-      console.log('   # Entering Processing ' + updateId);
+      console.log(' # Entering Processing ' + updateId);
       const infoImg = argv.outputdir + '/img/IMG-TWEET-' + updateId + '.png';
       const mainWebpage = argv.outputdir + '/img/WEB-INFO-' + updateId + '.html';
       const perimImg = argv.outputdir + '/img/IMG-PERIM-' + updateId + '.jpeg';
@@ -463,16 +463,26 @@ exports.handler = argv => {
       
       const cities = _.sortBy(cities2, x => x.distance);
 
-      const nearPopulation = cities.reduce((a, b) => a + b.weightedPopulation, 0);
+      const nearPopulation = Math.round(cities.reduce((a, b) => a + b.weightedPopulation, 0));
       const allPopulation = cities.reduce((a, b) => a + b.population, 0);
       console.log('  > Fire %s is near pop. %d (all %d), %d acres, %d staff', updateId, nearPopulation, allPopulation, cur.DailyAcres, cur.TotalIncidentPersonnel);
-      if ((lat && lon && nearPopulation <= 1000 || cur.state == 'AK' || cur.State == 'AK') ||
-          (!lat && !lon && (cur.DailyAcres || 0) < 1.1 && (cur.TotalIncidentPersonnel || 0) < 15) ||
-          (cur.Fire_Name.toLowerCase().includes('false') && cur.Fire_Name.toLowerCase().includes('alarm'))) {
-        console.log('  > Skipping %s', updateId);
-        console.log('   # Exiting Processing ' + updateId);
-        return;
+
+
+      const displayFilters = {
+        InAlaska: cur.state == 'AK' || cur.State == 'AK' || (_.first(cities) || {}).adminCode == 'AK',
+        InHawaii: cur.state == 'HI' || cur.State == 'HI' || (_.first(cities) || {}).adminCode == 'HI',
+        KnownLocationLowPop: lat && lon && nearPopulation <= 1000,
+        UnknownLocationSmallSize: !lat && !lon && (cur.DailyAcres || 0) < 1.1 && (cur.TotalIncidentPersonnel || 0) < 15,
+        FalseAlarmName: cur.Fire_Name.toLowerCase().includes('false') && cur.Fire_Name.toLowerCase().includes('alarm'),
       }
+
+      for (let filterKey in displayFilters) {
+        if (displayFilters[filterKey]) {
+          console.log('  #> Skipping %s -> filter %s', updateId, filterKey);
+          return;
+        }
+      }
+
       const byPop = _.sortBy(cities, 'population');
       let displayCities = {
         closest: _.first(cities.filter((x) => x.useful)),
