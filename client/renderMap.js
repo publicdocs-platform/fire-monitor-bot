@@ -198,6 +198,8 @@ function showMap(centerX, centerY, zoom, style, cities0) {
       let sclr = 'rgba(255,0,0,1)';
       let fclr = 'rgba(255,0,0,0.01)';
       let sclr2 = 'rgba(255,160,0,1)';
+
+
       return [new ol.style.Style({
         fill: new ol.style.Fill({
           color: fclr
@@ -207,7 +209,61 @@ function showMap(centerX, centerY, zoom, style, cities0) {
 
       }), new ol.style.Style({
         stroke: new ol.style.Stroke({ color: sclr, width: 1 }),
-      })];
+      }),];
+    }
+    let source = tiledVectorLayer(baseUrl, 1024, Library.GEOMAC.Fires.attribution);
+    return new ol.layer.Vector({
+      source: source,
+      style: styles,
+      declutter: false,
+    });
+  }
+
+
+  function perimNameLayer() {
+    const baseUrl = 'https://wildfire.cr.usgs.gov/arcgis/rest/services/geomac_dyn/MapServer/2'
+    function styles(feat) {
+      let center = ol.extent.getCenter(feat.getGeometry().getExtent());
+
+      const namedTextStyle = function (feature) {
+
+        const title = feature.get('incidentname') + '\n' + Math.ceil(feature.get('gisacres')) + ' acres';
+
+        return new ol.style.Text({
+          font: '12px Roboto',
+          text: title,
+          fill: new ol.style.Fill({ color: '#ffff00' }),
+          stroke: new ol.style.Stroke({ color: '#000000', width: 2 }),
+          baseline: 'bottom',
+          offsetY: -15,
+        });
+      };
+
+
+      const howTextStyle = function (feature) {
+        const method = feature.get('mapmethod');
+        const date = new Date(feature.get('perimeterdatetime')).toISOString().substr(0,16) + ' UTC';
+        const title = date + (method ? ('\n via ' + method) : '');
+
+        return new ol.style.Text({
+          font: '11px Roboto',
+          text: title,
+          fill: new ol.style.Fill({ color: '#ffff00' }),
+          stroke: new ol.style.Stroke({ color: '#000000', width: 2 }),
+          baseline: 'top',
+          offsetY: 15,
+        });
+      };
+
+      return [
+        new ol.style.Style({
+          geometry: new ol.geom.Point(center),
+          text: namedTextStyle(feat),
+        }),
+        new ol.style.Style({
+          geometry: new ol.geom.Point(center),
+          text: howTextStyle(feat),
+        })];
     }
     let source = tiledVectorLayer(baseUrl, 1024, Library.GEOMAC.Fires.attribution);
     return new ol.layer.Vector({
@@ -569,14 +625,15 @@ function showMap(centerX, centerY, zoom, style, cities0) {
     'AFM-VIIRS-I',
     Library.USGS.NatlMap.GovUnits,
     Library.USGS.NatlMap.GovUnitsSelectedLabels,
+    'Perim-Name',
     // 'Summits',
     zoom > 10.5 ? Library.USGS.NatlMap.Names : 'Cities',
   ];
   let overviewLayers = [
     Library.Census.Tiger.USLandmass,
     Library.USGS.NatlMap.Blank,
-    Alpha(Library.USGS.NatlMap.ImageryTiled, 0.1),
-    Alpha(Library.USGS.ProtectedAreas.SimpleDesignations, 0.1),
+    //Alpha(Library.USGS.NatlMap.ImageryTiled, 0.1),
+    Alpha(Library.USGS.ProtectedAreas.SimpleDesignations, 0.25),
     Library.Census.Tiger.States,
     Library.Census.Tiger.Hydro,
     ZoomedRoads,
@@ -600,6 +657,8 @@ function showMap(centerX, centerY, zoom, style, cities0) {
       return satelliteVectorLayer(4);
     } else if (config === 'Perim') {
       return perimVectorLayer();
+    } else if (config === 'Perim-Name') {
+      return perimNameLayer();
     } else if (config === 'PerimFill') {
       return perimFillVectorLayer();
     } else if (config === 'Cities') {
