@@ -311,6 +311,7 @@ exports.handler = argv => {
     const xsortedKeys = _.sortBy(xkeys, i => -x[i].DailyAcres);
 
     for (let key1 of xsortedKeys) {
+      
       const key = key1;
       
       var { i, cur, perimDateTime, old, inciWeb, perim } = preDiffFireProcess(key, x, last, perims);
@@ -367,11 +368,14 @@ exports.handler = argv => {
         cur.Hashtag = util.fireName(cur.Name);
       }
 
+      await promisify(intensiveProcessingSemaphore.take).bind(intensiveProcessingSemaphore)();
       try {
         await internalProcessFire(updateId, inciWeb, cur, perim, old, oneDiff, isNew, key, perimDateTime);
       } catch (err) {
         console.log('$$$$ ERROR processing %s', updateId);
         console.log(err);
+      } finally {
+        intensiveProcessingSemaphore.leave();
       }
 
     }
@@ -612,7 +616,6 @@ function preDiffFireProcess(key, x, last, perims) {
       let x = last;
       if (!argv.twitterOnly) {
         try {
-            await promisify(intensiveProcessingSemaphore.take).bind(intensiveProcessingSemaphore)();
             await afm.refreshAfmSatelliteData(argv.outputdir + '/kml/');
             await dailyMap();
             x = await internalLoop(first, last);
@@ -620,7 +623,6 @@ function preDiffFireProcess(key, x, last, perims) {
           console.log('>> ERROR');
           console.log(err);
         } finally {
-          intensiveProcessingSemaphore.leave();
         }
 
         console.log('Next round');

@@ -243,10 +243,10 @@ function showMap(centerX, centerY, zoom, style, cities0) {
       const howTextStyle = function (feature) {
         const method = feature.get('mapmethod');
         const date = new Date(feature.get('perimeterdatetime')).toISOString().substr(0,16) + ' UTC';
-        const title = date + (method ? ('\n via ' + method) : '');
+        const title = date;// + (method ? ('\n via ' + method) : '');
 
         return new ol.style.Text({
-          font: '11px Roboto',
+          font: '10px Roboto',
           text: title,
           fill: new ol.style.Fill({ color: '#ffff00' }),
           stroke: new ol.style.Stroke({ color: '#000000', width: 2 }),
