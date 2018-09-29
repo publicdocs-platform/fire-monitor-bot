@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 /*
 Copyright (c) 2018 Advay Mengle <source@madvay.com>.
-See the LICENSE and NOTICE files for details..
- See the LICENSE and NOTICE files for details.
+See the LICENSE and NOTICE files for details.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
