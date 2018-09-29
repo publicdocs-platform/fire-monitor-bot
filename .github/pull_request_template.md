@@ -12,7 +12,7 @@ of CC0-1.0 (https://creativecommons.org/publicdomain/zero/1.0/).**
 Do not contribute or copy-paste third-party content, code or data using a pull request.  Instead provide
 URLs to the authoritative source and to license information and we'll see if we want to include it.
 
-Read the [contributor guidelines](https://github.com/publicdocs-platform/firemon/blob/guidelines/CONTRIBUTING.md).
+Read the [contributor guidelines](https://github.com/publicdocs-platform/firemon/blob/master/CONTRIBUTING.md).
 
 ---
 
