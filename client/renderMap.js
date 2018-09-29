@@ -298,7 +298,7 @@ function showMap(centerX, centerY, zoom, style, cities0) {
 
 
   function cityAreasLayer() {
-    const baseUrl = Library.USGS.NatlMap.GovUnits.url + '/19';
+    const baseUrl = 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/tigerWMS_Current/MapServer' + '/28';
     function style(feat) {
       let fclr = 'rgba(255,220,255,0.2)';
       let sclr = 'rgba(255,255,120,1)';
@@ -309,7 +309,7 @@ function showMap(centerX, centerY, zoom, style, cities0) {
         //stroke: new ol.style.Stroke({ color: sclr, width: 1 }),
       });
     }
-    let source = tiledVectorLayer(baseUrl, 1024, Library.USGS.NatlMap.GovUnits.attribution);
+    let source = tiledVectorLayer(baseUrl, 1024, ['U.S. Census Bureau – TIGER/Line']);
     return new ol.layer.Vector({
       source: source,
       style: style,
@@ -319,7 +319,7 @@ function showMap(centerX, centerY, zoom, style, cities0) {
 
 
   function unincAreasLayer() {
-    const baseUrl = Library.USGS.NatlMap.GovUnits.url + '/20';
+    const baseUrl = 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/tigerWMS_Current/MapServer' + '/30';
     function style(feat) {
       let fclr = 'rgba(255,230,255,0.2)';
       let sclr = 'rgba(255,255,120,1)';
@@ -330,7 +330,7 @@ function showMap(centerX, centerY, zoom, style, cities0) {
         //stroke: new ol.style.Stroke({ color: sclr, width: 1 }),
       });
     }
-    let source = tiledVectorLayer(baseUrl, 1024, Library.USGS.NatlMap.GovUnits.attribution);
+    let source = tiledVectorLayer(baseUrl, 1024, ['U.S. Census Bureau – TIGER/Line']);
     return new ol.layer.Vector({
       source: source,
       style: style,
