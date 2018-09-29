@@ -572,7 +572,7 @@ exports.handler = argv => {
       }
 
       async function renderUpdateImage() {
-        return render.renderInBrowser(2048, 1270, mainWebpageUrl, infoImg);
+        return render.renderInBrowser(2048, 1330, mainWebpageUrl, infoImg);
       }
     }
   }
