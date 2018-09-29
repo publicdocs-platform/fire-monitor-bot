@@ -33,6 +33,7 @@ exports.twitterAuth = {
 
 exports.ui = {
   disclaimer_url: process.env.FIREMON_DISCLAIMER_URL,
+  system_url: process.env.FIREMON_URL,
 };
 
 exports.gfx = {

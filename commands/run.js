@@ -187,6 +187,7 @@ exports.handler = argv => {
     twitterName: envconfig.twitterAuth.name,
     sourceUrl: dataOptions.uri,
     disclaimerUrl: envconfig.ui.disclaimer_url,
+    systemName: envconfig.ui.system_url,
   };
 
 
@@ -195,7 +196,7 @@ exports.handler = argv => {
     return htmlTemplate({ config: config, data: entry, curdir: process.cwd() });
   };
 
-  const perimeterTemplate = pug.compileFile(path.join(__dirname, '../templates/firePerimeterRender.pug'));
+  const perimeterTemplate = pug.compileFile(path.join(__dirname, '../templates/detailsRender.pug'));
   const perimeterHtml = function (entry) {
     return perimeterTemplate({ config: config, data: entry, curdir: process.cwd() });
   };

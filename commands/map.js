@@ -21,6 +21,8 @@ const render = require('../lib/render');
 const server = require('../lib/server');
 const files = require('../lib/files');
 const afm = require('../lib/afm');
+const kmz = require('../lib/kmz');
+const del = require('del');
 const rp = require('request-promise');
 
 const envconfig = require('../envconfig');
@@ -56,6 +58,14 @@ exports.builder = {
     string: true,
     desc: 'Map title',
   },
+  kmz: {
+    string: true,
+    desc: 'A KMZ url to display',
+  },
+  excludedLayers: {
+    string: true,
+    desc: 'Comma-separated layer names to exclude',
+  },
 }
 
 
@@ -64,7 +74,7 @@ const config = {
 };
 
 
-const template = pug.compileFile(path.join(__dirname, '../templates/firePerimeterRender.pug'));
+const template = pug.compileFile(path.join(__dirname, '../templates/detailsRender.pug'));
 const html = function (entry) {
   return template({ config: config, data: entry, curdir: process.cwd() });
 };
@@ -83,6 +93,16 @@ async function doIt(argv) {
 
   await afm.refreshAfmSatelliteData(argv.outputdir + '/kml/');
 
+
+  let customLayerCount = 0;
+  if (argv.kmz) {
+    await del(path.join(argv.outputdir, 'kml', 'custom-*.kml'));
+    for (let p of argv.kmz.split(',')) {
+      await kmz.loadKmz(p, path.join(argv.outputdir, 'kml', 'custom-'+customLayerCount+'.kml'));
+      customLayerCount++;
+    }
+  }
+
   const file = argv.outputdir + '/img/ONEOFF-WEB-MAP-' + updateId + '.html';
   const url = 'http://localhost:8080/updates/img/ONEOFF-WEB-MAP-' + updateId + '.html';
   const imgPath = argv.outputdir + '/img/ONEOFF-IMG-MAP-' + updateId + '.jpeg';
@@ -92,7 +112,11 @@ async function doIt(argv) {
     lon: argv.lon,
     zoom: argv.zoom,
     title: argv.title,
-    cities: []
+    cities: [],
+    mapData: {
+      excluded: (argv.excludedLayers ? argv.excludedLayers.split(',') : []),
+      customLayerCount: customLayerCount,
+    },
   };
   const htmlDetails = html(templateData);
   fs.writeFileSync(file, htmlDetails);

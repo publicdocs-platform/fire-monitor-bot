@@ -15,9 +15,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-function showMap(centerX, centerY, zoom, style, cities0) {
-  let detail = style == 'perim';
-  let cities = cities0 || { closest: [], biggest: [] };
+function showMap(centerX, centerY, zoom, style, opts) {
+  const opt = opts || {};
+  const detail = style == 'perim';
+  const cities = opts.cities || { closest: [], biggest: [] };
+  const excluded = opts.excluded || [];
+  const customLayerCount = opts.customLayerCount || 0;
   let showAll = 'show:';
 
   for (let s = 0; s < 100; s++) {
@@ -525,6 +528,71 @@ function showMap(centerX, centerY, zoom, style, cities0) {
     '00_to_06hr_fire': infraredStyle('Active Burning'),
     'prev_6_days_fire': infraredStyle('Last 24-48 hrs'),
   };
+/*
+<Style id="heat_perimeter">
+            <LineStyle>
+                <color>FF0000FF</color>
+                <width>2.5</width>
+            </LineStyle>
+            <PolyStyle>
+                <color>FF0000FF</color>
+                <fill>0</fill>
+                <outline>1</outline>
+            </PolyStyle>
+        </Style>
+        <Style id="intense_heat">
+            <LineStyle>
+                <color>c80078ff</color>
+                <width>1.5</width>
+            </LineStyle>
+            <PolyStyle>
+                <color>7d004bff</color>
+                <fill>1</fill>
+                <outline>1</outline>
+            </PolyStyle>
+        </Style>
+        <Style id="scattered_heat">
+            <LineStyle>
+                <color>FF00FFFF</color>
+                <width>1.5</width>
+            </LineStyle>
+            <PolyStyle>
+                <color>4a00ffff</color>
+                <fill>1</fill>
+                <outline>1</outline>
+            </PolyStyle>
+        </Style>
+        <Style id="isolated_heat">
+            <IconStyle>
+                <scale>0.4</scale>
+                <Icon>
+                    <href>isolated_heat.png</href>
+                </Icon>
+            </IconStyle>
+            <LabelStyle>
+                <scale>0</scale>
+            </LabelStyle>
+        </Style>*/
+
+
+  function kmlStyle(sclr, fclr) {
+    return [
+      new ol.style.Style({
+        fill: new ol.style.Fill({
+          color: fclr
+        }),
+        stroke: new ol.style.Stroke({ color: sclr, width: 2 }),
+      }),
+    ]
+  }
+  const kmlStyles = {
+    'heat_perimeter': kmlStyle('#ff0000', 'rgba(0,0,0,0)'),
+    'intense_heat': kmlStyle('#c80078', '#7d004b'),
+    'scattered_heat': kmlStyle('#ff00ff', '#4a00ff'),
+    'isolated_heat': new ol.style.Style({
+      image: new ol.style.Icon({src:whiteDot, color: '#ff0000', scale:1.0/6.0}),
+    }),
+  };
 
   function afmKmlLayer(url) {
 
@@ -544,6 +612,27 @@ function showMap(centerX, centerY, zoom, style, cities0) {
       style: stylesFunc,
       source: new ol.source.Vector({
         attributions: [modisCredit, viirsCredit, legend, afmCredit],
+        url: url,
+        format: new ol.format.KML({
+          extractStyles: false
+        }),
+      })
+    });
+  }
+
+  function customKmlLayer(url) {
+    function stylesFunc(feat) {
+      const name = feat.get('styleUrl');
+
+      const parts = name.split('#');
+      const styleName = parts[parts.length - 1];
+      console.log(styleName);
+      return kmlStyles[styleName] || null;
+    }
+    return new ol.layer.Vector({
+      style: stylesFunc,
+      source: new ol.source.Vector({
+        attributions: [],
         url: url,
         format: new ol.format.KML({
           extractStyles: false
@@ -647,6 +736,8 @@ function showMap(centerX, centerY, zoom, style, cities0) {
   ];
 
   let configs = detail ? perimLayers : overviewLayers;
+
+  configs = configs.filter(c => !excluded.includes(c));
   
   function configToLayer(config) {
     let source = null;
@@ -702,6 +793,10 @@ function showMap(centerX, centerY, zoom, style, cities0) {
   }
 
   let layers = configs.map(configToLayer);
+
+  for (let cl = 0; cl < customLayerCount; cl++) {
+    layers.push(customKmlLayer('../kml/custom-' + cl + '.kml'));
+  }
   let controls = [];
 
   controls.push(new ol.control.ScaleLine({ units: 'us', minWidth: 70 }));
