@@ -16,6 +16,7 @@
     "test": "mocha './{,!(node_modules)/**/}test/*.js'"
   },
   "dependencies": {
+    "@publicdocs/togeojson": "https://github.com/publicdocs-platform/togeojson",
     "@turf/bearing": "^6.0.1",
     "@turf/distance": "^6.0.1",
     "deep-diff": "^1.0.2",
@@ -45,6 +46,7 @@
     "title-case": "^2.1.1",
     "twit": "^2.2.11",
     "us-cities-db": "https://github.com/publicdocs-platform/us-cities-db",
+    "xmldom": "^0.1.27",
     "yargs": "^12.0.2"
   },
   "devDependencies": {

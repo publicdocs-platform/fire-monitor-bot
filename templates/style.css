@@ -19,6 +19,12 @@ html.perim {
     padding-left: 15px;
 }
 
+.detailSubtitle {
+    font-size: 50%;
+    text-align: left;
+    font-weight: normal;
+}
+
 .perim .perimDate {
     padding-left: 5px;
 }
@@ -60,6 +66,10 @@ html.perim {
     display: inline-block;
     z-index: 1000000;
     text-shadow: 0 0 2px #fff;
+}
+
+.mapTitle h1 {
+    text-align: left;
 }
 
 

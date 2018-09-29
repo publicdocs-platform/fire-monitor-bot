@@ -58,6 +58,10 @@ exports.builder = {
     string: true,
     desc: 'Map title',
   },
+  subtitle: {
+    string: true,
+    desc: 'Map subtitle',
+  },
   kmz: {
     string: true,
     desc: 'A KMZ url to display',
@@ -66,11 +70,17 @@ exports.builder = {
     string: true,
     desc: 'Comma-separated layer names to exclude',
   },
+  quit: {
+    boolean: true,
+    default: true,
+    desc: 'Quit after generating map',
+  },
 }
 
 
 const config = {
   twitterName: envconfig.twitterAuth.name,
+  systemName: envconfig.ui.system_url,
 };
 
 
@@ -98,7 +108,7 @@ async function doIt(argv) {
   if (argv.kmz) {
     await del(path.join(argv.outputdir, 'kml', 'custom-*.kml'));
     for (let p of argv.kmz.split(',')) {
-      await kmz.loadKmz(p, path.join(argv.outputdir, 'kml', 'custom-'+customLayerCount+'.kml'));
+      await kmz.loadKmz(p, path.join(argv.outputdir, 'kml', 'custom-'+customLayerCount+'.kml'), true);
       customLayerCount++;
     }
   }
@@ -112,6 +122,7 @@ async function doIt(argv) {
     lon: argv.lon,
     zoom: argv.zoom,
     title: argv.title,
+    subtitle: argv.subtitle ? argv.subtitle.split(';') : [],
     cities: [],
     mapData: {
       excluded: (argv.excludedLayers ? argv.excludedLayers.split(',') : []),
@@ -124,5 +135,7 @@ async function doIt(argv) {
 }
 
 exports.handler = argv => {
-  doIt(argv).then(() => {process.exit();})
+  doIt(argv).then(() => {
+    if (argv.quit) { process.exit(); }
+  })
 };

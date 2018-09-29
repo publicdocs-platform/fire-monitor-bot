@@ -59,6 +59,9 @@ html.perim
                             span.perimDate Perimeter @#{friendlyDate(data.perimDateTime)}
                         else
                             span.perimDate General Vicinity
+                        each st in (data.subtitle || [])
+                            .detailSubtitle
+                                | #{st}
         script
             | showMap(#{data.lon}, #{data.lat}, #{data.zoom}, 'perim', !{JSON.stringify(mapData)});
 

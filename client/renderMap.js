@@ -309,7 +309,6 @@ function showMap(centerX, centerY, zoom, style, opts) {
         fill: new ol.style.Fill({
           color: fclr
         }),
-        //stroke: new ol.style.Stroke({ color: sclr, width: 1 }),
       });
     }
     let source = tiledVectorLayer(baseUrl, 1024, ['U.S. Census Bureau – TIGER/Line']);
@@ -376,11 +375,6 @@ function showMap(centerX, centerY, zoom, style, opts) {
           }),
           stroke: new ol.style.Stroke({ color: sclr, width: zoom>=12.5 ? 3 : 1, lineDash:zoom>=12.5?[3,3]:[3,3] }),
         }),
-        /*new ol.style.Style({
-          zIndex: topZindex,
-          geometry: new ol.geom.Point(ol.extent.getCenter(feat.getGeometry().getExtent())),
-          image: new ol.style.Icon({size: [48,48], src:whiteTri, color: fclr, scale:1.0/6.0}),
-        })*/
       ]
     }
 
@@ -528,67 +522,20 @@ function showMap(centerX, centerY, zoom, style, opts) {
     '00_to_06hr_fire': infraredStyle('Active Burning'),
     'prev_6_days_fire': infraredStyle('Last 24-48 hrs'),
   };
-/*
-<Style id="heat_perimeter">
-            <LineStyle>
-                <color>FF0000FF</color>
-                <width>2.5</width>
-            </LineStyle>
-            <PolyStyle>
-                <color>FF0000FF</color>
-                <fill>0</fill>
-                <outline>1</outline>
-            </PolyStyle>
-        </Style>
-        <Style id="intense_heat">
-            <LineStyle>
-                <color>c80078ff</color>
-                <width>1.5</width>
-            </LineStyle>
-            <PolyStyle>
-                <color>7d004bff</color>
-                <fill>1</fill>
-                <outline>1</outline>
-            </PolyStyle>
-        </Style>
-        <Style id="scattered_heat">
-            <LineStyle>
-                <color>FF00FFFF</color>
-                <width>1.5</width>
-            </LineStyle>
-            <PolyStyle>
-                <color>4a00ffff</color>
-                <fill>1</fill>
-                <outline>1</outline>
-            </PolyStyle>
-        </Style>
-        <Style id="isolated_heat">
-            <IconStyle>
-                <scale>0.4</scale>
-                <Icon>
-                    <href>isolated_heat.png</href>
-                </Icon>
-            </IconStyle>
-            <LabelStyle>
-                <scale>0</scale>
-            </LabelStyle>
-        </Style>*/
-
 
   function kmlStyle(sclr, fclr) {
-    return [
-      new ol.style.Style({
+    return new ol.style.Style({
         fill: new ol.style.Fill({
           color: fclr
         }),
         stroke: new ol.style.Stroke({ color: sclr, width: 2 }),
-      }),
-    ]
+      });
   }
   const kmlStyles = {
-    'heat_perimeter': kmlStyle('#ff0000', 'rgba(0,0,0,0)'),
-    'intense_heat': kmlStyle('#c80078', '#7d004b'),
-    'scattered_heat': kmlStyle('#ff00ff', '#4a00ff'),
+    'heat_perimeter': kmlStyle('rgba(255,0,0,255)', 'rgba(0,0,0,0)'),
+    'intense_heat': kmlStyle('rgba(255,0,0,0)', 'rgba(255,0,0,0.5)'),
+    'scattered_heat': kmlStyle('rgba(255,0,0,0)', 'rgba(255,255,0,0.2)'),
+    'noData': kmlStyle('rgba(255,0,0,0)', 'rgba(50,50,50,0.7)'),
     'isolated_heat': new ol.style.Style({
       image: new ol.style.Icon({src:whiteDot, color: '#ff0000', scale:1.0/6.0}),
     }),
@@ -603,7 +550,6 @@ function showMap(centerX, centerY, zoom, style, opts) {
 
     function stylesFunc(feat) {
       const name = feat.get('styleUrl');
-
       const parts = name.split('/');
       const styleName = parts[parts.length - 1];
       return afmStyles[styleName] || null;
@@ -636,6 +582,34 @@ function showMap(centerX, centerY, zoom, style, opts) {
         url: url,
         format: new ol.format.KML({
           extractStyles: false
+        }),
+      })
+    });
+  }
+
+  function customGeojsonLayer(url) {
+    function stylesFunc(feat) {
+
+      const name = feat.get('styleUrl');
+
+      const parts = name.split('#');
+      const styleName = parts[parts.length - 1];
+      console.log(styleName);
+      const base = kmlStyles[styleName] || null;
+
+      const g = feat.getGeometry();
+      if ('GeometryCollection' === g.getType() && base != null) {
+        return base;
+      } else {
+        return base;
+      }
+    }
+    return new ol.layer.Vector({
+      style: stylesFunc,
+      source: new ol.source.Vector({
+        attributions: [],
+        url: url,
+        format: new ol.format.GeoJSON({
         }),
       })
     });
@@ -795,7 +769,7 @@ function showMap(centerX, centerY, zoom, style, opts) {
   let layers = configs.map(configToLayer);
 
   for (let cl = 0; cl < customLayerCount; cl++) {
-    layers.push(customKmlLayer('../kml/custom-' + cl + '.kml'));
+    layers.push(customGeojsonLayer('../kml/custom-' + cl + '.kml.geojson'));
   }
   let controls = [];
 
@@ -825,12 +799,6 @@ function showMap(centerX, centerY, zoom, style, opts) {
 
   // Create the grid
   let grid = new ol.Graticule({
-    // the style to use for the lines, optional.
-    /*strokeStyle: new Stroke({
-      color: 'rgba(255,120,0,0.9)',
-      width: 2,
-      lineDash: [0.5, 4]
-    }),*/
     showLabels: true,
     latLabelStyle: new ol.style.Text({
       font: '8px Roboto',
