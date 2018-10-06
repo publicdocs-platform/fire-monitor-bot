@@ -610,6 +610,8 @@ function showMap(centerX, centerY, zoom, style, opts) {
         attributions: [],
         url: url,
         format: new ol.format.GeoJSON({
+          dataProjection: 'EPSG:4326', 
+          featureProjection:'EPSG:4326',
         }),
       })
     });
@@ -627,7 +629,7 @@ function showMap(centerX, centerY, zoom, style, opts) {
         },
         'geometry': {
           'type': 'Point',
-          'coordinates': [city.lon, city.lat],
+          'coordinates': ol.proj.fromLonLat([city.lon, city.lat]),
         }
       };
     }
@@ -642,7 +644,7 @@ function showMap(centerX, centerY, zoom, style, opts) {
       'crs': {
         'type': 'name',
         'properties': {
-          'name': 'EPSG:4326'
+          'name': 'EPSG:3857'
         }
       },
       'features': citiesBest.map(cityFeature)
@@ -656,7 +658,7 @@ function showMap(centerX, centerY, zoom, style, opts) {
     }
     return new ol.layer.Vector({
       source: new ol.source.Vector({
-        features: (new ol.format.GeoJSON()).readFeatures(allFeats),
+        features: (new ol.format.GeoJSON({dataProjection: 'EPSG:3857', featureProjection:'EPSG:3857'})).readFeatures(allFeats),
         attributions: 'U.S. Census Bureau Gazetteer',
       }),
       style: style,
@@ -790,8 +792,9 @@ function showMap(centerX, centerY, zoom, style, opts) {
     layers: layers,
     target: 'map',
     view: new ol.View({
-      projection: 'EPSG:4326',
-      center: [centerX, centerY],
+      projection: 'EPSG:3857',
+      //projection: 'EPSG:4326',
+      center: ol.proj.fromLonLat([centerX, centerY]),
       zoom: zoom
     })
   });
