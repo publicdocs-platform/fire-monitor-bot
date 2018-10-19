@@ -498,6 +498,8 @@ exports.handler = argv => {
         displayCities.biggest = null;
       }
 
+      const extraTags = cur.POOCounty ? util.hashTagify(cur.POOCounty + ' County') : null;
+
       const terrainImg = terrainPath || null;
       const templateData = {
         lat: lat,
@@ -507,6 +509,7 @@ exports.handler = argv => {
         current: cur,
         last: old,
         diff: oneDiff,
+        extraTags: extraTags,
         isNew: isNew,
         terrainImg: terrainImg,
         terrainCredit: terrainImg ? maprender.terrainCredit : '',
