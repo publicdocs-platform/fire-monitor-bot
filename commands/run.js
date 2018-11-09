@@ -427,7 +427,7 @@ exports.handler = argv => {
         console.log('>> Missing perimeter - ' + updateId);
       }
       const center = rr ? rr.center : [cur.Lon, cur.Lat];
-      const zoom = rr ? rr.zoom : 14;
+      const zoom = rr ? rr.zoom : 11;
       const terrainPath = perim.length > 0 ? null : '/dev/null';
 
       const lat = center ? center[1] : cur.Lat;
