@@ -133,6 +133,10 @@ exports.builder = {
     string: true,
     desc: 'Command to run after peristing data'
   },
+  ignoreSatellites: {
+    boolean: true,
+    desc: 'Ignores AFM satellite data'
+  },
 }
 
 exports.handler = argv => {
@@ -620,9 +624,11 @@ function preDiffFireProcess(key, x, last, perims) {
       let x = last;
       if (!argv.twitterOnly) {
         try {
+          if (!argv.ignoreSatellites) {
             await afm.refreshAfmSatelliteData(argv.outputdir + '/kml/');
-            await dailyMap();
-            x = await internalLoop(first, last);
+          }
+          await dailyMap();
+          x = await internalLoop(first, last);
         } catch (err) {
           console.log('>> ERROR');
           console.log(err);
