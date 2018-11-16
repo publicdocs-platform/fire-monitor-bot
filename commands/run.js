@@ -51,6 +51,7 @@ const geomac = require('../lib/geomac');
 const tileserver = require('../lib/tileserver');
 const server = require('../lib/server');
 const files = require('../lib/files');
+const units = require('../lib/units');
 
 
 
@@ -136,6 +137,10 @@ exports.builder = {
   ignoreSatellites: {
     boolean: true,
     desc: 'Ignores AFM satellite data'
+  },
+  unitsSocialPath: {
+    string: true,
+    desc: 'Path to fire units social media info'
   },
 }
 
@@ -223,7 +228,6 @@ exports.handler = argv => {
                   );
   }
 
-  const REMOVE_forceDeltaDebug = argv.debug;
   const periodSeq = argv.debug ? 5 : 65;
 
 
@@ -286,20 +290,6 @@ exports.handler = argv => {
         console.log('Missing ' + key);
       }
     });
-
-    if (REMOVE_forceDeltaDebug && !first) {
-      const bs = ['2018-CASHF-001444','2018-WAOWF-000443','2018-CASHF-001438'];
-      bs.map((bsk, bsi) => {
-        if (!x[bsk]) { return; }
-        x[bsk].Fire_Name = 'TEST FAKE ' + x[bsk].Fire_Name;
-        x[bsk].Hashtag = '#TestOnly' + x[bsk].Hashtag.substr(1);
-        x[bsk].ModifiedOnDateTime = dateString(new Date().getTime());
-        x[bsk].PercentContained = last[bsk].PercentContained + 7.3;
-        x[bsk].DailyAcres = last[bsk].DailyAcres + 55;
-        x[bsk].EstimatedCostToDate = last[bsk].EstimatedCostToDate - 34455;
-        x[bsk].TotalIncidentPersonnel = last[bsk].TotalIncidentPersonnel + 55;
-      });
-    }
 
     const globalUpdateId = 'Update-at-' + dateString(new Date().getTime());
     {
@@ -502,7 +492,9 @@ exports.handler = argv => {
         displayCities.biggest = null;
       }
 
-      const extraTags = cur.POOCounty ? util.hashTagify(cur.POOCounty + ' County') : null;
+      const countyTag = cur.POOCounty ? util.hashTagify(cur.POOCounty + ' County') : null;
+
+      const extraTags = [cur.unitMention, countyTag].filter(x => x).join(' ');
 
       const terrainImg = terrainPath || null;
       const templateData = {
@@ -586,7 +578,7 @@ exports.handler = argv => {
   }
 
 
-function preDiffFireProcess(key, x, last, perims) {
+  function preDiffFireProcess(key, x, last, perims) {
     const i = key;
     let cur = x[i];
     const old = last[i] || {};
@@ -616,6 +608,8 @@ function preDiffFireProcess(key, x, last, perims) {
       perim.push([[[cur.Lon, cur.Lat], [cur.Lon, cur.Lat]]]);
     }
     cur.PerimDateTime = perimDateTime;
+    cur.unitId = cur.pooresponsibleunit || cur.UniqueFireIdentifier.split('-')[1];
+    cur.unitMention = units.unitTag(cur.unitId);
     return { i, cur, perimDateTime, old, inciWeb, perim };
   }
 
@@ -627,6 +621,7 @@ function preDiffFireProcess(key, x, last, perims) {
           if (!argv.ignoreSatellites) {
             await afm.refreshAfmSatelliteData(argv.outputdir + '/kml/');
           }
+          await units.loadUnits(argv.unitsSocialPath);
           await dailyMap();
           x = await internalLoop(first, last);
         } catch (err) {
