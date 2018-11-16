@@ -474,7 +474,7 @@ exports.handler = argv => {
         KnownLocationLowPop: lat && lon && nearPopulation <= 1000,
         UnknownLocationSmallSize: !lat && !lon && (cur.DailyAcres || 0) < 1.1 && (cur.TotalIncidentPersonnel || 0) < 15,
         FalseAlarmType: cur.IncidentTypeCategory === 'FA' || cur.incidenttypecategory === 'FA',
-        FalseAlarmName: cur.Fire_Name.toLowerCase().includes('false') && cur.Fire_Name.toLowerCase().includes('alarm'),
+        FalseAlarmName: cur.Fire_Name.toLowerCase().substr(0,3) === 'FA ' || (cur.Fire_Name.toLowerCase().includes('false') && cur.Fire_Name.toLowerCase().includes('alarm')),
         // 3 hours with no info, might be stale
         OldEmergingFiresWithoutInfo: (cur.NFSAType || '').includes('Emerging') && !cur.DailyAcres && !cur.PercentContained && (cur.ModifiedOnDateTimeEpoch - cur.FireDiscoveryDateTimeEpoch > 1000 * 60 * 60 * 3),
       }
