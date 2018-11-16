@@ -1,9 +1,9 @@
 - var numFormat = new Intl.NumberFormat('en-US', {maximumFractionDigits: 2});
 - var currencyFormat = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 });
 if (data.current.NFSAType || '').includes('Emerging')
-  | #{data.current.Hashtag} unofficial new fire report; details uncertain.#{'\n'}
+  | #{data.current.Hashtag} 🔥 unofficial new fire report; details uncertain.#{'\n'}
 else
-  | #{data.current.Hashtag} unofficial update: #{numFormat.format(data.current.DailyAcres)} Acres. #{numFormat.format(data.current.PercentContained)}% Contained*.#{'\n'}
+  | #{data.current.Hashtag} 🔥 unofficial update: #{numFormat.format(data.current.DailyAcres)} Acres. #{numFormat.format(data.current.PercentContained)}% Contained*.#{'\n'}
 if data.extraTags
   | #{data.extraTags + '; '}
 if data.cities
