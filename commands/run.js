@@ -126,6 +126,11 @@ exports.builder = {
     default: 60 * 5 + 11,
     desc: 'Seconds between twitter posts'
   },
+  pruneDays: {
+    number: true,
+    default: 45,
+    desc: 'Days before pruning stale entries'
+  },
   twitterThreadQueryPrefix: {
     string: true,
     desc: 'Twitter query to find posts to reply to'
@@ -145,6 +150,8 @@ exports.builder = {
 }
 
 exports.handler = argv => {
+
+  console.log(argv);
 
   // This functionality is disabled.
   if (false) { tileserver.run(8081); }
@@ -291,7 +298,10 @@ exports.handler = argv => {
       }
     });
 
-    const globalUpdateId = 'Update-at-' + dateString(new Date().getTime());
+    const curTime = new Date().getTime();
+    const pruneTime = curTime - 1000 * 60 * 60 * 24 * argv.pruneDays;
+
+    const globalUpdateId = 'Update-at-' + dateString(curTime);
     {
       console.log('Saving ' + globalUpdateId);
       const diffGlobal = deepDiff(last, x) || [];
@@ -314,16 +324,25 @@ exports.handler = argv => {
         continue;
       }
 
+
       if (i in last && last[i].ModifiedOnDateTime >= cur.ModifiedOnDateTime) {                    
         // Keep the newer data around.
         x[i] = Object.assign({}, last[i]);
         x[i].PerimDateTime = perimDateTime;
         cur = x[i];
+
+        if (!cur.ModifiedOnDateTimeEpoch || cur.ModifiedOnDateTimeEpoch < pruneTime) {
+          console.log(' #! Pruning %s -> last mod %s', i, cur.ModifiedOnDateTime);
+          delete x[i];
+          continue;
+        }
+
         // Only skip the update if perimeter is ALSO not up to date.
         if (!perimDateTime || (last[i].PerimDateTime && last[i].PerimDateTime >= perimDateTime)) {
           continue;
         }
       }
+
 
       let oneDiff = deepDiff(old, cur);
       oneDiff = _.keyBy(oneDiff, o => o.path.join('.'));
