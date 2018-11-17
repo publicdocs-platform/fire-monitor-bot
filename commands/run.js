@@ -332,7 +332,7 @@ exports.handler = argv => {
         cur = x[i];
 
         if (!cur.ModifiedOnDateTimeEpoch || cur.ModifiedOnDateTimeEpoch < pruneTime) {
-          console.log(' #! Pruning %s -> last mod %s', i, cur.ModifiedOnDateTime);
+          console.log(' #! Pruning %s %s -> last mod %s', i, cur.Name, cur.ModifiedOnDateTime);
           delete x[i];
           continue;
         }
