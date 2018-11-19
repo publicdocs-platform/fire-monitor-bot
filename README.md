@@ -1,5 +1,5 @@
-# firemon
-Unofficial wildfire data monitor.  Gathers data from public sources, and posts it to Twitter.
+# Unofficial wildfire data monitor
+Gathers data from public sources, and posts it to Twitter.
 
 The original runs at https://twitter.com/FireUnofficial
 
