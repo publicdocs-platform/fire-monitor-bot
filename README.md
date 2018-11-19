@@ -26,8 +26,8 @@ The entire [NOTICE](NOTICE) file serves as the NOTICE that must be included unde
 Section 4d of the License.
 
 ````
-The firemon software is available under the license below.
-Third-party dependencies not distributed with firemon
+The fire-monitor-bot software is available under the license below.
+Third-party dependencies not distributed with fire-monitor-bot
 and data used during runtime may be under other licenses.
 
 The fire information displayed by this app is
@@ -47,7 +47,7 @@ We cannot give any legal advice on that.
 
 =====
 
-firemon (https://github.com/publicdocs-platform/firemon)
+fire-monitor-bot (https://github.com/publicdocs-platform/fire-monitor-bot)
 
 Copyright (c) 2018 Advay Mengle <source@madvay.com>
 

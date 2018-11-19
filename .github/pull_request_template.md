@@ -2,7 +2,7 @@
 By submitting this pull request, you hereby license all content you contribute to this
 repository (including but not limited to this pull request and all bugs, commits,
 pull requests, feature requests, and suggestions) under the repository's
-[LICENSE](https://github.com/publicdocs-platform/firemon/blob/master/LICENSE).
+[LICENSE](https://github.com/publicdocs-platform/fire-monitor-bot/blob/master/LICENSE).
 You also represent and warrant that you have all necessary rights to license the
 content as specified in the preceding sentence and that doing so will not infringe
 upon any right of any third party nor violate any applicable law or regulation.
@@ -12,7 +12,7 @@ of CC0-1.0 (https://creativecommons.org/publicdomain/zero/1.0/).**
 Do not contribute or copy-paste third-party content, code or data using a pull request.  Instead provide
 URLs to the authoritative source and to license information and we'll see if we want to include it.
 
-Read the [contributor guidelines](https://github.com/publicdocs-platform/firemon/blob/master/CONTRIBUTING.md).
+Read the [contributor guidelines](https://github.com/publicdocs-platform/fire-monitor-bot/blob/master/CONTRIBUTING.md).
 
 ---
 

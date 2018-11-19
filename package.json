@@ -1,9 +1,9 @@
 {
-  "name": "firemon",
+  "name": "fire-monitor-bot",
   "version": "1.0.0",
   "description": "Monitors public wildfire data (unofficial - not for safety/emergency purposes)",
   "main": "index.js",
-  "repository": "https://github.com/publicdocs-platform/firemon",
+  "repository": "https://github.com/publicdocs-platform/fire-monitor-bot",
   "author": "Advay Mengle <source@madvay.com>",
   "license": "SEE LICENSE IN LICENSE",
   "private": true,
