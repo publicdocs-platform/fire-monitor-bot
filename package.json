@@ -19,6 +19,7 @@
     "@publicdocs/togeojson": "https://github.com/publicdocs-platform/togeojson",
     "@turf/bearing": "^6.0.1",
     "@turf/distance": "^6.0.1",
+    "csv": "^4.0.0",
     "deep-diff": "^1.0.2",
     "del": "^3.0.0",
     "dotenv": "^6.0.0",

@@ -147,6 +147,10 @@ exports.builder = {
     string: true,
     desc: 'Path to fire units social media info'
   },
+  unitsIdPath: {
+    string: true,
+    desc: 'Path to fire units ID info'
+  },
 }
 
 exports.handler = argv => {
@@ -513,7 +517,7 @@ exports.handler = argv => {
 
       const countyTag = cur.POOCounty ? util.hashTagify(cur.POOCounty + ' County') : null;
 
-      const extraTags = [cur.unitMention, countyTag].filter(x => x).join(' ');
+      const extraTags = [countyTag, cur.unitMention].filter(x => x).join(' ');
 
       const terrainImg = terrainPath || null;
       const templateData = {
@@ -640,7 +644,7 @@ exports.handler = argv => {
           if (!argv.ignoreSatellites) {
             await afm.refreshAfmSatelliteData(argv.outputdir + '/kml/');
           }
-          await units.loadUnits(argv.unitsSocialPath);
+          await units.loadUnits(argv.unitsIdPath, argv.unitsSocialPath);
           await dailyMap();
           x = await internalLoop(first, last);
         } catch (err) {
