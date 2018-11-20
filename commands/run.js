@@ -569,9 +569,9 @@ exports.handler = argv => {
         //allImgs = 
         let saved = {
           text: tweet,
-          image1AltText: tweet,
+          image1AltText: cur.UniqueFireIdentifier + ' - ' + tweet,
           image1: infoImg,
-          image2AltText: 'Perimeter map',
+          image2AltText: cur.UniqueFireIdentifier + ' - Perimeter map',
           image2: detailRender,
           selectors: [cur.state || cur.State || key.substr(5, 2), 'other'],
           threadQuery: argv.twitterThreadQueryPrefix ? (argv.twitterThreadQueryPrefix + ' ' + cur.Hashtag) : null,
