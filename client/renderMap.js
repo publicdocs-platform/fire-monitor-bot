@@ -33,7 +33,7 @@ function showMap(centerX, centerY, zoom, style, opts) {
         Blank: {
           url: 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSTNMBlank/MapServer',
           attribution: 'USGS The National Map (TNM)',
-          params: { layers: '', FORMAT: 'PNG' }
+          params: { layers: '', FORMAT: 'PNG32' }
         },
         Hydro: {
           url: 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSHydroCached/MapServer',
@@ -43,12 +43,12 @@ function showMap(centerX, centerY, zoom, style, opts) {
             'USGS TNM: Small-Scale hydrography',
             'NOAA NCEI: ETOPO1 Global Relief',
           ],
-          params: { layers: '', FORMAT: 'PNG' }
+          params: { layers: '', FORMAT: 'PNG32' }
         },
         Imagery: {
           url: 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer',
           attribution: 'USGS TNM: Orthoimagery',
-          params: { layers: '', FORMAT: 'PNG' }
+          params: { layers: '', FORMAT: 'PNG32' }
         },
         ImageryTiled: {
           tiled: true,
@@ -59,64 +59,64 @@ function showMap(centerX, centerY, zoom, style, opts) {
         ImageryTopo: {
           url: 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryTopo/MapServer',
           attribution: 'USGS TNM: Orthoimagery and US Topo',
-          params: { layers: '', FORMAT: 'PNG' }
+          params: { layers: '', FORMAT: 'PNG32' }
         },
         Polygons: {
           url: 'https://carto.nationalmap.gov/arcgis/rest/services/selectable_polygons/MapServer',
           attribution: 'USGS',
-          params: { layers: '', FORMAT: 'PNG' }
+          params: { layers: '', FORMAT: 'PNG32' }
         },
         Roads: {
           url: 'https://carto.nationalmap.gov/arcgis/rest/services/transportation/MapServer/',
           attribution: ['USGS TNM: NTD', 'U.S. Census Bureau – TIGER/Line', 'U.S. Forest Service'],
-          params: { layers: 'show:13,18,21,22,23,25,26,27,28,29,30,31,32,33,34,35,36', FORMAT: 'PNG' }
+          params: { layers: 'show:13,18,21,22,23,25,26,27,28,29,30,31,32,33,34,35,36', FORMAT: 'PNG32' }
         },
         RoadsMediumScale: {
           url: 'https://carto.nationalmap.gov/arcgis/rest/services/transportation/MapServer/',
           attribution: ['USGS TNM: NTD', 'U.S. Census Bureau – TIGER/Line', 'U.S. Forest Service'],
-          params: { layers: 'show:13,18,25,26,27,28,29,30,31,32,33,34,35,36', FORMAT: 'PNG' }
+          params: { layers: 'show:13,18,25,26,27,28,29,30,31,32,33,34,35,36', FORMAT: 'PNG32' }
         },
         RoadsLowScale: {
           url: 'https://carto.nationalmap.gov/arcgis/rest/services/transportation/MapServer/',
           attribution: ['USGS TNM: NTD', 'U.S. Census Bureau – TIGER/Line', 'U.S. Forest Service'],
-          params: { layers: 'show:13,25,26,36', FORMAT: 'PNG' }
+          params: { layers: 'show:13,25,26,36', FORMAT: 'PNG32' }
         },
         TransportNotInCensus: {
           url: 'https://carto.nationalmap.gov/arcgis/rest/services/transportation/MapServer/',
           attribution: ['USGS TNM: NTD', 'U.S. Census Bureau – TIGER/Line', 'U.S. Forest Service'],
-          params: { layers: 'show:13,18,19,25,26,29,30,31,32,33,34,35,36', FORMAT: 'PNG' }
+          params: { layers: 'show:13,18,19,25,26,29,30,31,32,33,34,35,36', FORMAT: 'PNG32' }
         },
         TransportNotInCensusMediumScale: {
           url: 'https://carto.nationalmap.gov/arcgis/rest/services/transportation/MapServer/',
           attribution: ['USGS TNM: NTD', 'U.S. Census Bureau – TIGER/Line', 'U.S. Forest Service'],
-          params: { layers: 'show:13,18,25,26,29,30,31,32,33,34,35,36', FORMAT: 'PNG' }
+          params: { layers: 'show:13,18,25,26,29,30,31,32,33,34,35,36', FORMAT: 'PNG32' }
         },
         GovUnits: {
           url: 'https://carto.nationalmap.gov/arcgis/rest/services/govunits/MapServer/',
           attribution: 'USGS TNM: NBD',
-          params: { layers: 'exclude:17', FORMAT: 'PNG' }
+          params: { layers: 'exclude:17', FORMAT: 'PNG32' }
         },
         GovUnitsSelectedLabels: {
           url: 'https://carto.nationalmap.gov/arcgis/rest/services/govunits/MapServer/',
           attribution: 'USGS TNM: NBD',
-          params: { layers: 'show:4,5,6,7,16', FORMAT: 'PNG' }
+          params: { layers: 'show:4,5,6,7,16', FORMAT: 'PNG32' }
         },
         Names: {
           url: 'https://carto.nationalmap.gov/arcgis/rest/services/geonames/MapServer/',
           attribution: 'USGS TNM: GNIS',
-          params: { layers: ''/*'show:0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22'*/, FORMAT: 'PNG' }
+          params: { layers: ''/*'show:0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22'*/, FORMAT: 'PNG32' }
         },
         NamesPhysical: {
           url: 'https://carto.nationalmap.gov/arcgis/rest/services/geonames/MapServer/',
           attribution: 'USGS TNM: GNIS',
-          params: { layers: 'show:1', FORMAT: 'PNG' }
+          params: { layers: 'show:1', FORMAT: 'PNG32' }
         },
       },
       ProtectedAreas: {
         SimpleDesignations: {
           url: 'https://gis1.usgs.gov/arcgis/rest/services/PADUS1_4/SimpleDesignationType/MapServer',
           attribution: 'USGS GAP, PADUS',
-          params: { layers: '', FORMAT: 'PNG' },
+          params: { layers: '', FORMAT: 'PNG32' },
           opacity: 0.3,
         }
       }
@@ -126,7 +126,7 @@ function showMap(centerX, centerY, zoom, style, opts) {
         url: 'https://wildfire.cr.usgs.gov/ArcGIS/rest/services/geomac_dyn/MapServer',
         attribution: 'USGS GeoMAC (wildfire.cr.usgs.gov)',
         params: {
-          FORMAT: 'PNG',
+          FORMAT: 'PNG32',
           layers: 'show:0,1,2',
         },
         opacity: 0.5,
@@ -137,12 +137,12 @@ function showMap(centerX, centerY, zoom, style, opts) {
         States: {
           url: 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer',
           attribution: 'U.S. Census Bureau – TIGER/Line',
-          params: { layers: 'show:0,2,4,6,8,10,12,14,15,16', FORMAT: 'PNG' }
+          params: { layers: 'show:0,2,4,6,8,10,12,14,15,16', FORMAT: 'PNG32' }
         },
         Roads: {
           url: 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Transportation/MapServer',
           attribution: 'U.S. Census Bureau – TIGER/Line',
-          params: { layers: '', FORMAT: 'PNG' }
+          params: { layers: '', FORMAT: 'PNG32' }
         },
         USLandmass: {
           url: 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/USLandmass/MapServer',
@@ -152,22 +152,22 @@ function showMap(centerX, centerY, zoom, style, opts) {
         Hydro: {
           url: 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Hydro/MapServer',
           attribution: 'U.S. Census Bureau – TIGER/Line',
-          params: { layers: '', FORMAT: 'PNG' }
+          params: { layers: '', FORMAT: 'PNG32' }
         },
         HydroPaths: {
           url: 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Hydro/MapServer',
           attribution: 'U.S. Census Bureau – TIGER/Line',
-          params: { layers: 'show:0', FORMAT: 'PNG' }
+          params: { layers: 'show:0', FORMAT: 'PNG32' }
         },
         HydroBodies: {
           url: 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Hydro/MapServer',
           attribution: 'U.S. Census Bureau – TIGER/Line',
-          params: { layers: 'show:1,2', FORMAT: 'PNG' }
+          params: { layers: 'show:1,2', FORMAT: 'PNG32' }
         },
         Urban: {
           url: 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Urban/MapServer',
           attribution: 'U.S. Census Bureau – TIGER/Line',
-          params: { layers: '', FORMAT: 'PNG' }
+          params: { layers: '', FORMAT: 'PNG32' }
         },
       }
     },
