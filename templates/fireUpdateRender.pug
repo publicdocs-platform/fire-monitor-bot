@@ -107,7 +107,8 @@ html.update
                                             if data.cities.biggest
                                                 span.detail #{data.cities.biggest.directions}
                                                 br
-                                        span.detail #{data.current.FireCause} Cause 
+                                        if data.current.FireCause
+                                            span.detail #{data.current.FireCause} Cause
                                         span.detail Discovered #{friendlyDate(data.current.FireDiscoveryDateTime)}
                                         br
                                         span.detail Summary Updated #{friendlyDate(data.current.ModifiedOnDateTime)}
