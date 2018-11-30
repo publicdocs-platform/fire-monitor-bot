@@ -671,8 +671,8 @@ function showMap(centerX, centerY, zoom, style, opts) {
   let perimLayers = [
     // Library.Census.Tiger.USLandmass,
     Library.USGS.NatlMap.Blank,
-    Alpha(Library.USGS.NatlMap.Imagery, Math.max(Math.min( (zoom-10)/(15-10) * 0.5 + 0.4 ,0.9),0.4)),
-    Alpha(Library.USGS.ProtectedAreas.SimpleDesignations, 0.1),
+    //Alpha(Library.USGS.NatlMap.Imagery, Math.max(Math.min( (zoom-10)/(15-10) * 0.5 + 0.4 ,0.9),0.4)),
+    Alpha(Library.USGS.ProtectedAreas.SimpleDesignations, 0.25),
     'UnincAreas',
     'CityAreas',
     //Library.USGS.NatlMap.Polygons,
