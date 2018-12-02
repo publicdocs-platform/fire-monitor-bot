@@ -421,13 +421,9 @@ exports.handler = argv => {
       const mainWebpage = argv.outputdir + '/img/WEB-INFO-' + updateId + '.html';
       const perimImg = argv.outputdir + '/img/IMG-PERIM-' + updateId + '.jpeg';
       const perimWebpage = argv.outputdir + '/img/WEB-PERIM-' + updateId + '.html';
-      const centerImg = argv.outputdir + '/img/IMG-CENTER-' + updateId + '.jpeg';
-      const centerWebpage = argv.outputdir + '/img/WEB-CENTER-' + updateId + '.html';
       const mainWebpageUrl = 'http://localhost:8080/updates/img/WEB-INFO-' + updateId + '.html';
       const centerWebpageUrl = 'http://localhost:8080/updates/img/WEB-CENTER-' + updateId + '.html';
       const perimWebpageUrl = 'http://localhost:8080/updates/img/WEB-PERIM-' + updateId + '.html';
-      const terrainMapImg = tmpdir + '/img/src/terrain/MAP-TERRAIN-' + updateId + '.png';
-      const detailMapImg = tmpdir + '/img/src/detail/MAP-DETAIL-' + updateId + '.png';
       if (inciWeb && argv.archiveInciweb) {
         let u = 'https://web.archive.org/save/https://inciweb.nwcg.gov/incident/' + inciWeb + '/';
         rp({ uri: u, resolveWithFullResponse: true }).then((r) => {

@@ -36,13 +36,19 @@ function showMap(centerX, centerY, zoom, style, opts) {
           params: { layers: '', FORMAT: 'PNG32' }
         },
         Hydro: {
-          url: 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSHydroCached/MapServer',
+          url: 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSHydroCached/MapServer/tile/{z}/{y}/{x}',
+          tiled: true,
           attribution: [
             'USGS TNM: NHD',
             'EPA: NHDPlus Med. Res.',
             'USGS TNM: Small-Scale hydrography',
             'NOAA NCEI: ETOPO1 Global Relief',
           ],
+          params: { layers: '', FORMAT: 'PNG32' }
+        },
+        ShadedRelief: {
+          url: 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSShadedReliefOnly/MapServer',
+          attribution: ['USGS TNM: 3DEP', 'USGS EROS Center: GMTED2010'],
           params: { layers: '', FORMAT: 'PNG32' }
         },
         Imagery: {
@@ -71,6 +77,17 @@ function showMap(centerX, centerY, zoom, style, opts) {
           attribution: ['USGS TNM: NTD', 'U.S. Census Bureau – TIGER/Line', 'U.S. Forest Service'],
           params: { layers: 'show:13,18,21,22,23,25,26,27,28,29,30,31,32,33,34,35,36', FORMAT: 'PNG32' }
         },
+        // https://carto.nationalmap.gov/arcgis/rest/services/Contours/MapServer/export?dpi=96&transparent=true&format=png32&layers=show%3A1%2C2%2C3%2C4%2C5%2C6%2C7%2C8%2C10%2C11%2C15%2C16%2C21%2C25%2C29%2C33&bbox=-13106595.152917184%2C3924911.567880801%2C-13044146.100808278%2C3986978.4348482806&bboxSR=102100&imageSR=102100&size=817%2C812&f=image
+        Contours: {
+          url: 'https://carto.nationalmap.gov/arcgis/rest/services/Contours/MapServer/',
+          attribution: ['USGS TNM: 3DEP'],
+          params: { layers: 'show:1,2,3,4,5,6,7,8,10,11,15,16,21,25,29,33', FORMAT: 'PNG32' }
+        },
+        ContoursDetail: {
+          url: 'https://carto.nationalmap.gov/arcgis/rest/services/Contours/MapServer/',
+          attribution: ['USGS TNM: 3DEP'],
+          params: { layers: 'show:13,18,26,27,34,35', FORMAT: 'PNG32' }
+        },
         RoadsMediumScale: {
           url: 'https://carto.nationalmap.gov/arcgis/rest/services/transportation/MapServer/',
           attribution: ['USGS TNM: NTD', 'U.S. Census Bureau – TIGER/Line', 'U.S. Forest Service'],
@@ -90,6 +107,11 @@ function showMap(centerX, centerY, zoom, style, opts) {
           url: 'https://carto.nationalmap.gov/arcgis/rest/services/transportation/MapServer/',
           attribution: ['USGS TNM: NTD', 'U.S. Census Bureau – TIGER/Line', 'U.S. Forest Service'],
           params: { layers: 'show:13,18,25,26,29,30,31,32,33,34,35,36', FORMAT: 'PNG32' }
+        },
+        GovUnitAreas: {
+          url: 'https://carto.nationalmap.gov/arcgis/rest/services/govunits/MapServer/',
+          attribution: 'USGS TNM: NBD',
+          params: { layers: 'show:22,23,24,25', FORMAT: 'PNG32' }
         },
         GovUnits: {
           url: 'https://carto.nationalmap.gov/arcgis/rest/services/govunits/MapServer/',
@@ -671,10 +693,14 @@ function showMap(centerX, centerY, zoom, style, opts) {
   let perimLayers = [
     // Library.Census.Tiger.USLandmass,
     Library.USGS.NatlMap.Blank,
+    Library.USGS.NatlMap.ShadedRelief,
     //Alpha(Library.USGS.NatlMap.Imagery, Math.max(Math.min( (zoom-10)/(15-10) * 0.5 + 0.4 ,0.9),0.4)),
-    Alpha(Library.USGS.ProtectedAreas.SimpleDesignations, 0.25),
+    //Alpha(Library.USGS.ProtectedAreas.SimpleDesignations, 0.8),
+    Alpha(Library.USGS.NatlMap.GovUnitAreas, 0.23),
     'UnincAreas',
     'CityAreas',
+    Alpha(Library.USGS.NatlMap.ContoursDetail, 0.05),
+    Alpha(Library.USGS.NatlMap.Contours, 0.3),
     //Library.USGS.NatlMap.Polygons,
     Library.Census.Tiger.States,
     //Alpha(Library.Census.Tiger.HydroBodies, 0.5),
