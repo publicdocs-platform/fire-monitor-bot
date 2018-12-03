@@ -35,6 +35,11 @@ function showMap(centerX, centerY, zoom, style, opts) {
           attribution: 'USGS The National Map (TNM)',
           params: { layers: '', FORMAT: 'PNG32' }
         },
+        HydroNHD: {
+          url: 'https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer',
+          attribution: 'USGS TNM: NHD',
+          params: { layers: 'show:2,3,7,8,9,10', FORMAT: 'PNG32' }
+        },
         Hydro: {
           url: 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSHydroCached/MapServer/tile/{z}/{y}/{x}',
           tiled: true,
@@ -77,7 +82,6 @@ function showMap(centerX, centerY, zoom, style, opts) {
           attribution: ['USGS TNM: NTD', 'U.S. Census Bureau – TIGER/Line', 'U.S. Forest Service'],
           params: { layers: 'show:13,18,21,22,23,25,26,27,28,29,30,31,32,33,34,35,36', FORMAT: 'PNG32' }
         },
-        // https://carto.nationalmap.gov/arcgis/rest/services/Contours/MapServer/export?dpi=96&transparent=true&format=png32&layers=show%3A1%2C2%2C3%2C4%2C5%2C6%2C7%2C8%2C10%2C11%2C15%2C16%2C21%2C25%2C29%2C33&bbox=-13106595.152917184%2C3924911.567880801%2C-13044146.100808278%2C3986978.4348482806&bboxSR=102100&imageSR=102100&size=817%2C812&f=image
         Contours: {
           url: 'https://carto.nationalmap.gov/arcgis/rest/services/Contours/MapServer/',
           attribution: ['USGS TNM: 3DEP'],
@@ -699,13 +703,13 @@ function showMap(centerX, centerY, zoom, style, opts) {
     Alpha(Library.USGS.NatlMap.GovUnitAreas, 0.23),
     'UnincAreas',
     'CityAreas',
+    zoom >= 10 ? Library.USGS.NatlMap.HydroNHD : Library.USGS.NatlMap.Hydro,
     Alpha(Library.USGS.NatlMap.ContoursDetail, 0.05),
     Alpha(Library.USGS.NatlMap.Contours, 0.3),
     //Library.USGS.NatlMap.Polygons,
     Library.Census.Tiger.States,
     //Alpha(Library.Census.Tiger.HydroBodies, 0.5),
     //Alpha(Library.Census.Tiger.HydroPaths, 0.2),
-    Library.USGS.NatlMap.Hydro,
     ZoomedRoads,
     Library.Census.Tiger.Roads,
     //Alpha(Library.USGS.NatlMap.TransportNotInCensusMediumScale, 0.3),
