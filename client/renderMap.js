@@ -428,19 +428,10 @@ function showMap(centerX, centerY, zoom, style, opts) {
 
     const featCenter = ol.extent.getCenter(geom.getExtent());
 
-    let align = 'left';
-    offsetX = 0;
-    if (featCenter[0] > centerX) {
-      align = 'right';
-      offsetX = -0;
-    }
-
-    let baseline = 'bottom';
-    let offsetY = -3;
-    if (featCenter[1] > centerY) {
-      baseline = 'top';
-      offsetY = 5;
-    }
+    const align = 'center';
+    const offsetX = 0;
+    const baseline = 'middle';
+    const offsetY = 0;
 
     return new ol.style.Text({
       textAlign: align,
@@ -677,7 +668,7 @@ function showMap(centerX, centerY, zoom, style, opts) {
       return new ol.style.Style({
         zIndex: feat.get('dist') < 10 ? (-1000000 + feat.get('dist')): -feat.get('population')/10000.0,
         text: namedTextStyle(feat),
-        image: new ol.style.Icon({src:whiteDot, color: '#66ff66', scale:1.0/6.0}),
+        //image: new ol.style.Icon({src:whiteDot, color: '#66ff66', scale:1.0/6.0}),
       });
     }
     return new ol.layer.Vector({
