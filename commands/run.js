@@ -439,6 +439,7 @@ exports.handler = argv => {
       } else {
         console.log('>> Missing perimeter - ' + updateId);
       }
+      const events = [{lon: cur.Lon, lat: cur.Lat}];
       const center = rr ? rr.center : [cur.Lon, cur.Lat];
       const zoom = rr ? rr.zoom : 12;
       const terrainPath = perim.length > 0 ? null : '/dev/null';
@@ -526,6 +527,7 @@ exports.handler = argv => {
         diff: oneDiff,
         extraTags: extraTags,
         isNew: isNew,
+        mapData: { events: events },
         terrainImg: terrainImg,
         terrainCredit: terrainImg ? maprender.terrainCredit : '',
       };
@@ -548,6 +550,7 @@ exports.handler = argv => {
             lon: lon,
             zoom: zoom,
             cities: displayCities,
+            mapData: { events: events },
             perimDateTime: perimDateTime,
             current: cur,
             last: old,
@@ -587,7 +590,7 @@ exports.handler = argv => {
       }
 
       async function renderPerim() {
-        return render.renderInBrowser(1450, 1450, perimWebpageUrl, perimImg);
+        return render.renderInBrowser(2232, 1450, perimWebpageUrl, perimImg);
       }
 
       async function renderUpdateImage() {

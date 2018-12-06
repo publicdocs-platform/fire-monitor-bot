@@ -20,6 +20,7 @@ function showMap(centerX, centerY, zoom, style, opts) {
   const detail = style == 'perim';
   const cities = opts.cities || { closest: [], biggest: [] };
   const excluded = opts.excluded || [];
+  const events = opts.events || [];
   const customLayerCount = opts.customLayerCount || 0;
   let showAll = 'show:';
 
@@ -327,8 +328,8 @@ function showMap(centerX, centerY, zoom, style, opts) {
   function cityAreasLayer() {
     const baseUrl = 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/tigerWMS_Current/MapServer' + '/28';
     function style(feat) {
-      let fclr = 'rgba(255,220,255,0.4)';
-      let sclr = 'rgba(255,220,255,1)';
+      let fclr = 'rgba(255,220,255,1.0)';
+      let sclr = 'rgba(155,120,155,1)';
       return new ol.style.Style({
         fill: new ol.style.Fill({
           color: fclr
@@ -348,8 +349,8 @@ function showMap(centerX, centerY, zoom, style, opts) {
   function unincAreasLayer() {
     const baseUrl = 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/tigerWMS_Current/MapServer' + '/30';
     function style(feat) {
-      let fclr = 'rgba(255,230,255,0.4)';
-      let sclr = 'rgba(255,230,255,1)';
+      let fclr = 'rgba(255,230,255,1.0)';
+      let sclr = 'rgba(155,130,155,1)';
       return new ol.style.Style({
         fill: new ol.style.Fill({
           color: fclr
@@ -681,6 +682,47 @@ function showMap(centerX, centerY, zoom, style, opts) {
     });
   }
 
+
+  function eventsVectorLayer(events) {
+    function eventFeature(evt) {
+
+      return {
+        'type': 'Feature',
+        'properties': {
+          'name': evt.name || '',
+        },
+        'geometry': {
+          'type': 'Point',
+          'coordinates': ol.proj.fromLonLat([evt.lon, evt.lat]),
+        }
+      };
+    }
+    let allFeats = {
+      'type': 'FeatureCollection',
+      'crs': {
+        'type': 'name',
+        'properties': {
+          'name': 'EPSG:3857'
+        }
+      },
+      'features': events.map(eventFeature)
+    };
+    function style(feat) {
+      return new ol.style.Style({
+        //text: namedTextStyle(feat),
+        image: new ol.style.Icon({src:whiteDot, color: '#ff0000', scale:2.0/6.0}),
+      });
+    }
+    return new ol.layer.Vector({
+      source: new ol.source.Vector({
+        features: (new ol.format.GeoJSON({dataProjection: 'EPSG:3857', featureProjection:'EPSG:3857'})).readFeatures(allFeats),
+        attributions: ['NWCG', 'NFSA', 'USGS GeoMAC'],
+      }),
+      style: style,
+      declutter: false,
+    });
+  }
+
   let ZoomedRoads = zoom < 11.5 ? Library.USGS.NatlMap.RoadsLowScale : (zoom < 12.5 ? Library.USGS.NatlMap.RoadsMediumScale : Library.USGS.NatlMap.Roads);
 
   let perimLayers = [
@@ -709,6 +751,7 @@ function showMap(centerX, centerY, zoom, style, opts) {
     'AFM-VIIRS-I',
     Library.USGS.NatlMap.GovUnits,
     Library.USGS.NatlMap.GovUnitsSelectedLabels,
+    'Events',
     'Perim-Name',
     // 'Summits',
     zoom > 10.5 ? Library.USGS.NatlMap.Names : 'Cities',
@@ -726,6 +769,7 @@ function showMap(centerX, centerY, zoom, style, opts) {
     'PerimFill',
     'Fires',
     'Complexes',
+    'Events',
     Library.USGS.NatlMap.Names,
     'Cities',
   ];
@@ -765,6 +809,8 @@ function showMap(centerX, centerY, zoom, style, opts) {
       return afmKmlLayer('../kml/modis.kml');
     } else if (config === 'AFM-VIIRS-I') {
       return afmKmlLayer('../kml/viirs-i.kml');
+    } else if (config == 'Events') {
+      return eventsVectorLayer(events);
     }
     let opts = {
       hidpi: true,
