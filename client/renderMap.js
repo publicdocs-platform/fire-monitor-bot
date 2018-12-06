@@ -130,7 +130,7 @@ function showMap(centerX, centerY, zoom, style, opts) {
         Names: {
           url: 'https://carto.nationalmap.gov/arcgis/rest/services/geonames/MapServer/',
           attribution: 'USGS TNM: GNIS',
-          params: { layers: ''/*'show:0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22'*/, FORMAT: 'PNG32' }
+          params: { layers: '', FORMAT: 'PNG32' }
         },
         NamesPhysical: {
           url: 'https://carto.nationalmap.gov/arcgis/rest/services/geonames/MapServer/',
@@ -233,9 +233,7 @@ function showMap(centerX, centerY, zoom, style, opts) {
         fill: new ol.style.Fill({
           color: fclr
         }),
-
         stroke: new ol.style.Stroke({ color: sclr2, width: 2 }),
-
       }), new ol.style.Style({
         stroke: new ol.style.Stroke({ color: sclr, width: 1 }),
       }),];
@@ -272,7 +270,7 @@ function showMap(centerX, centerY, zoom, style, opts) {
       const howTextStyle = function (feature) {
         const method = feature.get('mapmethod');
         const date = new Date(feature.get('perimeterdatetime')).toISOString().substr(0,16) + ' UTC';
-        const title = date;// + (method ? ('\n via ' + method) : '');
+        const title = date;
 
         return new ol.style.Text({
           font: '10px Roboto',
@@ -396,7 +394,7 @@ function showMap(centerX, centerY, zoom, style, opts) {
       return [
         new ol.style.Style({
           geometry: feat.getGeometry(),
-          zIndex: topZindex, //-(feat.get('julian') * 100000 + feat.get('gmt')),
+          zIndex: topZindex,
           fill: zoom > 12.5 ? null : new ol.style.Fill({
             color: fclr
           }),
@@ -430,7 +428,6 @@ function showMap(centerX, centerY, zoom, style, opts) {
 
     const featCenter = ol.extent.getCenter(geom.getExtent());
 
-    // TODO: Doesn't work at dateline or poles.
     let align = 'left';
     offsetX = 0;
     if (featCenter[0] > centerX) {
@@ -824,7 +821,6 @@ function showMap(centerX, centerY, zoom, style, opts) {
     target: 'map',
     view: new ol.View({
       projection: 'EPSG:3857',
-      //projection: 'EPSG:4326',
       center: ol.proj.fromLonLat([centerX, centerY]),
       zoom: zoom
     })
