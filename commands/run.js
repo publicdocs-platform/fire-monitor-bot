@@ -572,6 +572,7 @@ exports.handler = argv => {
         //allImgs = 
         let saved = {
           text: tweet,
+          shortText: cur.UniqueFireIdentifier + ' - Unofficial fire report. See officials for safety info. May be incorrect; disclaimers in images.',
           image1AltText: cur.UniqueFireIdentifier + ' - ' + tweet,
           image1: infoImg,
           image2AltText: cur.UniqueFireIdentifier + ' - Perimeter map',
