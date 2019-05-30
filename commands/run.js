@@ -487,6 +487,7 @@ exports.handler = argv => {
         FalseAlarmName: cur.Fire_Name.toLowerCase().substr(0,3) === 'fa ' || (cur.Fire_Name.toLowerCase().includes('false') && cur.Fire_Name.toLowerCase().includes('alarm')),
         // 3 hours with no info, might be stale
         OldEmergingFiresWithoutInfo: (cur.NFSAType || '').includes('Emerging') && !cur.DailyAcres && !cur.PercentContained && (cur.ModifiedOnDateTimeEpoch - cur.FireDiscoveryDateTimeEpoch > 1000 * 60 * 60 * 3),
+        LACNoData: !cur.DailyAcres && !cur.PercentContained && cur.Fire_Name.toLowerCase().substr(0,4) === 'lac-',
       }
 
       for (let filterKey in displayFilters) {
