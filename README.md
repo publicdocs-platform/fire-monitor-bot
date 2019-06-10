@@ -1,6 +1,8 @@
 # Unofficial wildfire data monitor
 Gathers data from public sources, and posts it to Twitter.
 
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](./LICENSE) [![Build Status](https://travis-ci.com/publicdocs-platform/fire-monitor-bot.svg?branch=master)](https://travis-ci.com/publicdocs-platform/fire-monitor-bot)
+
 The original runs at https://twitter.com/FireUnofficial
 
 The fire information displayed by this app is UNOFFICIAL, FOR INFORMATION ONLY, 
