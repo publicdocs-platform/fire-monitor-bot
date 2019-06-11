@@ -354,28 +354,40 @@ function showMap(centerX, centerY, zoom, style, opt) {
   const whiteDot = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAylJREFUaAXtmb2O2kAQxw0RBVxxIKWBLlddkAgPELoUKfIM6XiDdLzLSVT0IOVqKPIESChVdNElkAqSBhqEMz+EDbJ314sx+Czxl0Y2s7PzsbvenR0c54rrCJw0ArmTeqs714R9L3QndCtUFFoJ/RP6IfRdaCr0YvBKPPko9CD0JORaEHLI04/+qeBGrH4R+i1k47RO5tdOD/ouhs9i6Y+Qzqk4fPSh96x4LdofheI4aNsH/dhJHO9EI9Nt68gpcs9iB3uRsN2F3oumr0LsKkbk83mn0Wg49XrdqVarTqlUcpbLpTObzZzJZOKMx2Nns9kYdewa2bU+CX2zETbJMBJ/hYwj2mq13G636y4WC9eE+Xy+lUM+SufOrtVMiKwSrEXjsmk2m+5oNDL5rG0bDocu/cWGiVhOsb8J7Qeby+XcTqfjrtdrrYM2DfRHD/oMgeDH0WBLUyotFApur9ez8c9aBn3o1dkU/lFbLIeKcp9npJJ23osSvYaZwB/rw44TVjkaTPc5gX6dbeHjVyTITZTpAR/cqWs+Knj0Gz5sNpTI3IkESzkKcXebKKeD7exOOh+Ej39GPEhrSAH79iVhOCfwz0fef9u/fNi/7t/a7fb+xwXeDPaU/nkucRkJjb6kB5EnbNKzw4mNXZU/wsPPLYIz8NZrOHyS25TL5UPW2d8rlco2p9IYuvf4wQDeeA2HTxKzNGCwy3V1i2AAymyzVvNnzOt3kafBru9nMAAu4CEUi0p2SC5phsGu71AwAKoHIaxWSnZILmkG9wgNfIeCAXCJCGE6TacKwiVIA9/PYADUbULgJpUGDHaVfuJj5s8B1srP4Ghzh+33+0H2WX8PBgPd3Rn/jGs6U7mQahRTz0bJesUxHUVmo5m/DzArmb6REUDm78QEQRVAuQ6zUJUgAJDpuhABZL4yRxAvujZ61uo0+TwpMdksCWFa1WlmATATxkKvtCs/+hj85509eSQLvgnthy1tSQSA/tjVaNtw2WKVtdMTgkAfei8GDrvM/kt5OErkTiRYZLFPQjbLCDnk6Uf/2LDdhY4xwKWIus2dUCb+qT8muKtscAT+A8FCHrHOcDhMAAAAAElFTkSuQmCC';
 
 
+  const satelliteVectorStyles = {
+    'Last 24-48 hrs': {
+      sclr: 'rgba(255,255,0,0.4)',
+      fclr: 'rgba(255,255,0,0.1)',
+      topZindex: -50,
+    },
+    'Last 12-24 hrs': {
+      sclr: 'rgba(255,165,0,0.6)',
+      fclr: 'rgba(255,165,0,0.1)',
+      topZindex: -25,
+    },
+    'Last 6-12 hrs': {
+      sclr: 'rgba(255,0,0,0.8)',
+      fclr: 'rgba(255,0,0,0.1)',
+      topZindex: 0,
+    },
+    'Active Burning': {
+      sclr: 'rgba(255,0,0,0.8)',
+      fclr: 'rgba(255,0,0,0.1)',
+      topZindex: 0,
+    },
+  };
+
   function satelliteVectorLayer(l) {
     const baseUrl = 'https://wildfire.cr.usgs.gov/arcgis/rest/services/geomac_dyn/MapServer/' + l;
     function style(feat) {
-      let sclr = 'rgba(255,255,0,0.1)';
-      let fclr = 'rgba(255,255,0,0)';
-      let topZindex = -100;
       const time = feat.get('load_stat');
-      if (time === 'Last 24-48 hrs') {
-        sclr = 'rgba(255,255,0,0.4)';
-        fclr = 'rgba(255,255,0,0.1)';
-        topZindex = -50;
-      } else if (time === 'Last 12-24 hrs') {
-        sclr = 'rgba(255,165,0,0.6)';
-        fclr = 'rgba(255,165,0,0.1)';
-        topZindex = -25;
-      } else if (time === 'Active Burning') {
-        sclr = 'rgba(255,0,0,0.8)';
-        fclr = 'rgba(255,0,0,0.1)';
-        topZindex = 0;
-      } else {
+      const s = satelliteVectorStyles[time];
+      if (!s) {
         return null;
       }
+      const sclr = s.sclr;
+      const fclr = s.fclr;
+      const topZindex = s.topZindex;
       return [
         new ol.style.Style({
           geometry: feat.getGeometry(),
@@ -472,30 +484,37 @@ function showMap(centerX, centerY, zoom, style, opt) {
     return geoNamesVectorLayer('1', {where: 'gaz_featureclass=\'Summit\''}, whiteTri, '#dddd22');
   }
 
+  const infraredStyles = {
+    'Last 24-48 hrs': {
+      sclr: 'rgba(255,255,0,0.4)',
+      fclr: 'rgba(255,255,0,0.1)',
+      topZindex: -50,
+    },
+    'Last 12-24 hrs': {
+      sclr: 'rgba(255,165,0,0.6)',
+      fclr: 'rgba(255,165,0,0.1)',
+      topZindex: -25,
+    },
+    'Last 6-12 hrs': {
+      sclr: 'rgba(255,0,0,0.8)',
+      fclr: 'rgba(255,0,0,0.1)',
+      topZindex: 0,
+    },
+    'Active Burning': {
+      sclr: 'rgba(255,50,50,0.8)',
+      fclr: 'rgba(255,50,50,0.25)',
+      topZindex: 0,
+    },
+  };
 
   function infraredStyle(time) {
-    let sclr = 'rgba(255,255,0,0.1)';
-    let fclr = 'rgba(255,255,0,0)';
-    let topZindex = -100;
-    if (time === 'Last 24-48 hrs') {
-      sclr = 'rgba(255,255,0,0.4)';
-      fclr = 'rgba(255,255,0,0.1)';
-      topZindex = -50;
-    } else if (time === 'Last 12-24 hrs') {
-      sclr = 'rgba(255,165,0,0.6)';
-      fclr = 'rgba(255,165,0,0.1)';
-      topZindex = -25;
-    } else if (time === 'Last 6-12 hrs') {
-      sclr = 'rgba(255,0,0,0.8)';
-      fclr = 'rgba(255,0,0,0.1)';
-      topZindex = 0;
-    } else if (time === 'Active Burning') {
-      sclr = 'rgba(255,50,50,0.8)';
-      fclr = 'rgba(255,50,50,0.25)';
-      topZindex = 0;
-    } else {
+    const s = infraredStyles[time];
+    if (!s) {
       return null;
     }
+    const sclr = s.sclr;
+    const fclr = s.fclr;
+    const topZindex = s.topZindex;
     return [
       new ol.style.Style({
         zIndex: topZindex,
