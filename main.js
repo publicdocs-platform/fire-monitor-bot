@@ -21,40 +21,36 @@ require('./envconfig');
 const yargs = require('yargs');
 const pkgVersion = require('./package.json').version;
 
-try {
-  yargs.commandDir('commands')
-      .demandCommand()
-      .help('help', 'Displays usage help for commands')
-      .option('debug', {
-        boolean: true,
-        desc: 'Exercises functionality just for debugging - do not use in production',
-      })
-      .option('outputdir', {
-        string: true,
-        alias: 'o',
-        default: './output/',
-        desc: 'Where to dump generated diffs, tweets, images, etc',
-      })
-      .option('clean', {
-        boolean: true,
-        desc: 'Whether to clear the data files and Twitter post queue before starting',
-      })
-      .option('db', {
-        string: true,
-        default: './persist.yaml',
-        desc: 'R/W file to persist fire info.',
-      })
-      .option('port', {
-        number: true,
-        default: 8080,
-        desc: 'Web server port',
-      })
-      .scriptName('firemon')
-      .recommendCommands()
-      .strict()
-      .version('version', 'Displays package version', pkgVersion)
-      .wrap(yargs.terminalWidth())
-      .parse();
-} catch (err) {
-  throw err;
-}
+yargs.commandDir('commands')
+    .demandCommand()
+    .help('help', 'Displays usage help for commands')
+    .option('debug', {
+      boolean: true,
+      desc: 'Exercises functionality just for debugging - do not use in production',
+    })
+    .option('outputdir', {
+      string: true,
+      alias: 'o',
+      default: './output/',
+      desc: 'Where to dump generated diffs, tweets, images, etc',
+    })
+    .option('clean', {
+      boolean: true,
+      desc: 'Whether to clear the data files and Twitter post queue before starting',
+    })
+    .option('db', {
+      string: true,
+      default: './persist.yaml',
+      desc: 'R/W file to persist fire info.',
+    })
+    .option('port', {
+      number: true,
+      default: 8080,
+      desc: 'Web server port',
+    })
+    .scriptName('firemon')
+    .recommendCommands()
+    .strict()
+    .version('version', 'Displays package version', pkgVersion)
+    .wrap(yargs.terminalWidth())
+    .parse();
