@@ -37,7 +37,6 @@ const maprender = require('../lib/maprender');
 const render = require('../lib/render');
 const geocoding = require('../lib/geocoding');
 const geomac = require('../lib/geomac');
-const tileserver = require('../lib/tileserver');
 const server = require('../lib/server');
 const files = require('../lib/files');
 const units = require('../lib/units');
@@ -157,11 +156,6 @@ exports.builder = {
 
 exports.handler = (argv) => {
   console.log(argv);
-
-  // This functionality is disabled.
-  if (false) {
-    tileserver.run(8081);
-  }
 
   const FairSemaphore = require('fair-semaphore');
   const processingSemaphore = new FairSemaphore(1);
@@ -475,8 +469,8 @@ exports.handler = (argv) => {
 
 
       const displayFilters = {
-        InAlaska: cur.state == 'AK' || cur.State == 'AK' || (_.first(cities) || {}).adminCode == 'AK',
-        InHawaii: cur.state == 'HI' || cur.State == 'HI' || (_.first(cities) || {}).adminCode == 'HI',
+        InAlaska: cur.state === 'AK' || cur.State === 'AK' || (_.first(cities) || {}).adminCode === 'AK',
+        InHawaii: cur.state === 'HI' || cur.State === 'HI' || (_.first(cities) || {}).adminCode === 'HI',
         KnownLocationLowPop: lat && lon && nearPopulation <= 1000,
         UnknownLocationSmallSize: !lat && !lon && (cur.DailyAcres || 0) < 1.1 && (cur.TotalIncidentPersonnel || 0) < 15,
         FalseAlarmType: cur.IncidentTypeCategory === 'FA' || cur.incidenttypecategory === 'FA',
@@ -505,7 +499,7 @@ exports.handler = (argv) => {
         biggest: _.last(byPop.filter((x) => x.useful)),
         all: {closest: cities, biggest: _.reverse(byPop)},
       };
-      if (displayCities.closest == displayCities.biggest) {
+      if (displayCities.closest === displayCities.biggest) {
         displayCities.biggest = null;
       }
 
@@ -538,7 +532,7 @@ exports.handler = (argv) => {
 
 
       async function perimAndSaveProcess() {
-        const detailImg = (lat && lon) || (perim.length > 0 && !(perim.length == 1 && perim[0].length == 1 && perim[0][0].length == 2));
+        const detailImg = (lat && lon) || (perim.length > 0 && !(perim.length === 1 && perim[0].length === 1 && perim[0][0].length === 2));
         let detailRender = null;
         if (detailImg) {
           const perimTemplateData = {

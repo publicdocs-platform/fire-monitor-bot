@@ -20,7 +20,7 @@ limitations under the License.
 /* exported showMap */
 function showMap(centerX, centerY, zoom, style, opt) {
   const opts = opt || {};
-  const detail = style == 'perim';
+  const detail = style === 'perim';
   const cities = opts.cities || {closest: [], biggest: []};
   const excluded = opts.excluded || [];
   const events = opts.events || [];
@@ -361,15 +361,15 @@ function showMap(centerX, centerY, zoom, style, opt) {
       let fclr = 'rgba(255,255,0,0)';
       let topZindex = -100;
       const time = feat.get('load_stat');
-      if (time == 'Last 24-48 hrs') {
+      if (time === 'Last 24-48 hrs') {
         sclr = 'rgba(255,255,0,0.4)';
         fclr = 'rgba(255,255,0,0.1)';
         topZindex = -50;
-      } else if (time == 'Last 12-24 hrs') {
+      } else if (time === 'Last 12-24 hrs') {
         sclr = 'rgba(255,165,0,0.6)';
         fclr = 'rgba(255,165,0,0.1)';
         topZindex = -25;
-      } else if (time == 'Active Burning') {
+      } else if (time === 'Active Burning') {
         sclr = 'rgba(255,0,0,0.8)';
         fclr = 'rgba(255,0,0,0.1)';
         topZindex = 0;
@@ -477,19 +477,19 @@ function showMap(centerX, centerY, zoom, style, opt) {
     let sclr = 'rgba(255,255,0,0.1)';
     let fclr = 'rgba(255,255,0,0)';
     let topZindex = -100;
-    if (time == 'Last 24-48 hrs') {
+    if (time === 'Last 24-48 hrs') {
       sclr = 'rgba(255,255,0,0.4)';
       fclr = 'rgba(255,255,0,0.1)';
       topZindex = -50;
-    } else if (time == 'Last 12-24 hrs') {
+    } else if (time === 'Last 12-24 hrs') {
       sclr = 'rgba(255,165,0,0.6)';
       fclr = 'rgba(255,165,0,0.1)';
       topZindex = -25;
-    } else if (time == 'Last 6-12 hrs') {
+    } else if (time === 'Last 6-12 hrs') {
       sclr = 'rgba(255,0,0,0.8)';
       fclr = 'rgba(255,0,0,0.1)';
       topZindex = 0;
-    } else if (time == 'Active Burning') {
+    } else if (time === 'Active Burning') {
       sclr = 'rgba(255,50,50,0.8)';
       fclr = 'rgba(255,50,50,0.25)';
       topZindex = 0;
@@ -759,7 +759,7 @@ function showMap(centerX, centerY, zoom, style, opt) {
       return afmKmlLayer('../kml/modis.kml');
     } else if (config === 'AFM-VIIRS-I') {
       return afmKmlLayer('../kml/viirs-i.kml');
-    } else if (config == 'Events') {
+    } else if (config === 'Events') {
       return eventsVectorLayer(events);
     }
     const opts = {

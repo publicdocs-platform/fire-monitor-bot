@@ -17,6 +17,7 @@ module.exports = {
   'rules': {
     'require-jsdoc': 'off',
     'max-len': 'off',
+    'eqeqeq': ['error', 'smart'],
   },
   'overrides': [
     {
