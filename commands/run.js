@@ -150,6 +150,20 @@ exports.builder = {
     string: true,
     desc: 'Path to fire units ID info',
   },
+  unitsIdPath: {
+    string: true,
+    desc: 'Path to fire units ID info',
+  },
+  retweetMinAcres: {
+    number: true,
+    default: 100,
+    desc: 'Minimum acreage to retweet',
+  },
+  retweetSelector: {
+    string: true,
+    default: 'general',
+    desc: 'Account selector to use for retweeting',
+  },
 };
 
 exports.handler = (argv) => {
@@ -564,6 +578,12 @@ exports.handler = (argv) => {
         // Tweet out in population and acre order.
         const invPrio = Math.log10(cur.DailyAcres) * 1000 + nearPopulation;
         const priority = numeral(Math.round(100000000000 - invPrio)).format('0000000000000');
+
+        let retweetSelectors = [];
+        if (argv.retweetSelector && cur.DailyAcres >= argv.retweetMinAcres) {
+          retweetSelectors = [argv.retweetSelector];
+        }
+
         // allImgs =
         const saved = {
           text: tweet,
@@ -573,6 +593,7 @@ exports.handler = (argv) => {
           image2AltText: cur.UniqueFireIdentifier + ' - Perimeter map',
           image2: detailRender,
           selectors: [cur.state || cur.State || key.substr(5, 2), 'other'],
+          retweetSelectors: retweetSelectors,
           threadQuery: argv.twitterThreadQueryPrefix ? (argv.twitterThreadQueryPrefix + ' ' + cur.Hashtag) : null,
         };
         if (center) {
