@@ -14,7 +14,8 @@
     "debug": "node --inspect main.js",
     "cleanstart": "yarn clean; node main.js",
     "test": "nyc mocha './{,!(node_modules)/**/}test/*.js'",
-    "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
+    "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
+    "lint": "eslint . --fix"
   },
   "dependencies": {
     "@publicdocs/togeojson": "https://github.com/publicdocs-platform/togeojson",
@@ -53,9 +54,12 @@
     "yargs": "^13.2.4"
   },
   "devDependencies": {
-    "@babel/cli": "^7.1.2",
-    "@babel/core": "^7.1.2",
-    "@babel/preset-env": "^7.1.0",
+    "@babel/cli": "^7.4.0",
+    "@babel/core": "^7.4.0",
+    "@babel/preset-env": "^7.4.0",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.16.0",
+    "eslint-config-google": "^0.13.0",
     "mocha": "^6.1.4",
     "nyc": "^14.1.1"
   },

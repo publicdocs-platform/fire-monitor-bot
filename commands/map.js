@@ -37,7 +37,7 @@ exports.description = 'Runs a daemon to post updates';
 exports.builder = {
   twitter: {
     boolean: true,
-    desc: 'Whether to post to Twitter'
+    desc: 'Whether to post to Twitter',
   },
   lat: {
     number: true,
@@ -75,7 +75,7 @@ exports.builder = {
     default: true,
     desc: 'Quit after generating map',
   },
-}
+};
 
 
 const config = {
@@ -85,15 +85,12 @@ const config = {
 
 
 const template = pug.compileFile(path.join(__dirname, '../templates/detailsRender.pug'));
-const html = function (entry) {
-  return template({ config: config, data: entry, curdir: process.cwd() });
+const html = function(entry) {
+  return template({config: config, data: entry, curdir: process.cwd()});
 };
 
 
-
 async function doIt(argv) {
-
-
   const tmpdir = files.setupDirs(argv.outputdir, argv.clean);
 
   server.run(argv.port, argv.outputdir);
@@ -107,7 +104,7 @@ async function doIt(argv) {
   let customLayerCount = 0;
   if (argv.kmz) {
     await del(path.join(argv.outputdir, 'kml', 'custom-*.kml'));
-    for (let p of argv.kmz.split(',')) {
+    for (const p of argv.kmz.split(',')) {
       await kmz.loadKmz(p, path.join(argv.outputdir, 'kml', 'custom-'+customLayerCount+'.kml'), true);
       customLayerCount++;
     }
@@ -134,8 +131,10 @@ async function doIt(argv) {
   await render.renderInBrowser(1450, 1450, url, imgPath);
 }
 
-exports.handler = argv => {
+exports.handler = (argv) => {
   doIt(argv).then(() => {
-    if (argv.quit) { process.exit(); }
-  })
+    if (argv.quit) {
+      process.exit();
+    }
+  });
 };

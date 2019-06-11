@@ -54,7 +54,6 @@ const files = require('../lib/files');
 const units = require('../lib/units');
 
 
-
 exports.command = 'run';
 
 exports.aliases = ['daemon'];
@@ -64,20 +63,20 @@ exports.description = 'Runs a daemon to post updates';
 exports.builder = {
   once: {
     boolean: true,
-    desc: 'Run only once and then exit'
+    desc: 'Run only once and then exit',
   },
   twitter: {
     boolean: true,
-    desc: 'Whether to post to Twitter'
+    desc: 'Whether to post to Twitter',
   },
   twitterOnly: {
     boolean: true,
-    desc: 'Whether to stop other daemon activities other than tweeting'
+    desc: 'Whether to stop other daemon activities other than tweeting',
   },
   monitorPerims: {
     boolean: true,
     default: true,
-    desc: 'Whether to post changes only to the perimeter.'
+    desc: 'Whether to post changes only to the perimeter.',
   },
   userAgent: {
     string: true,
@@ -86,97 +85,98 @@ exports.builder = {
   },
   locations: {
     boolean: true,
-    desc: 'Whether to post images of fire locations'
+    desc: 'Whether to post images of fire locations',
   },
   redo: {
     string: true,
-    desc: 'Forces an update of a given fire ids (comma separated)'
+    desc: 'Forces an update of a given fire ids (comma separated)',
   },
   realFireNames: {
     boolean: true,
-    desc: 'Use real fire names not hashtags'
+    desc: 'Use real fire names not hashtags',
   },
   archiveInciweb: {
     boolean: true,
-    desc: 'Save InciWeb updates to web.archive.org'
+    desc: 'Save InciWeb updates to web.archive.org',
   },
   emergingNew: {
     boolean: true,
-    desc: 'Include emerging wildfires <24hrs'
+    desc: 'Include emerging wildfires <24hrs',
   },
   emergingOld: {
     boolean: true,
-    desc: 'Include emerging wildfires >24hrs'
+    desc: 'Include emerging wildfires >24hrs',
   },
   perimAfter: {
     string: true,
-    default:'2017-12-31',
-    desc: 'Only display a update because of a perimeter change after this timestamp'
+    default: '2017-12-31',
+    desc: 'Only display a update because of a perimeter change after this timestamp',
   },
   twitterAuthPath: {
     string: true,
-    desc: 'Path to twitter profiles'
+    desc: 'Path to twitter profiles',
   },
   twitterAccountsPath: {
     string: true,
-    desc: 'Path to twitter accounts per state'
+    desc: 'Path to twitter accounts per state',
   },
   twitterPeriodSec: {
     number: true,
     default: 60 * 5 + 11,
-    desc: 'Seconds between twitter posts'
+    desc: 'Seconds between twitter posts',
   },
   pruneDays: {
     number: true,
     default: 45,
-    desc: 'Days before pruning stale entries'
+    desc: 'Days before pruning stale entries',
   },
   twitterThreadQueryPrefix: {
     string: true,
-    desc: 'Twitter query to find posts to reply to'
+    desc: 'Twitter query to find posts to reply to',
   },
   postPersistCmd: {
     string: true,
-    desc: 'Command to run after peristing data'
+    desc: 'Command to run after peristing data',
   },
   ignoreSatellites: {
     boolean: true,
-    desc: 'Ignores AFM satellite data'
+    desc: 'Ignores AFM satellite data',
   },
   unitsSocialPath: {
     string: true,
-    desc: 'Path to fire units social media info'
+    desc: 'Path to fire units social media info',
   },
   unitsIdPath: {
     string: true,
-    desc: 'Path to fire units ID info'
+    desc: 'Path to fire units ID info',
   },
-}
+};
 
-exports.handler = argv => {
-
+exports.handler = (argv) => {
   console.log(argv);
 
   // This functionality is disabled.
-  if (false) { tileserver.run(8081); }
+  if (false) {
+    tileserver.run(8081);
+  }
 
   const FairSemaphore = require('fair-semaphore');
   const processingSemaphore = new FairSemaphore(1);
 
   const intensiveProcessingSemaphore = util.namedSemaphore(processingSemaphore, 'computation');
 
-  const tmpdir = files.setupDirs(argv.outputdir, argv.clean)
+  const tmpdir = files.setupDirs(argv.outputdir, argv.clean);
 
   server.run(argv.port, argv.outputdir);
 
 
   const processFire = function(e, proj) {
-    let entry = e.attributes;
-    let ret = {};
+    const entry = e.attributes;
+    const ret = {};
     const to = proj4(proj, 'EPSG:4326', [e.geometry.x, e.geometry.y]);
     ret.Lon = to[0];
     ret.Lat = to[1];
-    for (let key in entry) {
+    for (const key in entry) {
       ret[key] = entry[key];
       if (key.endsWith('DateTime')) {
         ret[key + 'Epoch'] = ret[key];
@@ -197,9 +197,9 @@ exports.handler = argv => {
     qs: {
     },
     headers: {
-      'User-Agent': 'Request-Promise; ' + argv.userAgent
+      'User-Agent': 'Request-Promise; ' + argv.userAgent,
     },
-    json: true
+    json: true,
   };
 
 
@@ -212,31 +212,30 @@ exports.handler = argv => {
 
 
   const htmlTemplate = pug.compileFile(path.join(__dirname, '../templates/fireUpdateRender.pug'));
-  const genHtml = function (entry) {
-    return htmlTemplate({ config: config, data: entry, curdir: process.cwd() });
+  const genHtml = function(entry) {
+    return htmlTemplate({config: config, data: entry, curdir: process.cwd()});
   };
 
   const perimeterTemplate = pug.compileFile(path.join(__dirname, '../templates/detailsRender.pug'));
-  const perimeterHtml = function (entry) {
-    return perimeterTemplate({ config: config, data: entry, curdir: process.cwd() });
+  const perimeterHtml = function(entry) {
+    return perimeterTemplate({config: config, data: entry, curdir: process.cwd()});
   };
-
 
 
   const tweetTemplate = pug.compileFile(path.join(__dirname, '../templates/fireUpdateTweet.pug'));
 
-  const genTweet = function (entry) {
-    return tweetTemplate({ config: config, data: entry, curdir: process.cwd() });
+  const genTweet = function(entry) {
+    return tweetTemplate({config: config, data: entry, curdir: process.cwd()});
   };
 
   if (argv.twitter) {
     const t = require('../lib/twitter');
     t.launchDaemon(argv.outputdir + '/postqueue/',
-                   util.namedSemaphore(processingSemaphore, 'twitter'),
-                   argv.twitterAuthPath,
-                   argv.twitterAccountsPath,
-                   argv.twitterPeriodSec * 1000
-                  );
+        util.namedSemaphore(processingSemaphore, 'twitter'),
+        argv.twitterAuthPath,
+        argv.twitterAccountsPath,
+        argv.twitterPeriodSec * 1000
+    );
   }
 
   const periodSeq = argv.debug ? 5 : 65;
@@ -262,14 +261,13 @@ exports.handler = argv => {
   })();
 
   async function internalLoop(first, last) {
-
     const layers = await rp(dataOptions);
 
-    let x = Object.assign({}, last);
+    const x = Object.assign({}, last);
 
     const dataSetName = 'Active Incidents';
 
-    const dataSet = _.find(layers, p => p.name === dataSetName);
+    const dataSet = _.find(layers, (p) => p.name === dataSetName);
 
     const requiredLayerNames = ['Large WF'];
     if (argv.emergingNew) {
@@ -279,9 +277,9 @@ exports.handler = argv => {
       requiredLayerNames.unshift('Emerging WF > 24 hours');
     }
 
-    const filteredLayers = dataSet.layerConfigs.filter(f => requiredLayerNames.includes(f.featureCollection.layerDefinition.name));
-    const layerFeatures = filteredLayers.map(x => {
-      return x.featureCollection.featureSet.features.map(y => {
+    const filteredLayers = dataSet.layerConfigs.filter((f) => requiredLayerNames.includes(f.featureCollection.layerDefinition.name));
+    const layerFeatures = filteredLayers.map((x) => {
+      return x.featureCollection.featureSet.features.map((y) => {
         const r = processFire(y, 'EPSG:'+ x.featureCollection.featureSet.spatialReference.latestWkid);
         r.NFSAType = x.featureCollection.layerDefinition.name;
         return r;
@@ -289,12 +287,12 @@ exports.handler = argv => {
     });
 
     const data = _.flatten(layerFeatures);
-    
-    const nfsaData = _.keyBy(data, o => o.UniqueFireIdentifier);
+
+    const nfsaData = _.keyBy(data, (o) => o.UniqueFireIdentifier);
     const gm = await geomac.getFires(argv.userAgent);
 
-    let keys = _.union(_.keys(nfsaData), _.keys(gm));
-    keys.map(key => {
+    const keys = _.union(_.keys(nfsaData), _.keys(gm));
+    keys.map((key) => {
       const merged = geomac.mergedNfsaGeomacFire(nfsaData[key], gm[key]);
       x[key] = merged;
       if (!merged) {
@@ -312,24 +310,23 @@ exports.handler = argv => {
       const diffsGlobal = yaml.safeDump(diffGlobal, {skipInvalid: true});
       fs.writeFileSync(argv.outputdir + '/data/GLOBAL-DIFF-' + globalUpdateId + '.yaml', diffsGlobal);
     }
-  
+
     const perims = await geomac.getPerimeters(argv.userAgent);
 
     const xkeys = _.keys(x);
-    const xsortedKeys = _.sortBy(xkeys, i => -x[i].DailyAcres);
+    const xsortedKeys = _.sortBy(xkeys, (i) => -x[i].DailyAcres);
 
-    for (let key1 of xsortedKeys) {
-      
+    for (const key1 of xsortedKeys) {
       const key = key1;
-      
-      var { i, cur, perimDateTime, old, inciWeb, perim } = preDiffFireProcess(key, x, last, perims);
+
+      let {i, cur, perimDateTime, old, inciWeb, perim} = preDiffFireProcess(key, x, last, perims);
 
       if (first) {
         continue;
       }
 
 
-      if (i in last && last[i].ModifiedOnDateTime >= cur.ModifiedOnDateTime) {                    
+      if (i in last && last[i].ModifiedOnDateTime >= cur.ModifiedOnDateTime) {
         // Keep the newer data around.
         x[i] = Object.assign({}, last[i]);
         x[i].PerimDateTime = perimDateTime;
@@ -349,7 +346,7 @@ exports.handler = argv => {
 
 
       let oneDiff = deepDiff(old, cur);
-      oneDiff = _.keyBy(oneDiff, o => o.path.join('.'));
+      oneDiff = _.keyBy(oneDiff, (o) => o.path.join('.'));
 
       if (!('DailyAcres' in oneDiff || 'PercentContained' in oneDiff)) {
         if (!argv.monitorPerims || !('PerimDateTime' in oneDiff)) {
@@ -366,9 +363,9 @@ exports.handler = argv => {
         continue;
       }
 
-      const updateId = 'Update-' + cur.ModifiedOnDateTime + '-PER-' + (cur.PerimDateTime || 'NONE') + '-of-' + i + '-named-' + cur.Name.replace(/[^a-z0-9]/gi,'');
+      const updateId = 'Update-' + cur.ModifiedOnDateTime + '-PER-' + (cur.PerimDateTime || 'NONE') + '-of-' + i + '-named-' + cur.Name.replace(/[^a-z0-9]/gi, '');
 
-      const diffs = yaml.safeDump(oneDiff || [],  {skipInvalid: true});
+      const diffs = yaml.safeDump(oneDiff || [], {skipInvalid: true});
       const isNew = !(i in last);
 
       console.log('- ' + updateId);
@@ -394,15 +391,14 @@ exports.handler = argv => {
       } finally {
         intensiveProcessingSemaphore.leave();
       }
-
     }
 
-    fs.writeFileSync(argv.db, yaml.safeDump(x,  {skipInvalid: true}));
+    fs.writeFileSync(argv.db, yaml.safeDump(x, {skipInvalid: true}));
 
     if (argv.postPersistCmd) {
       try {
         await exec(argv.postPersistCmd);
-      } catch(err) {
+      } catch (err) {
         console.log('### Error in post persist command: ');
         console.log(err);
       }
@@ -410,7 +406,7 @@ exports.handler = argv => {
 
     if (argv.once) {
       process.exit();
-      while(true) { }
+      while (true) { }
     }
 
     return x;
@@ -425,8 +421,8 @@ exports.handler = argv => {
       const centerWebpageUrl = 'http://localhost:8080/updates/img/WEB-CENTER-' + updateId + '.html';
       const perimWebpageUrl = 'http://localhost:8080/updates/img/WEB-PERIM-' + updateId + '.html';
       if (inciWeb && argv.archiveInciweb) {
-        let u = 'https://web.archive.org/save/https://inciweb.nwcg.gov/incident/' + inciWeb + '/';
-        rp({ uri: u, resolveWithFullResponse: true }).then((r) => {
+        const u = 'https://web.archive.org/save/https://inciweb.nwcg.gov/incident/' + inciWeb + '/';
+        rp({uri: u, resolveWithFullResponse: true}).then((r) => {
           console.log('   ~~ Archived to web.archive.org: %s', r.headers ? ('https://web.archive.org/' + r.headers['content-location']) : 'unknown');
         }).catch((err) => {
           console.log('   ~~ ERROR Archiving to web.archive.org: ' + u);
@@ -448,30 +444,29 @@ exports.handler = argv => {
       const lon = center ? center[0] : cur.Lon;
       // MultiPolygon -> Coordinates
       const points = _.flattenDepth(perim, 2);
-      const useful = 100 + Math.sqrt(0.0015625 /*mi2 per acre*/ * cur.DailyAcres);
+      const useful = 100 + Math.sqrt(0.0015625 /* mi2 per acre*/ * cur.DailyAcres);
       const cities2 = lat ? _.sortBy(geocoding.nearestCities(lat, lon, 1000, 500)
-        .map(x => {
-          let thePoint = [];
-          if (x.distance < useful) {
-            x.useful = true;
-            const pointDists = points.map(pp => geocoding.distance(pp[0], pp[1], x.lon, x.lat));
-            const minPointIndex = _.minBy(_.range(0, points.length), idx => pointDists[idx]);
-            const thePoint = points[minPointIndex];
-            x.distance = pointDists[minPointIndex];
-            x.bearing = geocoding.bearing(x.lon, x.lat, thePoint[0], thePoint[1]);
-            x.displayName = geocoding.cityDisplayName(x);
-            x.directions = geocoding.friendlyDistance(x.distance, 'mi', geocoding.compass(x.bearing), x.displayName);
-            x.weightedPopulation = x.distance < 20 ? x.population : (x.distance < 50 ? 0.5 * x.population : (x.distance < 75 ? 0.01 * x.population : (x.distance < 100 ? 0.001 * x.population : 0)));
-          }
-          else {
-            x.useful = false;
-            x.weightedPopulation = 0;
-          }
-          return x;
-        }), (x) => x.distance) : [];
-      
-      
-      const cities = _.sortBy(cities2, x => x.distance);
+          .map((x) => {
+            const thePoint = [];
+            if (x.distance < useful) {
+              x.useful = true;
+              const pointDists = points.map((pp) => geocoding.distance(pp[0], pp[1], x.lon, x.lat));
+              const minPointIndex = _.minBy(_.range(0, points.length), (idx) => pointDists[idx]);
+              const thePoint = points[minPointIndex];
+              x.distance = pointDists[minPointIndex];
+              x.bearing = geocoding.bearing(x.lon, x.lat, thePoint[0], thePoint[1]);
+              x.displayName = geocoding.cityDisplayName(x);
+              x.directions = geocoding.friendlyDistance(x.distance, 'mi', geocoding.compass(x.bearing), x.displayName);
+              x.weightedPopulation = x.distance < 20 ? x.population : (x.distance < 50 ? 0.5 * x.population : (x.distance < 75 ? 0.01 * x.population : (x.distance < 100 ? 0.001 * x.population : 0)));
+            } else {
+              x.useful = false;
+              x.weightedPopulation = 0;
+            }
+            return x;
+          }), (x) => x.distance) : [];
+
+
+      const cities = _.sortBy(cities2, (x) => x.distance);
 
       const nearPopulation = Math.round(cities.reduce((a, b) => a + b.weightedPopulation, 0));
       const allPopulation = cities.reduce((a, b) => a + b.population, 0);
@@ -484,13 +479,13 @@ exports.handler = argv => {
         KnownLocationLowPop: lat && lon && nearPopulation <= 1000,
         UnknownLocationSmallSize: !lat && !lon && (cur.DailyAcres || 0) < 1.1 && (cur.TotalIncidentPersonnel || 0) < 15,
         FalseAlarmType: cur.IncidentTypeCategory === 'FA' || cur.incidenttypecategory === 'FA',
-        FalseAlarmName: cur.Fire_Name.toLowerCase().substr(0,3) === 'fa ' || (cur.Fire_Name.toLowerCase().includes('false') && cur.Fire_Name.toLowerCase().includes('alarm')),
+        FalseAlarmName: cur.Fire_Name.toLowerCase().substr(0, 3) === 'fa ' || (cur.Fire_Name.toLowerCase().includes('false') && cur.Fire_Name.toLowerCase().includes('alarm')),
         // 3 hours with no info, might be stale
         OldEmergingFiresWithoutInfo: (cur.NFSAType || '').includes('Emerging') && !cur.DailyAcres && !cur.PercentContained && (cur.ModifiedOnDateTimeEpoch - cur.FireDiscoveryDateTimeEpoch > 1000 * 60 * 60 * 3),
-        LACNoData: !cur.DailyAcres && !cur.PercentContained && cur.Fire_Name.toLowerCase().substr(0,4) === 'lac-',
-      }
+        LACNoData: !cur.DailyAcres && !cur.PercentContained && cur.Fire_Name.toLowerCase().substr(0, 4) === 'lac-',
+      };
 
-      for (let filterKey in displayFilters) {
+      for (const filterKey in displayFilters) {
         if (displayFilters[filterKey]) {
           console.log('  #> Skipping %s -> filter %s', updateId, filterKey);
           return;
@@ -504,10 +499,10 @@ exports.handler = argv => {
       }
 
       const byPop = _.sortBy(cities, 'population');
-      let displayCities = {
+      const displayCities = {
         closest: _.first(cities.filter((x) => x.useful)),
         biggest: _.last(byPop.filter((x) => x.useful)),
-        all: { closest: cities, biggest: _.reverse(byPop) }
+        all: {closest: cities, biggest: _.reverse(byPop)},
       };
       if (displayCities.closest == displayCities.biggest) {
         displayCities.biggest = null;
@@ -515,7 +510,7 @@ exports.handler = argv => {
 
       const countyTag = cur.POOCounty ? util.hashTagify(cur.POOCounty + ' County') : null;
 
-      const extraTags = [countyTag, cur.unitMention].filter(x => x).join(' ');
+      const extraTags = [countyTag, cur.unitMention].filter((x) => x).join(' ');
 
       const terrainImg = terrainPath || null;
       const templateData = {
@@ -528,7 +523,7 @@ exports.handler = argv => {
         diff: oneDiff,
         extraTags: extraTags,
         isNew: isNew,
-        mapData: { events: events },
+        mapData: {events: events},
         terrainImg: terrainImg,
         terrainCredit: terrainImg ? maprender.terrainCredit : '',
       };
@@ -541,7 +536,6 @@ exports.handler = argv => {
       await perimAndSaveProcess(null);
 
 
-
       async function perimAndSaveProcess() {
         const detailImg = (lat && lon) || (perim.length > 0 && !(perim.length == 1 && perim[0].length == 1 && perim[0][0].length == 2));
         let detailRender = null;
@@ -551,7 +545,7 @@ exports.handler = argv => {
             lon: lon,
             zoom: zoom,
             cities: displayCities,
-            mapData: { events: events },
+            mapData: {events: events},
             perimDateTime: perimDateTime,
             current: cur,
             last: old,
@@ -570,8 +564,8 @@ exports.handler = argv => {
         // Tweet out in population and acre order.
         const invPrio = Math.log10(cur.DailyAcres) * 1000 + nearPopulation;
         const priority = numeral(Math.round(100000000000 - invPrio)).format('0000000000000');
-        //allImgs = 
-        let saved = {
+        // allImgs =
+        const saved = {
           text: tweet,
           shortText: cur.UniqueFireIdentifier + ' - Unofficial fire report. See officials for safety info. May be incorrect; disclaimers in images.',
           image1AltText: cur.UniqueFireIdentifier + ' - ' + tweet,
@@ -582,13 +576,12 @@ exports.handler = argv => {
           threadQuery: argv.twitterThreadQueryPrefix ? (argv.twitterThreadQueryPrefix + ' ' + cur.Hashtag) : null,
         };
         if (center) {
-          saved.coords = { lat: lat, lon: lon };
+          saved.coords = {lat: lat, lon: lon};
         }
         // Tell the twitter daemon we are ready to post.
-        const savedYaml = yaml.safeDump(saved, { skipInvalid: true });
+        const savedYaml = yaml.safeDump(saved, {skipInvalid: true});
         fs.writeFileSync(argv.outputdir + '/postqueue/' + priority + '-TWEET-' + updateId + '.yaml', savedYaml);
         console.log('   # Exiting processing ' + updateId);
-
       }
 
       async function renderPerim() {
@@ -604,7 +597,7 @@ exports.handler = argv => {
 
   function preDiffFireProcess(key, x, last, perims) {
     const i = key;
-    let cur = x[i];
+    const cur = x[i];
     const old = last[i] || {};
     let perim = [];
     let perimDateTime = null;
@@ -615,18 +608,18 @@ exports.handler = argv => {
       inciWeb = perims[cur.UniqueFireIdentifier].attributes.inciwebid;
     }
     const children = _.values(perims)
-      .filter(fire => {
-        const b = (fire.attributes.complexname || '').toLowerCase() === (cur.Fire_Name || '').toLowerCase();
-        if (b) {
-          if (!perimDateTime || perimDateTime < fire.attributes.perimeterdatetime) {
-            perimDateTime = fire.attributes.perimeterdatetime;
-            inciWeb = fire.attributes.inciwebid;
+        .filter((fire) => {
+          const b = (fire.attributes.complexname || '').toLowerCase() === (cur.Fire_Name || '').toLowerCase();
+          if (b) {
+            if (!perimDateTime || perimDateTime < fire.attributes.perimeterdatetime) {
+              perimDateTime = fire.attributes.perimeterdatetime;
+              inciWeb = fire.attributes.inciwebid;
+            }
           }
-        }
-        return b;
-      })
-      .map(fire => fire.geometry.coords)
-      .reduce((a, b) => a.concat(b), []);
+          return b;
+        })
+        .map((fire) => fire.geometry.coords)
+        .reduce((a, b) => a.concat(b), []);
     perim = perim.concat(children);
     if (cur.Lat) {
       perim.push([[[cur.Lon, cur.Lat], [cur.Lon, cur.Lat]]]);
@@ -634,10 +627,10 @@ exports.handler = argv => {
     cur.PerimDateTime = perimDateTime;
     cur.unitId = cur.pooresponsibleunit || cur.UniqueFireIdentifier.split('-')[1];
     cur.unitMention = units.unitTag(cur.unitId);
-    return { i, cur, perimDateTime, old, inciWeb, perim };
+    return {i, cur, perimDateTime, old, inciWeb, perim};
   }
 
-  const mainLoop = function (first, last) {
+  const mainLoop = function(first, last) {
     (async function() {
       let x = last;
       if (!argv.twitterOnly) {
@@ -656,24 +649,30 @@ exports.handler = argv => {
 
         console.log('Next round');
       }
-      setTimeout(function () { mainLoop(false, x); }, 1000 * periodSeq * 1);
+      setTimeout(function() {
+        mainLoop(false, x);
+      }, 1000 * periodSeq * 1);
     })();
-  }
+  };
 
   let persist = undefined;
   if (fs.existsSync(argv.db)) {
     persist = yaml.safeLoad(fs.readFileSync(argv.db));
     if (argv.redo) {
-      argv.redo.split(',').map(x => { delete persist[x]; return 0; });
+      argv.redo.split(',').map((x) => {
+        delete persist[x]; return 0;
+      });
     }
   }
 
 
   console.log(`*** The fire information displayed by this app is UNOFFICIAL, FOR INFORMATION ONLY, 
   NOT SUITABLE FOR SAFETY/EMERGENCY PURPOSES, 
-  and MAY BE INCORRECT OR OUT-OF-DATE. USE AT YOUR OWN RISK. ***`)
+  and MAY BE INCORRECT OR OUT-OF-DATE. USE AT YOUR OWN RISK. ***`);
 
-  setImmediate(function () { mainLoop(persist ? false : true, persist ? persist : {}); });
+  setImmediate(function() {
+    mainLoop(persist ? false : true, persist ? persist : {});
+  });
 };
 
 

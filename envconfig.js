@@ -17,7 +17,7 @@ limitations under the License.
 'use strict';
 
 // Load .env files.
-require('dotenv').config()
+require('dotenv').config();
 
 // To configure Twit.
 exports.twitterAuth = {
