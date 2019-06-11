@@ -15,8 +15,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-function showMap(centerX, centerY, zoom, style, opts) {
-  const opt = opts || {};
+// This function is used in the rendering templates.
+
+/* exported showMap */
+function showMap(centerX, centerY, zoom, style, opt) {
+  const opts = opt || {};
   const detail = style == 'perim';
   const cities = opts.cities || {closest: [], biggest: []};
   const excluded = opts.excluded || [];
@@ -200,26 +203,11 @@ function showMap(centerX, centerY, zoom, style, opts) {
     },
   };
 
-  function Alpha(config, opacity) {
+  function alphaLayer(config, opacity) {
     const ret = Object.assign({}, config);
     ret.opacity = opacity;
     return ret;
   }
-
-
-  const textStyle = function(feature) {
-    return new ol.style.Text({
-      textAlign: 'left',
-      textBaseline: 'bottom',
-      font: '14px Roboto',
-      text: feature.get('name'),
-      fill: new ol.style.Fill({color: '#000000'}),
-      stroke: new ol.style.Stroke({color: '#ffffff', width: 2}),
-      offsetX: 0,
-      offsetY: 0,
-    });
-  };
-
 
   function perimVectorLayer() {
     const baseUrl = 'https://wildfire.cr.usgs.gov/arcgis/rest/services/geomac_dyn/MapServer/2';
@@ -267,7 +255,6 @@ function showMap(centerX, centerY, zoom, style, opts) {
 
 
       const howTextStyle = function(feature) {
-        const method = feature.get('mapmethod');
         const date = new Date(feature.get('perimeterdatetime')).toISOString().substr(0, 16) + ' UTC';
         const title = date;
 
@@ -421,8 +408,6 @@ function showMap(centerX, centerY, zoom, style, opts) {
       return null;
     }
 
-    const featCenter = ol.extent.getCenter(geom.getExtent());
-
     const align = 'center';
     const offsetX = 0;
     const baseline = 'middle';
@@ -571,27 +556,6 @@ function showMap(centerX, centerY, zoom, style, opts) {
     });
   }
 
-  function customKmlLayer(url) {
-    function stylesFunc(feat) {
-      const name = feat.get('styleUrl');
-
-      const parts = name.split('#');
-      const styleName = parts[parts.length - 1];
-      console.log(styleName);
-      return kmlStyles[styleName] || null;
-    }
-    return new ol.layer.Vector({
-      style: stylesFunc,
-      source: new ol.source.Vector({
-        attributions: [],
-        url: url,
-        format: new ol.format.KML({
-          extractStyles: false,
-        }),
-      }),
-    });
-  }
-
   function customGeojsonLayer(url) {
     function stylesFunc(feat) {
       const name = feat.get('styleUrl');
@@ -715,21 +679,21 @@ function showMap(centerX, centerY, zoom, style, opts) {
     // Library.Census.Tiger.USLandmass,
     Library.USGS.NatlMap.Blank,
     Library.USGS.NatlMap.ShadedRelief,
-    // Alpha(Library.USGS.NatlMap.Imagery, Math.max(Math.min( (zoom-10)/(15-10) * 0.5 + 0.4 ,0.9),0.4)),
-    // Alpha(Library.USGS.ProtectedAreas.SimpleDesignations, 0.8),
-    Alpha(Library.USGS.NatlMap.GovUnitAreas, 0.23),
+    // alphaLayer(Library.USGS.NatlMap.Imagery, Math.max(Math.min( (zoom-10)/(15-10) * 0.5 + 0.4 ,0.9),0.4)),
+    // alphaLayer(Library.USGS.ProtectedAreas.SimpleDesignations, 0.8),
+    alphaLayer(Library.USGS.NatlMap.GovUnitAreas, 0.23),
     'UnincAreas',
     'CityAreas',
     zoom >= 10 ? Library.USGS.NatlMap.HydroNHD : Library.USGS.NatlMap.Hydro,
-    Alpha(Library.USGS.NatlMap.ContoursDetail, 0.05),
-    Alpha(Library.USGS.NatlMap.Contours, 0.3),
+    alphaLayer(Library.USGS.NatlMap.ContoursDetail, 0.05),
+    alphaLayer(Library.USGS.NatlMap.Contours, 0.3),
     // Library.USGS.NatlMap.Polygons,
     Library.Census.Tiger.States,
-    // Alpha(Library.Census.Tiger.HydroBodies, 0.5),
-    // Alpha(Library.Census.Tiger.HydroPaths, 0.2),
+    // alphaLayer(Library.Census.Tiger.HydroBodies, 0.5),
+    // alphaLayer(Library.Census.Tiger.HydroPaths, 0.2),
     ZoomedRoads,
     Library.Census.Tiger.Roads,
-    // Alpha(Library.USGS.NatlMap.TransportNotInCensusMediumScale, 0.3),
+    // alphaLayer(Library.USGS.NatlMap.TransportNotInCensusMediumScale, 0.3),
     'Perim',
     // 'MODIS',
     'AFM-MODIS',
@@ -745,8 +709,8 @@ function showMap(centerX, centerY, zoom, style, opts) {
   const overviewLayers = [
     Library.Census.Tiger.USLandmass,
     Library.USGS.NatlMap.Blank,
-    // Alpha(Library.USGS.NatlMap.ImageryTiled, 0.1),
-    Alpha(Library.USGS.ProtectedAreas.SimpleDesignations, 0.25),
+    // alphaLayer(Library.USGS.NatlMap.ImageryTiled, 0.1),
+    alphaLayer(Library.USGS.ProtectedAreas.SimpleDesignations, 0.25),
     Library.Census.Tiger.States,
     Library.Census.Tiger.Hydro,
     ZoomedRoads,
@@ -766,7 +730,7 @@ function showMap(centerX, centerY, zoom, style, opts) {
 
   function configToLayer(config) {
     let source = null;
-    let ltype = null;
+    let LType = null;
     if (config === 'VIIRS') {
       return satelliteVectorLayer(5);
     } else if (config === 'MODIS') {
@@ -806,14 +770,14 @@ function showMap(centerX, centerY, zoom, style, opts) {
       attributions: config.attribution || null,
     };
     if (config.tiled) {
-      ltype = ol.layer.Tile;
+      LType = ol.layer.Tile;
       source = new ol.source.XYZ(opts);
     } else {
-      ltype = ol.layer.Image;
+      LType = ol.layer.Image;
       source = new ol.source.ImageArcGISRest(opts);
     }
 
-    return new ltype({
+    return new LType({
       source: source,
       opacity: config.opacity || 1.0,
     });
@@ -879,5 +843,5 @@ function showMap(centerX, centerY, zoom, style, opts) {
   if (detail) {
     grid.setMap(map);
   }
-}
+};
 

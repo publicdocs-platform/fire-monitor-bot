@@ -23,7 +23,6 @@ const files = require('../lib/files');
 const afm = require('../lib/afm');
 const kmz = require('../lib/kmz');
 const del = require('del');
-const rp = require('request-promise');
 
 const envconfig = require('../envconfig');
 const pug = require('pug');
@@ -91,15 +90,13 @@ const html = function(entry) {
 
 
 async function doIt(argv) {
-  const tmpdir = files.setupDirs(argv.outputdir, argv.clean);
+  files.setupDirs(argv.outputdir, argv.clean);
 
   server.run(argv.port, argv.outputdir);
 
   const updateId = new Date();
 
-
   await afm.refreshAfmSatelliteData(argv.outputdir + '/kml/');
-
 
   let customLayerCount = 0;
   if (argv.kmz) {

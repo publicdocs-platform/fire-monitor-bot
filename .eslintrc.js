@@ -1,9 +1,10 @@
 module.exports = {
   'parser': 'babel-eslint',
   'env': {
-    'browser': true,
+    'browser': false,
     'commonjs': true,
     'es6': true,
+    'node': true,
   },
   'extends': 'google',
   'globals': {
@@ -17,4 +18,17 @@ module.exports = {
     'require-jsdoc': 'off',
     'max-len': 'off',
   },
+  'overrides': [
+    {
+      'files': ['client/*.js'],
+      'parserOptions': {
+        'sourceType': 'script',
+      },
+      'env': {
+        'browser': true,
+        'commonjs': false,
+        'node': false,
+      },
+    }
+  ]
 };

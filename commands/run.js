@@ -16,29 +16,18 @@ limitations under the License.
 */
 'use strict';
 
-const os = require('os');
 const path = require('path');
-
-const rimraf = require('rimraf');
-const mkdirp = require('mkdirp');
-
 const proj4 = require('proj4');
-
 const rp = require('request-promise');
 const _ = require('lodash');
 const yaml = require('js-yaml');
-const titleCase = require('title-case');
 const pug = require('pug');
 const fs = require('fs');
 const del = require('del');
 const deepDiff = require('deep-diff');
 const numeral = require('numeral');
-const sharp = require('sharp');
 const promisify = require('util').promisify;
 const exec = promisify(require('child_process').exec);
-const ip = require('ip');
-
-const puppeteer = require('puppeteer');
 
 const envconfig = require('../envconfig');
 const util = require('../lib/util');
@@ -179,7 +168,7 @@ exports.handler = (argv) => {
 
   const intensiveProcessingSemaphore = util.namedSemaphore(processingSemaphore, 'computation');
 
-  const tmpdir = files.setupDirs(argv.outputdir, argv.clean);
+  files.setupDirs(argv.outputdir, argv.clean);
 
   server.run(argv.port, argv.outputdir);
 
@@ -432,7 +421,6 @@ exports.handler = (argv) => {
       const perimImg = argv.outputdir + '/img/IMG-PERIM-' + updateId + '.jpeg';
       const perimWebpage = argv.outputdir + '/img/WEB-PERIM-' + updateId + '.html';
       const mainWebpageUrl = 'http://localhost:8080/updates/img/WEB-INFO-' + updateId + '.html';
-      const centerWebpageUrl = 'http://localhost:8080/updates/img/WEB-CENTER-' + updateId + '.html';
       const perimWebpageUrl = 'http://localhost:8080/updates/img/WEB-PERIM-' + updateId + '.html';
       if (inciWeb && argv.archiveInciweb) {
         const u = 'https://web.archive.org/save/https://inciweb.nwcg.gov/incident/' + inciWeb + '/';
@@ -461,7 +449,6 @@ exports.handler = (argv) => {
       const useful = 100 + Math.sqrt(0.0015625 /* mi2 per acre*/ * cur.DailyAcres);
       const cities2 = lat ? _.sortBy(geocoding.nearestCities(lat, lon, 1000, 500)
           .map((x) => {
-            const thePoint = [];
             if (x.distance < useful) {
               x.useful = true;
               const pointDists = points.map((pp) => geocoding.distance(pp[0], pp[1], x.lon, x.lat));
