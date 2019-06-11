@@ -138,10 +138,6 @@ exports.builder = {
     string: true,
     desc: 'Path to fire units ID info',
   },
-  unitsIdPath: {
-    string: true,
-    desc: 'Path to fire units ID info',
-  },
   retweetMinAcres: {
     number: true,
     default: 100,
@@ -239,21 +235,9 @@ exports.handler = (argv) => {
 
 
   const dailyMap = (() => {
-    let ranBeforeDaily = false;
     return async function() {
+      // Nothing yet.
       return;
-      const t = new Date();
-      const time = Date.parse(argv.dailyMapTime);
-      if (!ranBeforeDaily) {
-        ranBeforeDaily = t.getTime() < time.getTime();
-        return;
-      }
-
-      if (!ranBeforeDaily || t.getTime() < time.getTime()) {
-        return;
-      }
-
-      ranBeforeDaily = false;
     };
   })();
 
@@ -362,7 +346,7 @@ exports.handler = (argv) => {
 
       const updateId = 'Update-' + cur.ModifiedOnDateTime + '-PER-' + (cur.PerimDateTime || 'NONE') + '-of-' + i + '-named-' + cur.Name.replace(/[^a-z0-9]/gi, '');
 
-      const diffs = yaml.safeDump(oneDiff || [], {skipInvalid: true});
+      const diffs = yaml.safeDump(oneDiff, {skipInvalid: true});
       const isNew = !(i in last);
 
       console.log('- ' + updateId);
@@ -528,7 +512,7 @@ exports.handler = (argv) => {
       fs.writeFileSync(mainWebpage, html);
 
       await renderUpdateImage();
-      await perimAndSaveProcess(null);
+      await perimAndSaveProcess();
 
 
       async function perimAndSaveProcess() {

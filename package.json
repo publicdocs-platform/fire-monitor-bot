@@ -14,7 +14,7 @@
     "debug": "node --inspect main.js",
     "cleanstart": "yarn clean; node main.js",
     "test": "nyc mocha './{,!(node_modules)/**/}test/*.js'",
-    "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
+    "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov && cat coverage.lcov | coveralls",
     "lint": "eslint . --fix"
   },
   "dependencies": {

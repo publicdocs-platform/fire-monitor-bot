@@ -383,7 +383,7 @@ function showMap(centerX, centerY, zoom, style, opt) {
           fill: zoom > 12.5 ? null : new ol.style.Fill({
             color: fclr,
           }),
-          stroke: new ol.style.Stroke({color: sclr, width: zoom>=12.5 ? 3 : 1, lineDash: zoom>=12.5?[3, 3]:[3, 3]}),
+          stroke: new ol.style.Stroke({color: sclr, width: zoom>=12.5 ? 3 : 1, lineDash: [3, 3]}),
         }),
       ];
     }
@@ -441,7 +441,7 @@ function showMap(centerX, centerY, zoom, style, opt) {
     return new ol.layer.Vector({
       source: source,
       style: style,
-      declutter: img ? true : true,
+      declutter: true,
     });
   }
 
@@ -502,7 +502,7 @@ function showMap(centerX, centerY, zoom, style, opt) {
         fill: zoom > 12.5 ? null : new ol.style.Fill({
           color: fclr,
         }),
-        stroke: new ol.style.Stroke({color: sclr, width: zoom>=12.5 ? 3 : 1, lineDash: zoom>=12.5?[3, 3]:[3, 3]}),
+        stroke: new ol.style.Stroke({color: sclr, width: zoom>=12.5 ? 3 : 1, lineDash: [3, 3]}),
       }),
     ];
   }
@@ -564,13 +564,7 @@ function showMap(centerX, centerY, zoom, style, opt) {
       const styleName = parts[parts.length - 1];
       console.log(styleName);
       const base = kmlStyles[styleName] || null;
-
-      const g = feat.getGeometry();
-      if ('GeometryCollection' === g.getType() && base != null) {
-        return base;
-      } else {
-        return base;
-      }
+      return base;
     }
     return new ol.layer.Vector({
       style: stylesFunc,
@@ -803,7 +797,7 @@ function showMap(centerX, centerY, zoom, style, opt) {
 
   const map = new ol.Map({
     controls: controls,
-    pixelRatio: detail ? 3 : 3,
+    pixelRatio: 3,
     layers: layers,
     target: 'map',
     view: new ol.View({
