@@ -31,7 +31,7 @@ const exec = promisify(require('child_process').exec);
 
 const envconfig = require('../envconfig');
 const logging = require('../lib/logging');
-const logger = logging.child({system: 'run'});
+const logger = logging.child({labels: {system: 'run'}});
 const util = require('../lib/util');
 const afm = require('../lib/afm');
 const dateString = util.dateString;
@@ -393,7 +393,7 @@ exports.handler = (argv) => {
     return x;
 
     async function internalProcessFire(parentLogger, updateId, inciWeb, cur, perim, old, oneDiff, isNew, key, perimDateTime) {
-      const logger = parentLogger.child({updateId: updateId});
+      const logger = parentLogger.child({labels: {updateId: updateId}});
       logger.info(' # Entering Processing %s', updateId);
       const infoImg = argv.outputdir + '/img/IMG-TWEET-' + updateId + '.png';
       const mainWebpage = argv.outputdir + '/img/WEB-INFO-' + updateId + '.html';
