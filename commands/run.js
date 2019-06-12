@@ -153,7 +153,7 @@ exports.builder = {
 };
 
 exports.handler = (argv) => {
-  logger.info(argv);
+  logger.info('Arguments %o', argv, {arguments: argv});
 
   const FairSemaphore = require('fair-semaphore');
   const processingSemaphore = new FairSemaphore(1);
@@ -367,10 +367,9 @@ exports.handler = (argv) => {
 
       await promisify(intensiveProcessingSemaphore.take).bind(intensiveProcessingSemaphore)();
       try {
-        await internalProcessFire(updateId, inciWeb, cur, perim, old, oneDiff, isNew, key, perimDateTime);
+        await internalProcessFire(logger, updateId, inciWeb, cur, perim, old, oneDiff, isNew, key, perimDateTime);
       } catch (err) {
-        logger.error('$$$$ ERROR processing %s', updateId);
-        logger.error(err);
+        logger.error('$$$$ ERROR processing %s', updateId, err);
       } finally {
         intensiveProcessingSemaphore.leave();
       }
@@ -382,8 +381,7 @@ exports.handler = (argv) => {
       try {
         await exec(argv.postPersistCmd);
       } catch (err) {
-        logger.error('### Error in post persist command: ');
-        logger.error(err);
+        logger.error('### Error in post persist command: ', err);
       }
     }
 
@@ -394,8 +392,9 @@ exports.handler = (argv) => {
 
     return x;
 
-    async function internalProcessFire(updateId, inciWeb, cur, perim, old, oneDiff, isNew, key, perimDateTime) {
-      logger.info(' # Entering Processing ' + updateId);
+    async function internalProcessFire(parentLogger, updateId, inciWeb, cur, perim, old, oneDiff, isNew, key, perimDateTime) {
+      const logger = parentLogger.child({updateId: updateId});
+      logger.info(' # Entering Processing %s', updateId);
       const infoImg = argv.outputdir + '/img/IMG-TWEET-' + updateId + '.png';
       const mainWebpage = argv.outputdir + '/img/WEB-INFO-' + updateId + '.html';
       const perimImg = argv.outputdir + '/img/IMG-PERIM-' + updateId + '.jpeg';
@@ -415,7 +414,7 @@ exports.handler = (argv) => {
       if (perim.length > 1 && argv.locations) {
         rr = await maprender.renderMap(null, perim, 1450 / 2, 1200 / 2, 15, true);
       } else {
-        logger.info('>> Missing perimeter - ' + updateId);
+        logger.info('>> Missing perimeter - %s', updateId);
       }
       const events = [{lon: cur.Lon, lat: cur.Lat}];
       const center = rr ? rr.center : [cur.Lon, cur.Lat];
@@ -630,8 +629,7 @@ exports.handler = (argv) => {
           await dailyMap();
           x = await internalLoop(first, last);
         } catch (err) {
-          logger.error('>> ERROR');
-          logger.error(err);
+          logger.error('>> Main loop error', err);
         } finally {
         }
 
