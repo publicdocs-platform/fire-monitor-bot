@@ -581,7 +581,6 @@ function showMap(centerX, centerY, zoom, style, opt) {
 
       const parts = name.split('#');
       const styleName = parts[parts.length - 1];
-      console.log(styleName);
       const base = kmlStyles[styleName] || null;
       return base;
     }

@@ -17,11 +17,15 @@ limitations under the License.
 */
 'use strict';
 
+
 require('./envconfig');
+require('./lib/logging');
+
 const yargs = require('yargs');
 const pkgVersion = require('./package.json').version;
 
-yargs.commandDir('commands')
+yargs.command(require('./commands/map'))
+    .command(require('./commands/run'))
     .demandCommand()
     .help('help', 'Displays usage help for commands')
     .option('debug', {

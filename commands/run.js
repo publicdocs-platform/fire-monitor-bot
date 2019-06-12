@@ -30,6 +30,8 @@ const promisify = require('util').promisify;
 const exec = promisify(require('child_process').exec);
 
 const envconfig = require('../envconfig');
+const logging = require('../lib/logging');
+const logger = logging.child({system: 'run'});
 const util = require('../lib/util');
 const afm = require('../lib/afm');
 const dateString = util.dateString;
@@ -151,7 +153,7 @@ exports.builder = {
 };
 
 exports.handler = (argv) => {
-  console.log(argv);
+  logger.info(argv);
 
   const FairSemaphore = require('fair-semaphore');
   const processingSemaphore = new FairSemaphore(1);
@@ -277,7 +279,7 @@ exports.handler = (argv) => {
       const merged = geomac.mergedNfsaGeomacFire(nfsaData[key], gm[key]);
       x[key] = merged;
       if (!merged) {
-        console.log('Missing ' + key);
+        logger.warn('Missing ' + key);
       }
     });
 
@@ -286,7 +288,7 @@ exports.handler = (argv) => {
 
     const globalUpdateId = 'Update-at-' + dateString(curTime);
     {
-      console.log('Saving ' + globalUpdateId);
+      logger.info('Saving ' + globalUpdateId);
       const diffGlobal = deepDiff(last, x) || [];
       const diffsGlobal = yaml.safeDump(diffGlobal, {skipInvalid: true});
       fs.writeFileSync(argv.outputdir + '/data/GLOBAL-DIFF-' + globalUpdateId + '.yaml', diffsGlobal);
@@ -314,7 +316,7 @@ exports.handler = (argv) => {
         cur = x[i];
 
         if (!cur.ModifiedOnDateTimeEpoch || cur.ModifiedOnDateTimeEpoch < pruneTime) {
-          console.log(' #! Pruning %s %s -> last mod %s', i, cur.Name, cur.ModifiedOnDateTime);
+          logger.info(' #! Pruning %s %s -> last mod %s', i, cur.Name, cur.ModifiedOnDateTime);
           delete x[i];
           continue;
         }
@@ -349,11 +351,11 @@ exports.handler = (argv) => {
       const diffs = yaml.safeDump(oneDiff, {skipInvalid: true});
       const isNew = !(i in last);
 
-      console.log('- ' + updateId);
+      logger.info('- ' + updateId);
       const diffPath = argv.outputdir + '/data/DIFF-' + updateId + '.yaml';
 
       if (fs.existsSync(diffPath)) {
-        console.log('$$$$ ANOMALY DETECTED - REPEATING UPDATE %s - SKIPPED', updateId);
+        logger.error('$$$$ ANOMALY DETECTED - REPEATING UPDATE %s - SKIPPED', updateId);
         fs.writeFileSync(argv.outputdir + '/data/ANOMALY-DIFF-' + updateId + '.' + globalUpdateId + '-INSTANT-' + new Date().toISOString() + '.yaml', diffs);
         continue;
       }
@@ -367,8 +369,8 @@ exports.handler = (argv) => {
       try {
         await internalProcessFire(updateId, inciWeb, cur, perim, old, oneDiff, isNew, key, perimDateTime);
       } catch (err) {
-        console.log('$$$$ ERROR processing %s', updateId);
-        console.log(err);
+        logger.error('$$$$ ERROR processing %s', updateId);
+        logger.error(err);
       } finally {
         intensiveProcessingSemaphore.leave();
       }
@@ -380,8 +382,8 @@ exports.handler = (argv) => {
       try {
         await exec(argv.postPersistCmd);
       } catch (err) {
-        console.log('### Error in post persist command: ');
-        console.log(err);
+        logger.error('### Error in post persist command: ');
+        logger.error(err);
       }
     }
 
@@ -393,7 +395,7 @@ exports.handler = (argv) => {
     return x;
 
     async function internalProcessFire(updateId, inciWeb, cur, perim, old, oneDiff, isNew, key, perimDateTime) {
-      console.log(' # Entering Processing ' + updateId);
+      logger.info(' # Entering Processing ' + updateId);
       const infoImg = argv.outputdir + '/img/IMG-TWEET-' + updateId + '.png';
       const mainWebpage = argv.outputdir + '/img/WEB-INFO-' + updateId + '.html';
       const perimImg = argv.outputdir + '/img/IMG-PERIM-' + updateId + '.jpeg';
@@ -403,17 +405,17 @@ exports.handler = (argv) => {
       if (inciWeb && argv.archiveInciweb) {
         const u = 'https://web.archive.org/save/https://inciweb.nwcg.gov/incident/' + inciWeb + '/';
         rp({uri: u, resolveWithFullResponse: true}).then((r) => {
-          console.log('   ~~ Archived to web.archive.org: %s', r.headers ? ('https://web.archive.org/' + r.headers['content-location']) : 'unknown');
+          logger.info('   ~~ Archived to web.archive.org: %s', r.headers ? ('https://web.archive.org/' + r.headers['content-location']) : 'unknown');
         }).catch((err) => {
-          console.log('   ~~ ERROR Archiving to web.archive.org: ' + u);
-          console.log(err);
+          logger.info('   ~~ ERROR Archiving to web.archive.org: ' + u);
+          logger.info(err);
         });
       }
       let rr = null;
       if (perim.length > 1 && argv.locations) {
         rr = await maprender.renderMap(null, perim, 1450 / 2, 1200 / 2, 15, true);
       } else {
-        console.log('>> Missing perimeter - ' + updateId);
+        logger.info('>> Missing perimeter - ' + updateId);
       }
       const events = [{lon: cur.Lon, lat: cur.Lat}];
       const center = rr ? rr.center : [cur.Lon, cur.Lat];
@@ -449,7 +451,7 @@ exports.handler = (argv) => {
 
       const nearPopulation = Math.round(cities.reduce((a, b) => a + b.weightedPopulation, 0));
       const allPopulation = cities.reduce((a, b) => a + b.population, 0);
-      console.log('  > Fire %s is near pop. %d (all %d), %d acres, %d staff', updateId, nearPopulation, allPopulation, cur.DailyAcres, cur.TotalIncidentPersonnel);
+      logger.info('  > Fire %s is near pop. %d (all %d), %d acres, %d staff', updateId, nearPopulation, allPopulation, cur.DailyAcres, cur.TotalIncidentPersonnel);
 
 
       const displayFilters = {
@@ -466,7 +468,7 @@ exports.handler = (argv) => {
 
       for (const filterKey in displayFilters) {
         if (displayFilters[filterKey]) {
-          console.log('  #> Skipping %s -> filter %s', updateId, filterKey);
+          logger.info('  #> Skipping %s -> filter %s', updateId, filterKey);
           return;
         }
       }
@@ -474,7 +476,7 @@ exports.handler = (argv) => {
       // This will go through. Make sure we don't put an old update on Twitter in the mean time.
       const delPaths = await del([argv.outputdir + '/postqueue/*-' + cur.UniqueFireIdentifier + '-*.yaml']);
       if (delPaths.length > 0) {
-        console.log('  > Old tweets deleted: %s', delPaths.join('; '));
+        logger.info('  > Old tweets deleted: %s', delPaths.join('; '));
       }
 
       const byPop = _.sortBy(cities, 'population');
@@ -567,7 +569,7 @@ exports.handler = (argv) => {
         // Tell the twitter daemon we are ready to post.
         const savedYaml = yaml.safeDump(saved, {skipInvalid: true});
         fs.writeFileSync(argv.outputdir + '/postqueue/' + priority + '-TWEET-' + updateId + '.yaml', savedYaml);
-        console.log('   # Exiting processing ' + updateId);
+        logger.info('   # Exiting processing ' + updateId);
       }
 
       async function renderPerim() {
@@ -628,12 +630,12 @@ exports.handler = (argv) => {
           await dailyMap();
           x = await internalLoop(first, last);
         } catch (err) {
-          console.log('>> ERROR');
-          console.log(err);
+          logger.error('>> ERROR');
+          logger.error(err);
         } finally {
         }
 
-        console.log('Next round');
+        logger.info('Next round');
       }
       setTimeout(function() {
         mainLoop(false, x);
@@ -652,7 +654,7 @@ exports.handler = (argv) => {
   }
 
 
-  console.log(`*** The fire information displayed by this app is UNOFFICIAL, FOR INFORMATION ONLY, 
+  logger.warn(`*** The fire information displayed by this app is UNOFFICIAL, FOR INFORMATION ONLY, 
   NOT SUITABLE FOR SAFETY/EMERGENCY PURPOSES, 
   and MAY BE INCORRECT OR OUT-OF-DATE. USE AT YOUR OWN RISK. ***`);
 
