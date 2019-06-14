@@ -8,6 +8,8 @@ Gathers data from public sources, and posts it to Twitter.
 
 The original runs at https://twitter.com/FireUnofficial
 
+The generated database is archived and updated at: https://github.com/publicdocs/wildfire-data-archive
+
 The fire information displayed by this app is UNOFFICIAL, FOR INFORMATION ONLY, 
 NOT SUITABLE FOR SAFETY/EMERGENCY PURPOSES, 
 and MAY BE INCORRECT OR OUT-OF-DATE. USE AT YOUR OWN RISK.
