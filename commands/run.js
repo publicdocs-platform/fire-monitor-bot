@@ -271,7 +271,7 @@ exports.handler = (argv) => {
     });
 
     const data0 = _.flatten(layerFeatures);
-    const data = data0.map((e) => Object.assign(e, {_Provenance: prov}));
+    const data = data0.map((e) => Object.assign(e, {_Provenance: _.cloneDeep(prov)}));
     const nfsaData = _.keyBy(data, (o) => o.UniqueFireIdentifier);
     const gm = await geomac.getFires(argv.userAgent);
 
