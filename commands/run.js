@@ -244,6 +244,7 @@ exports.handler = (argv) => {
   })();
 
   async function internalLoop(first, last) {
+    const prov = util.createProvenance(dataOptions);
     const layers = await rp(dataOptions);
 
     const x = Object.assign({}, last);
@@ -269,14 +270,14 @@ exports.handler = (argv) => {
       });
     });
 
-    const data = _.flatten(layerFeatures);
-
+    const data0 = _.flatten(layerFeatures);
+    const data = data0.map((e) => Object.assign(e, {_Provenance: prov}));
     const nfsaData = _.keyBy(data, (o) => o.UniqueFireIdentifier);
     const gm = await geomac.getFires(argv.userAgent);
 
     const keys = _.union(_.keys(nfsaData), _.keys(gm));
     keys.map((key) => {
-      const merged = geomac.mergedNfsaGeomacFire(nfsaData[key], gm[key]);
+      const merged = util.mergedNfsaGeomacFire(nfsaData[key], gm[key]);
       x[key] = merged;
       if (!merged) {
         logger.warn('Missing ' + key);
