@@ -18,43 +18,57 @@ limitations under the License.
 'use strict';
 
 
-require('./envconfig');
+const env = require('./envconfig');
 require('./lib/logging');
 
 const yargs = require('yargs');
 const pkgVersion = require('./package.json').version;
 
-yargs.command(require('./commands/map'))
-    .command(require('./commands/run'))
-    .demandCommand()
-    .help('help', 'Displays usage help for commands')
-    .option('debug', {
-      boolean: true,
-      desc: 'Exercises functionality just for debugging - do not use in production',
-    })
-    .option('outputdir', {
-      string: true,
-      alias: 'o',
-      default: './output/',
-      desc: 'Where to dump generated diffs, tweets, images, etc',
-    })
-    .option('clean', {
-      boolean: true,
-      desc: 'Whether to clear the data files and Twitter post queue before starting',
-    })
-    .option('db', {
-      string: true,
-      default: './persist.yaml',
-      desc: 'R/W file to persist fire info.',
-    })
-    .option('port', {
-      number: true,
-      default: 8080,
-      desc: 'Web server port',
-    })
-    .scriptName('firemon')
-    .recommendCommands()
-    .strict()
-    .version('version', 'Displays package version', pkgVersion)
-    .wrap(yargs.terminalWidth())
-    .parse();
+async function go() {
+  if (env.cloudDebugAgent) {
+    const debugAgent = require('@google-cloud/debug-agent');
+    debugAgent.start({
+      serviceContext: {
+        service: 'fire-monitor-bot',
+        version: pkgVersion,
+      },
+    });
+  }
+
+  yargs.command(require('./commands/map'))
+      .command(require('./commands/run'))
+      .demandCommand()
+      .help('help', 'Displays usage help for commands')
+      .option('debug', {
+        boolean: true,
+        desc: 'Exercises functionality just for debugging - do not use in production',
+      })
+      .option('outputdir', {
+        string: true,
+        alias: 'o',
+        default: './output/',
+        desc: 'Where to dump generated diffs, tweets, images, etc',
+      })
+      .option('clean', {
+        boolean: true,
+        desc: 'Whether to clear the data files and Twitter post queue before starting',
+      })
+      .option('db', {
+        string: true,
+        default: './persist.yaml',
+        desc: 'R/W file to persist fire info.',
+      })
+      .option('port', {
+        number: true,
+        default: 8080,
+        desc: 'Web server port',
+      })
+      .scriptName('firemon')
+      .recommendCommands()
+      .strict()
+      .version('version', 'Displays package version', pkgVersion)
+      .wrap(yargs.terminalWidth())
+      .parse();
+}
+
+go();

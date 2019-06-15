@@ -66,6 +66,7 @@
     "nyc": "^14.1.1"
   },
   "optionalDependencies": {
+    "@google-cloud/debug-agent": "^4.0.0",
     "@google-cloud/logging-winston": "^1.0.0"
   },
   "resolutions": {

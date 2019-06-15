@@ -19,6 +19,8 @@ limitations under the License.
 // Load .env files.
 require('dotenv').config();
 
+exports.cloudDebugAgent = process.env.GOOGLE_CLOUD_DEBUG_AGENT;
+
 // To configure Twit.
 exports.twitterAuth = {
   // This is for the user.
