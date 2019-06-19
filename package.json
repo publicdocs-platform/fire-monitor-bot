@@ -38,7 +38,7 @@
     "numeral": "^2.0.6",
     "ol-helpers": "https://github.com/publicdocs-platform/ol-helpers",
     "proj4": "^2.5.0",
-    "pug": "^2.0.3",
+    "pug": "^2.0.4",
     "puppeteer": "^1.8.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.2",
