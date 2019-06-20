@@ -18,7 +18,6 @@
     "lint": "eslint . --fix"
   },
   "dependencies": {
-    "@google-cloud/tasks": "^1.1.1",
     "@publicdocs/togeojson": "https://github.com/publicdocs-platform/togeojson",
     "@turf/bearing": "^6.0.1",
     "@turf/distance": "^6.0.1",
@@ -66,7 +65,9 @@
     "nyc": "^14.1.1"
   },
   "optionalDependencies": {
-    "@google-cloud/logging-winston": "^1.0.1"
+    "@google-cloud/logging-winston": "^1.0.1",
+    "@google-cloud/firestore": "^2.2.1",
+    "@google-cloud/tasks": "^1.1.1"
   },
   "resolutions": {
     "all-the-cities": "https://github.com/publicdocs-platform/us-cities-db"

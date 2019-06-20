@@ -63,6 +63,10 @@ exports.builder = {
     boolean: true,
     desc: 'Whether to stop other daemon activities other than tweeting',
   },
+  logTweets: {
+    boolean: false,
+    desc: 'Whether to log tweets to Firestore',
+  },
   monitorPerims: {
     boolean: true,
     default: true,
@@ -229,7 +233,8 @@ exports.handler = (argv) => {
         util.namedSemaphore(processingSemaphore, 'twitter'),
         argv.twitterAuthPath,
         argv.twitterAccountsPath,
-        argv.twitterPeriodSec * 1000
+        argv.twitterPeriodSec * 1000,
+        argv.logTweets
     );
   }
 
