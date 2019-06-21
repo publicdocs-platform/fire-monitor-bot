@@ -2,17 +2,10 @@
 - var currencyFormat = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 });
 - const friendlyDate = (d) => new Date(d).toLocaleString('en-US', {timeZone:'UTC', hour12:true, year: 'numeric', day: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', timeZoneName: 'short'});
 if (data.current.NFSAType || '').includes('Emerging')
-  if data.current.FireDiscoveryDateTime
-    | !{data.current.Hashtag} 🔥 discovered !{friendlyDate(data.current.FireDiscoveryDateTime)} - unofficial report.#{'\n'}
-  else
-    | !{data.current.Hashtag} 🔥 unofficial new fire report.#{'\n'}
+  | !{data.current.Hashtag} 🔥 unofficial new fire report.#{'\n'}
 else
-  | !{data.current.Hashtag} 🔥 unofficial update: !{numFormat.format(data.current.DailyAcres)} Acres. !{numFormat.format(data.current.PercentContained)}% Contained*.#{'\n'}
-if data.extraTags
-  | !{data.extraTags + '; '}
+  | !{data.current.Hashtag} 🔥 unofficial update.#{'\n'}
 if data.cities
   if data.cities.closest
     | !{data.cities.closest.directions + '. '}
-  if data.cities.biggest
-    | !{data.cities.biggest.directions + '. '}
-| See officials for safety info. May be incorrect; disclaimers in images.
+| DO NOT USE FOR SAFETY PURPOSES - See officials instead. May be incorrect; disclaimers in images.
