@@ -329,6 +329,7 @@ exports.handler = (argv) => {
         // Keep the newer data around.
         x[i] = Object.assign({}, last[i]);
         x[i].PerimDateTime = perimDateTime;
+        x[i].PerimeterData = cur.PerimeterData;
         cur = x[i];
 
         if (!cur.ModifiedOnDateTimeEpoch || cur.ModifiedOnDateTimeEpoch < pruneTime) {
@@ -347,7 +348,7 @@ exports.handler = (argv) => {
       let oneDiff = deepDiff(old, cur);
       oneDiff = _.keyBy(oneDiff, (o) => o.path.join('.'));
 
-      if (!('DailyAcres' in oneDiff || 'PercentContained' in oneDiff)) {
+      if (!('DailyAcres' in oneDiff || 'PercentContained' in oneDiff || 'PerimeterData.Acres' in oneDiff)) {
         if (!argv.monitorPerims || !('PerimDateTime' in oneDiff)) {
           // Unless acreage, perim, or containment change, we don't report it.
           continue;
@@ -357,7 +358,7 @@ exports.handler = (argv) => {
           continue;
         }
       }
-      if (!('PercentContained' in oneDiff || 'PerimDateTime' in oneDiff) && old.DailyAcres && cur.DailyAcres && Math.abs(cur.DailyAcres - old.DailyAcres) < 1.1) {
+      if (!('PercentContained' in oneDiff || 'PerimeterData.Acres' in oneDiff) && old.DailyAcres && cur.DailyAcres && Math.abs(cur.DailyAcres - old.DailyAcres) < 1.1) {
         // May be spurious - due to rounding in GEOMAC vs NFSA.
         continue;
       }
@@ -385,7 +386,8 @@ exports.handler = (argv) => {
       try {
         await internalProcessFire(logger, updateId, inciWeb, cur, perim, old, oneDiff, isNew, key, perimDateTime);
       } catch (err) {
-        logger.error('$$$$ ERROR processing %s', updateId, err);
+        logger.error('$$$$ ERROR processing %s', updateId);
+        logger.error(err);
       } finally {
         intensiveProcessingSemaphore.leave();
       }
@@ -397,7 +399,8 @@ exports.handler = (argv) => {
       try {
         await exec(argv.postPersistCmd);
       } catch (err) {
-        logger.error('### Error in post persist command: ', err);
+        logger.error('### Error in post persist command: ');
+        logger.error(err);
       }
     }
 
@@ -657,7 +660,8 @@ exports.handler = (argv) => {
           await dailyMap();
           x = await internalLoop(first, last);
         } catch (err) {
-          logger.error('>> Main loop error', err);
+          logger.error('>> Main loop error');
+          logger.error(err);
         } finally {
         }
 
