@@ -108,7 +108,7 @@ html.perim {
 
 
 h1 {
-    color: red;
+    color: black;
     background-color: rgb(162, 255, 182);
     margin-top: 0;
     margin-bottom: 0;
@@ -199,6 +199,22 @@ table {
     padding-right: 5px;
 }
 
+.warn-icon {
+    display: inline-block;
+    width: 70px;
+    padding-left: 20px;
+}
+
+.warn-content {
+    display: inline-block;
+    width: calc(100% - 90px);
+}
+
+.warn-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
 .warn {
     background-color: black;
     color: white;
@@ -223,6 +239,10 @@ table {
 .upd, .fireid {
     font-size: 70%;
     color: black;
+}
+
+.subwarn {
+    font-size: 54%;
 }
 
 .cite {
