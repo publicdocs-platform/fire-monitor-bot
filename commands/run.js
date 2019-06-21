@@ -332,18 +332,19 @@ exports.handler = (argv) => {
         x[i].PerimeterData = cur.PerimeterData;
         cur = x[i];
 
-        if (!cur.ModifiedOnDateTimeEpoch || cur.ModifiedOnDateTimeEpoch < pruneTime) {
-          logger.info(' #! Pruning %s %s -> last mod %s', i, cur.Name, cur.ModifiedOnDateTime);
-          delete x[i];
-          continue;
-        }
-
         // Only skip the update if perimeter is ALSO not up to date.
         if (!perimDateTime || (last[i].PerimDateTime && last[i].PerimDateTime >= perimDateTime)) {
+          x[i].PerimDateTime = last[i].PerimDateTime;
+          x[i].PerimeterData = last[i].PerimeterData;
           continue;
         }
       }
 
+      if (!cur.ModifiedOnDateTimeEpoch || cur.ModifiedOnDateTimeEpoch < pruneTime) {
+        logger.info(' #! Pruning %s %s -> last mod %s', i, cur.Name, cur.ModifiedOnDateTime);
+        delete x[i];
+        continue;
+      }
 
       let oneDiff = deepDiff(old, cur);
       oneDiff = _.keyBy(oneDiff, (o) => o.path.join('.'));
