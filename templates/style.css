@@ -208,6 +208,7 @@ table {
 .warn-content {
     display: inline-block;
     width: calc(100% - 90px);
+    vertical-align: top;
 }
 
 .warn-icon svg {
@@ -233,7 +234,7 @@ table {
     padding: 0;
     margin: 0;
     width: 100%;
-    font-size: 85%;
+    font-size: 100%;
 }
 
 .upd, .fireid {
