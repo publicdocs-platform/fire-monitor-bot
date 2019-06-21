@@ -210,7 +210,7 @@ function showMap(centerX, centerY, zoom, style, opt) {
   }
 
   function perimVectorLayer() {
-    const baseUrl = 'https://wildfire.cr.usgs.gov/arcgis/rest/services/geomac_dyn/MapServer/2';
+    const baseUrl = 'https://wildfire.cr.usgs.gov/arcgis/rest/services/geomac_dyn/MapServer/' + (opt.perimSourceLayer || '2');
     function styles(feat) {
       const sclr = 'rgba(255,0,0,1)';
       const fclr = 'rgba(255,0,0,0.01)';
@@ -236,7 +236,7 @@ function showMap(centerX, centerY, zoom, style, opt) {
 
 
   function perimNameLayer() {
-    const baseUrl = 'https://wildfire.cr.usgs.gov/arcgis/rest/services/geomac_dyn/MapServer/2';
+    const baseUrl = 'https://wildfire.cr.usgs.gov/arcgis/rest/services/geomac_dyn/MapServer/' + (opt.perimSourceLayer || '2');
     function styles(feat) {
       const center = ol.extent.getCenter(feat.getGeometry().getExtent());
 
@@ -288,7 +288,7 @@ function showMap(centerX, centerY, zoom, style, opt) {
 
 
   function perimFillVectorLayer() {
-    const baseUrl = 'https://wildfire.cr.usgs.gov/arcgis/rest/services/geomac_dyn/MapServer/2';
+    const baseUrl = 'https://wildfire.cr.usgs.gov/arcgis/rest/services/geomac_dyn/MapServer/' + (opt.perimSourceLayer || '2');
     function style(feat) {
       const sclr = 'rgba(255,0,0,0.7)';
       const fclr = 'rgba(255,255,0,0.5)';

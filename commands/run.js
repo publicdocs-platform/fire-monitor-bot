@@ -300,7 +300,17 @@ exports.handler = (argv) => {
       fs.writeFileSync(argv.outputdir + '/data/GLOBAL-DIFF-' + globalUpdateId + '.yaml', diffsGlobal);
     }
 
-    const perims = await geomac.getPerimeters(argv.userAgent);
+    const perims1 = await geomac.getPerimeters(argv.userAgent, false);
+    const perims2 = await geomac.getPerimeters(argv.userAgent, true);
+    const perims = {};
+    const perimKeys = _.union(_.keys(perims1), _.keys(perims2));
+    perimKeys.map((key) => {
+      const merged = util.latestPerimeter(perims1[key], perims2[key]);
+      perims[key] = merged;
+      if (!merged) {
+        logger.warn('Missing perim ' + key);
+      }
+    });
 
     const xkeys = _.keys(x);
     const xsortedKeys = _.sortBy(xkeys, (i) => -x[i].DailyAcres);
@@ -418,7 +428,7 @@ exports.handler = (argv) => {
       }
       let rr = null;
       if (perim.length > 1 && argv.locations) {
-        rr = await maprender.renderMap(null, perim, 1450 / 2, 1200 / 2, 15, true);
+        rr = await maprender.getMapBounds(perim, 1450 / 2, 1200 / 2, 15);
       } else {
         logger.info('>> Missing perimeter - %s', updateId);
       }
@@ -511,7 +521,6 @@ exports.handler = (argv) => {
         isNew: isNew,
         mapData: {events: events},
         terrainImg: terrainImg,
-        terrainCredit: terrainImg ? maprender.terrainCredit : '',
       };
       const html = genHtml(templateData);
       const tweet = genTweet(templateData);
@@ -531,14 +540,16 @@ exports.handler = (argv) => {
             lon: lon,
             zoom: zoom,
             cities: displayCities,
-            mapData: {events: events},
+            mapData: {
+              events: events,
+              perimSourceLayer: cur.PerimeterData ? cur.PerimeterData._Provenance.SourceLayer : null,
+            },
             perimDateTime: perimDateTime,
             current: cur,
             last: old,
             diff: oneDiff,
             isNew: isNew,
             img: detailImg,
-            imgCredit: maprender.detailedCredit,
           };
           const htmlPerim = perimeterHtml(perimTemplateData);
           fs.writeFileSync(perimWebpage, htmlPerim);
@@ -592,32 +603,43 @@ exports.handler = (argv) => {
     const i = key;
     const cur = x[i];
     const old = last[i] || {};
+    let perimAcres = null;
     let perim = [];
     let perimDateTime = null;
     let inciWeb = null;
+    let perimProvenance = null;
     if (cur.UniqueFireIdentifier in perims) {
-      perim = perims[cur.UniqueFireIdentifier].geometry.coords || [];
-      perimDateTime = perims[cur.UniqueFireIdentifier].attributes.perimeterdatetime;
-      inciWeb = perims[cur.UniqueFireIdentifier].attributes.inciwebid;
+      const p = perims[cur.UniqueFireIdentifier];
+      perim = p.geometry.coords || [];
+      perimDateTime = p.attributes.perimeterdatetime;
+      inciWeb = p.attributes.inciwebid;
+      perimAcres = p.attributes.gisacres;
+      perimProvenance = p._Provenance;
     }
     const children = _.values(perims)
-        .filter((fire) => {
-          const b = (fire.attributes.complexname || '').toLowerCase() === (cur.Fire_Name || '').toLowerCase();
+        .filter((p) => {
+          const b = (p.attributes.complexname || '').toLowerCase() === (cur.Fire_Name || '').toLowerCase();
           if (b) {
-            if (!perimDateTime || perimDateTime < fire.attributes.perimeterdatetime) {
-              perimDateTime = fire.attributes.perimeterdatetime;
-              inciWeb = fire.attributes.inciwebid;
+            if (!perimDateTime || perimDateTime < p.attributes.perimeterdatetime) {
+              perimDateTime = p.attributes.perimeterdatetime;
+              inciWeb = p.attributes.inciwebid;
             }
           }
           return b;
         })
-        .map((fire) => fire.geometry.coords)
+        .map((p) => p.geometry.coords)
         .reduce((a, b) => a.concat(b), []);
     perim = perim.concat(children);
     if (cur.Lat) {
       perim.push([[[cur.Lon, cur.Lat], [cur.Lon, cur.Lat]]]);
     }
+    // TODO: Migrate to PerimeterData.
     cur.PerimDateTime = perimDateTime;
+    cur.PerimeterData = {
+      DateTime: perimDateTime,
+      Acres: perimAcres,
+      _Provenance: perimProvenance,
+    };
     cur.unitId = cur.pooresponsibleunit || cur.UniqueFireIdentifier.split('-')[1];
     cur.unitMention = units.unitTag(cur.unitId);
     return {i, cur, perimDateTime, old, inciWeb, perim};
