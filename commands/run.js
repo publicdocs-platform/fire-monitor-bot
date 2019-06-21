@@ -546,7 +546,7 @@ exports.handler = (argv) => {
             cities: displayCities,
             mapData: {
               events: events,
-              perimSourceLayer: cur.PerimeterData ? cur.PerimeterData._Provenance.SourceLayer : null,
+              perimSourceLayer: cur.PerimeterData ? (cur.PerimeterData._Provenance ? cur.PerimeterData._Provenance.SourceLayer : null) : null,
             },
             perimDateTime: perimDateTime,
             current: cur,
