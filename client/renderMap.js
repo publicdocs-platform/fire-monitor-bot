@@ -727,7 +727,7 @@ function showMap(centerX, centerY, zoom, style, opt) {
     'Events',
     'Perim-Name',
     // 'Summits',
-    zoom > 10.5 ? Library.USGS.NatlMap.Names : 'Cities',
+    zoom > 10.9 ? Library.USGS.NatlMap.Names : 'Cities',
   ];
   const overviewLayers = [
     Library.Census.Tiger.USLandmass,
