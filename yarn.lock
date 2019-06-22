@@ -5393,10 +5393,9 @@ static-extend@^0.1.1:
     define-property "^0.2.5"
     object-copy "^0.1.0"
 
-staticmaps@^1.1.2:
+"staticmaps@https://github.com/publicdocs-platform/staticmaps#zoom-steps":
   version "1.1.2"
-  resolved "https://registry.yarnpkg.com/staticmaps/-/staticmaps-1.1.2.tgz#141b3fb0122b05323a22de20a0c68a8970ca8851"
-  integrity sha512-ynoJ033pjJWDu1jKgPnHL9G9XN9hoFDYkqhwbaG3ICcHEVsQ9IZ+6q3xIIRzwfvPcr0N+eZM22nVTUx+pJ+q1g==
+  resolved "https://github.com/publicdocs-platform/staticmaps#974b4453a00c4ed877030609dcd0025e42a139e7"
   dependencies:
     "@babel/runtime" "^7.3.1"
     lodash.find "^4.6.0"
