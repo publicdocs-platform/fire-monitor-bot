@@ -368,7 +368,7 @@ exports.handler = (argv) => {
         }
 
         if (!cur.ModifiedOnDateTimeEpoch || cur.ModifiedOnDateTimeEpoch < pruneTime) {
-          logger.debug(' #! Pruning %s %s -> last mod %s', i, cur.Name, cur.ModifiedOnDateTime);
+          logger.debug(' #! Pruning %s %s -> last mod %s', i, cur.Name, cur.ModifiedOnDateTime, {cur: cur, x: x[i]});
           delete x[i];
           continue;
         }
