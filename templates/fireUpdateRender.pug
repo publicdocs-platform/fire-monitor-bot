@@ -128,10 +128,10 @@ html.update
                                             span.detail #{data.current.FireCause} Cause
                                         span.detail Discovered #{friendlyDate(data.current.FireDiscoveryDateTime)}
                                         br
-                                        span.detail Summary Updated #{friendlyDate(data.current.ModifiedOnDateTime)}
+                                        span.detail Report Updated #{friendlyDate(data.current.ModifiedOnDateTime)}
                                         if !data.isNew && data.last.ModifiedOnDateTime && data.current.ModifiedOnDateTime != data.last.ModifiedOnDateTime
                                             br
-                                            span.detail Last Update #{friendlyDate(data.last.ModifiedOnDateTime)}
+                                            span.detail Prev. Updated #{friendlyDate(data.last.ModifiedOnDateTime)}
                                         if data.current.PerimDateTime
                                             br
                                             span.detail Perimeter Updated #{friendlyDate(data.current.PerimDateTime)}

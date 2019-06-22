@@ -188,6 +188,14 @@ exports.handler = (argv) => {
       }
     }
     ret.Source = 'NFSA';
+    ret.ModifiedOnDateTime_Raw = ret.ModifiedOnDateTime;
+    ret.ModifiedOnDateTimeEpoch_Raw = ret.ModifiedOnDateTimeEpoch;
+
+    if (ret.ICS209ReportDateTime) {
+      ret.ModifiedOnDateTime = ret.ICS209ReportDateTime;
+      ret.ModifiedOnDateTimeEpoch = ret.ICS209ReportDateTimeEpoch;
+    }
+
     ret.Hashtag = util.fireHashTag(ret.Name);
     return ret;
   };
@@ -487,7 +495,7 @@ exports.handler = (argv) => {
         updateId: updateId,
         nearPopulation: nearPopulation,
         allPopulation: allPopulation,
-        DailyAcres: cur.DailyAcres, 
+        DailyAcres: cur.DailyAcres,
         TotalIncidentPersonnel: cur.TotalIncidentPersonnel,
       });
 
