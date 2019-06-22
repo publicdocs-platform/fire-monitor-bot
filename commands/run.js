@@ -263,7 +263,7 @@ exports.handler = (argv) => {
     const prov = util.createProvenance(dataOptions);
     const layers = await rp(dataOptions);
 
-    const x = Object.assign({}, last);
+    const x = _.cloneDeep(last);
 
     const dataSetName = 'Active Incidents';
 
@@ -331,6 +331,7 @@ exports.handler = (argv) => {
         logger.debug(' #[ Start Processing key %s', key1);
         const key = key1;
 
+        // cur is a *reference* to x[i]
         let {i, cur, perimDateTime, old, inciWeb, perim} = preDiffFireProcess(key, x, last, perims);
 
         if (first) {
@@ -344,21 +345,24 @@ exports.handler = (argv) => {
             last: last[i],
             cur: cur,
           });
+          const curPerimData = _.cloneDeep(cur.PerimeterData);
           // Keep the newer data around.
-          x[i] = Object.assign({}, last[i]);
+          x[i] = _.cloneDeep(last[i]);
+          // Except perimeters, which still need to be checked.
           x[i].PerimDateTime = perimDateTime;
-          x[i].PerimeterData = cur.PerimeterData;
+          x[i].PerimeterData = curPerimData;
+          // cur is a *reference* to x[i]
           cur = x[i];
 
           // Only skip the update if perimeter is ALSO not up to date.
           if (!perimDateTime || (last[i].PerimDateTime && last[i].PerimDateTime >= perimDateTime)) {
-            logger.debug('  -) Previous perim not updated old %o new %o', last[i].PerimDateTime, perimDateTime, {
+            logger.debug('  -) Previous perim ALSO not updated old %o new %o', last[i].PerimDateTime, perimDateTime, {
               x: x[i],
               last: last[i],
               cur: cur,
             });
             x[i].PerimDateTime = last[i].PerimDateTime;
-            x[i].PerimeterData = last[i].PerimeterData;
+            x[i].PerimeterData = _.cloneDeep(last[i].PerimeterData);
             continue;
           }
         }
