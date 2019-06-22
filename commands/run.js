@@ -394,7 +394,7 @@ exports.handler = (argv) => {
           continue;
         }
 
-        const updateId = 'Update-' + cur.ModifiedOnDateTime + '-PER-' + (cur.PerimDateTime || 'NONE') + '-of-' + i + '-named-' + cur.Name.replace(/[^a-z0-9]/gi, '');
+        const updateId = 'UPD-' + cur.ModifiedOnDateTime + '-PER-' + (cur.PerimDateTime || 'none') + '-ID-' + i + '-NAME-' + cur.Name.replace(/[^a-z0-9]/gi, '') + '-S-' + cur.Source.charAt(0);
 
         const diffs = yaml.safeDump(oneDiff, {skipInvalid: true});
         const isNew = !(i in last);
