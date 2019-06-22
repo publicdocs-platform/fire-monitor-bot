@@ -69,7 +69,7 @@ exports.builder = {
   },
   monitorPerims: {
     boolean: true,
-    default: true,
+    default: false,
     desc: 'Whether to post changes only to the perimeter.',
   },
   userAgent: {
@@ -79,6 +79,7 @@ exports.builder = {
   },
   locations: {
     boolean: true,
+    default: true,
     desc: 'Whether to post images of fire locations',
   },
   redo: {
@@ -95,6 +96,7 @@ exports.builder = {
   },
   emergingNew: {
     boolean: true,
+    default: true,
     desc: 'Include emerging wildfires <24hrs',
   },
   emergingOld: {
@@ -316,81 +318,93 @@ exports.handler = (argv) => {
     const xsortedKeys = _.sortBy(xkeys, (i) => -x[i].DailyAcres);
 
     for (const key1 of xsortedKeys) {
-      const key = key1;
-
-      let {i, cur, perimDateTime, old, inciWeb, perim} = preDiffFireProcess(key, x, last, perims);
-
-      if (first) {
-        continue;
-      }
-
-
-      if (i in last && last[i].ModifiedOnDateTime >= cur.ModifiedOnDateTime) {
-        // Keep the newer data around.
-        x[i] = Object.assign({}, last[i]);
-        x[i].PerimDateTime = perimDateTime;
-        x[i].PerimeterData = cur.PerimeterData;
-        cur = x[i];
-
-        // Only skip the update if perimeter is ALSO not up to date.
-        if (!perimDateTime || (last[i].PerimDateTime && last[i].PerimDateTime >= perimDateTime)) {
-          x[i].PerimDateTime = last[i].PerimDateTime;
-          x[i].PerimeterData = last[i].PerimeterData;
-          continue;
-        }
-      }
-
-      if (!cur.ModifiedOnDateTimeEpoch || cur.ModifiedOnDateTimeEpoch < pruneTime) {
-        logger.info(' #! Pruning %s %s -> last mod %s', i, cur.Name, cur.ModifiedOnDateTime);
-        delete x[i];
-        continue;
-      }
-
-      let oneDiff = deepDiff(old, cur);
-      oneDiff = _.keyBy(oneDiff, (o) => o.path.join('.'));
-
-      if (!('DailyAcres' in oneDiff || 'PercentContained' in oneDiff || 'PerimeterData.Acres' in oneDiff)) {
-        if (!argv.monitorPerims || !('PerimDateTime' in oneDiff)) {
-          // Unless acreage, perim, or containment change, we don't report it.
-          continue;
-        }
-        // Only show perimeters changed after the filter.
-        if (!perimDateTime || perimDateTime <= argv.perimAfter) {
-          continue;
-        }
-      }
-      if (!('PercentContained' in oneDiff || 'PerimeterData.Acres' in oneDiff) && old.DailyAcres && cur.DailyAcres && Math.abs(cur.DailyAcres - old.DailyAcres) < 1.1) {
-        // May be spurious - due to rounding in GEOMAC vs NFSA.
-        continue;
-      }
-
-      const updateId = 'Update-' + cur.ModifiedOnDateTime + '-PER-' + (cur.PerimDateTime || 'NONE') + '-of-' + i + '-named-' + cur.Name.replace(/[^a-z0-9]/gi, '');
-
-      const diffs = yaml.safeDump(oneDiff, {skipInvalid: true});
-      const isNew = !(i in last);
-
-      logger.info('- ' + updateId);
-      const diffPath = argv.outputdir + '/data/DIFF-' + updateId + '.yaml';
-
-      if (fs.existsSync(diffPath)) {
-        logger.error('$$$$ ANOMALY DETECTED - REPEATING UPDATE %s - SKIPPED', updateId);
-        fs.writeFileSync(argv.outputdir + '/data/ANOMALY-DIFF-' + updateId + '.' + globalUpdateId + '-INSTANT-' + new Date().toISOString() + '.yaml', diffs);
-        continue;
-      }
-
-      fs.writeFileSync(diffPath, diffs);
-      if (argv.realFireNames) {
-        cur.Hashtag = util.fireName(cur.Name);
-      }
-
-      await promisify(intensiveProcessingSemaphore.take).bind(intensiveProcessingSemaphore)();
       try {
-        await internalProcessFire(logger, updateId, inciWeb, cur, perim, old, oneDiff, isNew, key, perimDateTime);
-      } catch (err) {
-        logger.error('$$$$ ERROR processing %s', updateId);
-        logger.error(err);
+        logger.debug(' #[ Start Processing key %s', key1);
+        const key = key1;
+
+        let {i, cur, perimDateTime, old, inciWeb, perim} = preDiffFireProcess(key, x, last, perims);
+
+        if (first) {
+          continue;
+        }
+
+
+        if (i in last && last[i].ModifiedOnDateTime >= cur.ModifiedOnDateTime) {
+          logger.debug('  -) Previous record not updated old %o new %o', last[i].ModifiedOnDateTime, cur.ModifiedOnDateTime);
+          // Keep the newer data around.
+          x[i] = Object.assign({}, last[i]);
+          x[i].PerimDateTime = perimDateTime;
+          x[i].PerimeterData = cur.PerimeterData;
+          cur = x[i];
+
+          // Only skip the update if perimeter is ALSO not up to date.
+          if (!perimDateTime || (last[i].PerimDateTime && last[i].PerimDateTime >= perimDateTime)) {
+            logger.debug('  -) Previous perim not updated old %o new %o', last[i].PerimDateTime, perimDateTime);
+            x[i].PerimDateTime = last[i].PerimDateTime;
+            x[i].PerimeterData = last[i].PerimeterData;
+            continue;
+          }
+        }
+
+        if (!cur.ModifiedOnDateTimeEpoch || cur.ModifiedOnDateTimeEpoch < pruneTime) {
+          logger.info(' #! Pruning %s %s -> last mod %s', i, cur.Name, cur.ModifiedOnDateTime);
+          delete x[i];
+          continue;
+        }
+
+        let oneDiff = deepDiff(old, cur);
+        oneDiff = _.keyBy(oneDiff, (o) => o.path.join('.'));
+
+        if (!('DailyAcres' in oneDiff || 'PercentContained' in oneDiff || 'PerimeterData.Acres' in oneDiff)) {
+          if (!argv.monitorPerims || !('PerimDateTime' in oneDiff)) {
+            // Unless acreage, perim, or containment change, we don't report it.x
+            logger.info('     -) No perim date diff or not monitored %o', perimDateTime, {diff: oneDiff});
+            continue;
+          }
+          // Only show perimeters changed after the filter.
+          if (!perimDateTime || perimDateTime <= argv.perimAfter) {
+            logger.info('    -) No perim date or old %o diff %o', perimDateTime, {diff: oneDiff});
+            continue;
+          }
+        }
+        if (!('PercentContained' in oneDiff || 'PerimeterData.Acres' in oneDiff) && old.DailyAcres && cur.DailyAcres && Math.abs(cur.DailyAcres - old.DailyAcres) < 1.1) {
+          // May be spurious - due to rounding in GEOMAC vs NFSA.
+          logger.info('    -) Insufficient acreage change old %o cur %o', old.DailyAcres, cur.DailyAcres, {diff: oneDiff});
+          continue;
+        }
+
+        const updateId = 'Update-' + cur.ModifiedOnDateTime + '-PER-' + (cur.PerimDateTime || 'NONE') + '-of-' + i + '-named-' + cur.Name.replace(/[^a-z0-9]/gi, '');
+
+        const diffs = yaml.safeDump(oneDiff, {skipInvalid: true});
+        const isNew = !(i in last);
+
+        logger.debug('    - Material update.', {diff: oneDiff});
+        const diffPath = argv.outputdir + '/data/DIFF-' + updateId + '.yaml';
+
+        if (fs.existsSync(diffPath)) {
+          logger.error('    $$$$ ANOMALY DETECTED - REPEATING UPDATE %s - SKIPPED', updateId);
+          fs.writeFileSync(argv.outputdir + '/data/ANOMALY-DIFF-' + updateId + '.' + globalUpdateId + '-INSTANT-' + new Date().toISOString() + '.yaml', diffs);
+          continue;
+        }
+
+        fs.writeFileSync(diffPath, diffs);
+        if (argv.realFireNames) {
+          cur.Hashtag = util.fireName(cur.Name);
+        }
+
+        await promisify(intensiveProcessingSemaphore.take).bind(intensiveProcessingSemaphore)();
+        try {
+          logger.info(' [# Entering internalProcessFire ' + updateId);
+          await internalProcessFire(logger, updateId, inciWeb, cur, perim, old, oneDiff, isNew, key, perimDateTime);
+        } catch (err) {
+          logger.error('    $$$$ ERROR processing %s', updateId);
+          logger.error(err);
+        } finally {
+          intensiveProcessingSemaphore.leave();
+          logger.info(' ]# Exiting internalProcessFire ' + updateId);
+        }
       } finally {
-        intensiveProcessingSemaphore.leave();
+        logger.debug(' ]# End Processing key %s', key1);
       }
     }
 
@@ -414,7 +428,6 @@ exports.handler = (argv) => {
 
     async function internalProcessFire(parentLogger, updateId, inciWeb, cur, perim, old, oneDiff, isNew, key, perimDateTime) {
       const logger = parentLogger.child({labels: {updateId: updateId}});
-      logger.info(' # Entering Processing %s', updateId);
       const infoImg = argv.outputdir + '/img/IMG-TWEET-' + updateId + '.png';
       const mainWebpage = argv.outputdir + '/img/WEB-INFO-' + updateId + '.html';
       const perimImg = argv.outputdir + '/img/IMG-PERIM-' + updateId + '.jpeg';
@@ -434,7 +447,7 @@ exports.handler = (argv) => {
       if (perim.length > 1 && argv.locations) {
         rr = await maprender.getMapBounds(perim, 1450 / 2, 1200 / 2, 15);
       } else {
-        logger.info('>> Missing perimeter - %s', updateId);
+        logger.info('     >> Missing perimeter - %s', updateId);
       }
       const events = [{lon: cur.Lon, lat: cur.Lat}];
       const center = rr ? rr.center : [cur.Lon, cur.Lat];
@@ -470,7 +483,13 @@ exports.handler = (argv) => {
 
       const nearPopulation = Math.round(cities.reduce((a, b) => a + b.weightedPopulation, 0));
       const allPopulation = cities.reduce((a, b) => a + b.population, 0);
-      logger.info('  > Fire %s is near pop. %d (all %d), %d acres, %d staff', updateId, nearPopulation, allPopulation, cur.DailyAcres, cur.TotalIncidentPersonnel);
+      logger.info('     > Fire %s is near pop. %d (all %d), %d acres, %d staff', updateId, nearPopulation, allPopulation, cur.DailyAcres, cur.TotalIncidentPersonnel, {
+        updateId: updateId,
+        nearPopulation: nearPopulation,
+        allPopulation: allPopulation,
+        DailyAcres: cur.DailyAcres, 
+        TotalIncidentPersonnel: cur.TotalIncidentPersonnel,
+      });
 
 
       const displayFilters = {
@@ -487,7 +506,7 @@ exports.handler = (argv) => {
 
       for (const filterKey in displayFilters) {
         if (displayFilters[filterKey]) {
-          logger.info('  #> Skipping %s -> filter %s', updateId, filterKey);
+          logger.info('     >) Skipping %s -> filter %s', updateId, filterKey);
           return;
         }
       }
@@ -495,7 +514,7 @@ exports.handler = (argv) => {
       // This will go through. Make sure we don't put an old update on Twitter in the mean time.
       const delPaths = await del([argv.outputdir + '/postqueue/*-' + cur.UniqueFireIdentifier + '-*.yaml']);
       if (delPaths.length > 0) {
-        logger.info('  > Old tweets deleted: %s', delPaths.join('; '));
+        logger.info('     > Old tweets deleted: %s', delPaths.join('; '));
       }
 
       const byPop = _.sortBy(cities, 'population');
@@ -589,7 +608,6 @@ exports.handler = (argv) => {
         // Tell the twitter daemon we are ready to post.
         const savedYaml = yaml.safeDump(saved, {skipInvalid: true});
         fs.writeFileSync(argv.outputdir + '/postqueue/' + priority + '-TWEET-' + updateId + '.yaml', savedYaml);
-        logger.info('   # Exiting processing ' + updateId);
       }
 
       async function renderPerim() {
