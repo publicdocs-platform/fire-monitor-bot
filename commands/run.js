@@ -339,7 +339,11 @@ exports.handler = (argv) => {
 
 
         if (i in last && last[i].ModifiedOnDateTime >= cur.ModifiedOnDateTime) {
-          logger.debug('  -) Previous record not updated old %o new %o', last[i].ModifiedOnDateTime, cur.ModifiedOnDateTime);
+          logger.debug('  -) Previous record not updated old %o new %o', last[i].ModifiedOnDateTime, cur.ModifiedOnDateTime, {
+            x: x[i],
+            last: last[i],
+            cur: cur,
+          });
           // Keep the newer data around.
           x[i] = Object.assign({}, last[i]);
           x[i].PerimDateTime = perimDateTime;
@@ -348,7 +352,11 @@ exports.handler = (argv) => {
 
           // Only skip the update if perimeter is ALSO not up to date.
           if (!perimDateTime || (last[i].PerimDateTime && last[i].PerimDateTime >= perimDateTime)) {
-            logger.debug('  -) Previous perim not updated old %o new %o', last[i].PerimDateTime, perimDateTime);
+            logger.debug('  -) Previous perim not updated old %o new %o', last[i].PerimDateTime, perimDateTime, {
+              x: x[i],
+              last: last[i],
+              cur: cur,
+            });
             x[i].PerimDateTime = last[i].PerimDateTime;
             x[i].PerimeterData = last[i].PerimeterData;
             continue;
@@ -356,7 +364,7 @@ exports.handler = (argv) => {
         }
 
         if (!cur.ModifiedOnDateTimeEpoch || cur.ModifiedOnDateTimeEpoch < pruneTime) {
-          logger.info(' #! Pruning %s %s -> last mod %s', i, cur.Name, cur.ModifiedOnDateTime);
+          logger.debug(' #! Pruning %s %s -> last mod %s', i, cur.Name, cur.ModifiedOnDateTime);
           delete x[i];
           continue;
         }
