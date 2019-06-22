@@ -241,15 +241,15 @@ function showMap(centerX, centerY, zoom, style, opt) {
       const center = ol.extent.getCenter(feat.getGeometry().getExtent());
 
       const namedTextStyle = function(feature) {
-        const title = feature.get('incidentname') + '\n' + Math.ceil(feature.get('gisacres')) + ' acres';
+        const title = feature.get('incidentname') + '\nPerim. of ' + Math.ceil(feature.get('gisacres')) + ' acres';
 
         return new ol.style.Text({
-          font: '12px Roboto',
+          font: '14px Roboto',
           text: title,
-          fill: new ol.style.Fill({color: '#ffff00'}),
+          fill: new ol.style.Fill({color: '#ffffff'}),
           stroke: new ol.style.Stroke({color: '#000000', width: 2}),
           baseline: 'bottom',
-          offsetY: -15,
+          offsetY: -17,
         });
       };
 
@@ -259,12 +259,12 @@ function showMap(centerX, centerY, zoom, style, opt) {
         const title = date;
 
         return new ol.style.Text({
-          font: '10px Roboto',
+          font: '12px Roboto',
           text: title,
-          fill: new ol.style.Fill({color: '#ffff00'}),
+          fill: new ol.style.Fill({color: '#ffffff'}),
           stroke: new ol.style.Stroke({color: '#000000', width: 2}),
           baseline: 'top',
-          offsetY: 15,
+          offsetY: 17,
         });
       };
 

@@ -25,18 +25,15 @@ html.update
                 div.title
                     h1
                         span #{data.current.Fire_Name} Fire
-            div.warn
+            div.warn.main-warn
                 div.warn-icon
                     include ../imgs/warning.svg
                 div.warn-content
-                    | DO NOT USE FOR HEALTH, SAFETY, EMERGENCY, or EVACUATION PURPOSES. For information only.
+                    | DO NOT USE FOR HEALTH, SAFETY, EMERGENCY, or EVACUATION PURPOSES. Consult local public officials instead.
                     br
-                    | Consult local public officials for health, safety, emergency, or evacuation info.
+                    | Info is APPROXIMATE, often INCORRECT and OUT-OF-DATE, NOT REAL-TIME, and NOT REVIEWED BY A HUMAN BEING.
                     br
-                    | Automated fire information is APPROXIMATE and often INCORRECT and OUT-OF-DATE.
-                    br
-                    | USE AT YOUR OWN RISK — FIRES MAY BE CLOSER AND LARGER THAN THEY APPEAR HERE
-
+                    | For information only. USE AT YOUR OWN RISK — FIRES MAY BE CLOSER AND LARGER THAN THEY APPEAR HERE
             table.wrapper
                 tr
                     if hasImg
