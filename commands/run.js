@@ -606,14 +606,27 @@ exports.handler = (argv) => {
           retweetSelectors = [argv.retweetSelector];
         }
 
-        // allImgs =
+        const usePerimAcres = cur.PerimDateTime && (cur.PerimDateTime > cur.ModifiedOnDateTime) && cur.PerimeterData.Acres && cur.PerimeterData.Acres > (cur.DailyAcres || 0);
+
+        const imgSummary = {
+          img: infoImg,
+          altText: cur.UniqueFireIdentifier + ' - ' + tweet,
+        };
+
+        const imgPerim = {
+          img: detailRender,
+          altText: cur.UniqueFireIdentifier + ' - Perimeter map',
+        };
+
+        const imgsSaved = usePerimAcres ? [imgPerim, imgSummary] : [imgSummary, imgPerim];
+
         const saved = {
           text: tweet,
           shortText: cur.UniqueFireIdentifier + ' - Unofficial fire report. See officials for safety info. May be incorrect; disclaimers in images.',
-          image1AltText: cur.UniqueFireIdentifier + ' - ' + tweet,
-          image1: infoImg,
-          image2AltText: cur.UniqueFireIdentifier + ' - Perimeter map',
-          image2: detailRender,
+          image1AltText: imgsSaved[0].altText,
+          image1: imgsSaved[0].img,
+          image2AltText: imgsSaved[1].altText,
+          image2: imgsSaved[1].img,
           selectors: [cur.state || cur.State || key.substr(5, 2), 'other'],
           retweetSelectors: retweetSelectors,
           threadQuery: argv.twitterThreadQueryPrefix ? (argv.twitterThreadQueryPrefix + ' ' + cur.Hashtag) : null,

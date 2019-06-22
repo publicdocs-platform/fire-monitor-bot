@@ -323,6 +323,14 @@ table {
     white-space: nowrap;
 }
 
+.detail-important {
+    background-color: red;
+    color: white;
+    padding: 2px;
+    width: 100%;
+    display: block;
+}
+
 .detail + .detail:before {
     content: " — ";
 }
