@@ -53,6 +53,10 @@ you wish to use the same disclaimers and/or whether those disclaimers meet
 your obligations under both our and third-party requirements.
 We cannot give any legal advice on that.
 
+No license to use any trademarks is provided.  You are not permitted
+to use any of the names of our Twitter accounts in any content you
+generate.
+
 =====
 
 fire-monitor-bot (https://github.com/publicdocs-platform/fire-monitor-bot)

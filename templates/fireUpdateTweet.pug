@@ -5,6 +5,8 @@ if (data.current.NFSAType || '').includes('Emerging')
   | !{data.current.Hashtag} 🔥 unofficial new fire report.#{'\n'}
 else
   | !{data.current.Hashtag} 🔥 unofficial update.#{'\n'}
+if data.extraTags
+  | !{data.extraTags + '; '}
 if data.cities
   if data.cities.closest
     | !{data.cities.closest.directions + '. '}

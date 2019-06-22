@@ -16,6 +16,8 @@ html.perim
         script
             include ../node_modules/ol-helpers/index.js
         script
+            include ../node_modules/qrcode/build/qrcode.min.js
+        script
             include ../client/renderMap.js
         style
             include style.css
@@ -26,12 +28,12 @@ html.perim
             div.warn
                 div.warn-icon
                     include ../imgs/warning.svg
-                div.warn-content(style='padding-top:20px;')
-                    | DO NOT USE FOR HEALTH, SAFETY, EMERGENCY, or EVACUATION PURPOSES. Consult local public officials for health, safety, emergency, or evacuation info.
+                div.warn-content
+                    | DO NOT USE FOR HEALTH, SAFETY, EMERGENCY, or EVACUATION PURPOSES. Consult local public officials instead.
                     br
-                    | Unofficial report. For information only. Automated fire information is APPROXIMATE and often INCORRECT and OUT-OF-DATE.
+                    | Info is APPROXIMATE, often INCORRECT and OUT-OF-DATE, NOT REAL-TIME, and NOT REVIEWED BY A HUMAN BEING.
                     br
-                    | USE AT YOUR OWN RISK — FIRES MAY BE CLOSER AND LARGER THAN THEY APPEAR HERE
+                    | Unofficial. For information only. USE AT YOUR OWN RISK — FIRES MAY BE CLOSER AND LARGER THAN THEY APPEAR HERE
             div.warn
                 if (data.current ? (data.current.NFSAType || '') : '').includes('Emerging')
                     div.innerWarn
@@ -59,6 +61,7 @@ html.perim
                         each st in (data.subtitle || [])
                             .detailSubtitle
                                 | #{st}
+            canvas#qrcode        
         script
             | showMap(#{data.lon}, #{data.lat}, #{data.zoom}, 'perim', !{JSON.stringify(mapData)});
 

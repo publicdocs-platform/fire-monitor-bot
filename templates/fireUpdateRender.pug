@@ -16,6 +16,8 @@ html.update
         script
             include ../node_modules/ol-helpers/index.js
         script
+            include ../node_modules/qrcode/build/qrcode.min.js
+        script
             include ../client/renderMap.js
         style
             include style.css
@@ -25,18 +27,15 @@ html.update
                 div.title
                     h1
                         span #{data.current.Fire_Name} Fire
-            div.warn
+            div.warn.main-warn
                 div.warn-icon
                     include ../imgs/warning.svg
                 div.warn-content
-                    | DO NOT USE FOR HEALTH, SAFETY, EMERGENCY, or EVACUATION PURPOSES. For information only.
+                    | DO NOT USE FOR HEALTH, SAFETY, EMERGENCY, or EVACUATION PURPOSES. Consult local public officials instead.
                     br
-                    | Consult local public officials for health, safety, emergency, or evacuation info.
+                    | Info is APPROXIMATE, often INCORRECT and OUT-OF-DATE, NOT REAL-TIME, and NOT REVIEWED BY A HUMAN BEING.
                     br
-                    | Automated fire information is APPROXIMATE and often INCORRECT and OUT-OF-DATE.
-                    br
-                    | USE AT YOUR OWN RISK — FIRES MAY BE CLOSER AND LARGER THAN THEY APPEAR HERE
-
+                    | For information only. USE AT YOUR OWN RISK — FIRES MAY BE CLOSER AND LARGER THAN THEY APPEAR HERE
             table.wrapper
                 tr
                     if hasImg
@@ -54,18 +53,19 @@ html.update
                             tr.important
                                 td(colspan=2)
                                     div.warn
-                                        | UNOFFICIAL REPORT
-                                        span.subwarn
-                                            | &nbsp;— Not affiliated with or endorsed by any government agencies.
+                                        | UNOFFICIAL REPORT — Updated #{friendlyDate(data.current.ModifiedOnDateTime)}
+                                        if data.current.PerimDateTime && (data.current.PerimDateTime > data.current.ModifiedOnDateTime)
+                                            br
+                                            span.detail-important (Perimeter info. is more recent than report)
                             tr.important
                                 th(width='38%')
-                                    if data.current.PercentContained || 0 == data.current.PercentContained
+                                    if data.current.PercentContained || 0 === data.current.PercentContained
                                         span.current #{numFormat.format(data.current.PercentContained)}%
                                     else
                                         span.current Unknown %
                                 td(width='62%')
                                     | Contained*
-                                    if !data.isNew && 'PercentContained' in data.diff
+                                    if !data.isNew && 'PercentContained' in data.diff && (data.current.PercentContained - data.last.PercentContained > 0.5 || data.current.PercentContained - data.last.PercentContained < -0.5)
                                         span.previous
                                             if data.current.PercentContained > data.last.PercentContained
                                                 span.deltaUp ▲
@@ -73,16 +73,21 @@ html.update
                                                 span.deltaDown ▼
                                             | from #{numFormat.format(data.last.PercentContained)}%
                             tr.important
+                                - const usePerimAcres = data.current.PerimDateTime && (data.current.PerimDateTime > data.current.ModifiedOnDateTime) && data.current.PerimeterData.Acres && data.current.PerimeterData.Acres > (data.current.DailyAcres || 0);
+                                - const rawAcres = usePerimAcres ? data.current.PerimeterData.Acres : data.current.DailyAcres;
+                                - const acres = rawAcres >= 100 ? Math.round(rawAcres) : rawAcres;
                                 th
-                                    if data.current.DailyAcres || 0 == data.current.DailyAcres
-                                        span.current #{numFormat.format(data.current.DailyAcres)}
+                                    if rawAcres || 0 === rawAcres
+                                        span.current #{numFormat.format(acres)}
                                     else
                                         span.current Unknown
                                 td
                                     | Acres
-                                    if !data.isNew && 'DailyAcres' in data.diff
+                                    if usePerimAcres
+                                        span.previous (by perimeter)
+                                    if !data.isNew && (acres - data.last.DailyAcres > 0.5 || acres - data.last.DailyAcres < -0.5)
                                         span.previous
-                                            if data.current.DailyAcres > data.last.DailyAcres
+                                            if acres > data.last.DailyAcres
                                                 span.deltaUp ▲
                                             else
                                                 span.deltaDown ▼
@@ -127,11 +132,9 @@ html.update
                                         if data.current.FireCause
                                             span.detail #{data.current.FireCause} Cause
                                         span.detail Discovered #{friendlyDate(data.current.FireDiscoveryDateTime)}
-                                        br
-                                        span.detail Summary Updated #{friendlyDate(data.current.ModifiedOnDateTime)}
                                         if !data.isNew && data.last.ModifiedOnDateTime && data.current.ModifiedOnDateTime != data.last.ModifiedOnDateTime
                                             br
-                                            span.detail Last Update #{friendlyDate(data.last.ModifiedOnDateTime)}
+                                            span.detail Prev. Updated #{friendlyDate(data.last.ModifiedOnDateTime)}
                                         if data.current.PerimDateTime
                                             br
                                             span.detail Perimeter Updated #{friendlyDate(data.current.PerimDateTime)}
@@ -140,6 +143,8 @@ html.update
 
             div.cite
                 b
+                    | Unofficial. Not affiliated with or endorsed by any government agencies.
+                    br
                     | To the maximum extent permitted by law: (1) all content is provided to you on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, WHETHER EXPRESS, IMPLIED, STATUTORY, OR OTHER (INCLUDING, WITHOUT LIMITATION, ANY WARRANTIES OR CONDNTIONS OF TITLE, MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR NONINFRINGEMENT); and (2) IN NO EVENT WILL ANY AUTHOR OR DATA PROVIDER BE LIABLE TO YOU ON ANY LEGAL THEORY (INCLUDING, WITHOUT LIMITATION, NEGLIGENCE) OR OTHERWISE FOR ANY DIRECT, SPECIAL, INDIRECT, INCIDENTAL, CONSEQUENTIAL, PUNITIVE, EXEMPLARY, OR OTHER LOSSES, COSTS, EXPENSES, OR DAMAGES arising out of your use of this content, even if the author or data provider has been advised of the possibility of such losses, costs, expenses, or damages.
                 p
                     | Sources: NWCG; NFSA (#{config.sourceUrl});
@@ -151,7 +156,9 @@ html.update
                     | *Containment may represent objective completion rather than perimeter containment.
                 p
                     | Generated by twitter.com/@#{config.twitterName} using #{config.systemName}.
-                    | No claim to original U.S. Government works. Unofficial. Not affiliated with govt.
+                    | No claim to original U.S. Government works.
                     | EPSG:3857.
+
+            canvas#qrcode
         script
             | showMap(#{data.lon}, #{data.lat}, #{data.zoom}, 'update', !{JSON.stringify(mapData)});

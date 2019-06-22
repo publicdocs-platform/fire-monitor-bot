@@ -1,5 +1,5 @@
 html {
-    font-family: 'DejaVu Sans', sans-serif;
+    font-family: 'Roboto', sans-serif;
     background-color: white;
     zoom: 186%;
 }
@@ -7,7 +7,10 @@ html {
 
 html.perim {
     zoom: 200%;
-    font-family: 'Roboto';
+}
+
+html.update {
+    font-size: 105%;
 }
 
 .content {
@@ -128,12 +131,34 @@ h1 {
 body {
     font-size: 150%;
     text-align: center;
-    border:5px solid rgb(85, 215, 255);
+    border: none;
+    margin: 0;
+}
+
+#qrcode {
+    position: fixed;
+    bottom: 10px;
+    right: 0;
+    z-index: 999;
+    float: right;
+}
+
+.perim #qrcode {
+    bottom: auto;
+    top: 0;
+}
+
+.update .cite {
+    width: calc(100% - 130px);
+    margin: 13px 2px 13px 2px;
+}
+
+
+.update .main-warn {
+    padding: 5px 0;
 }
 
 .perim body {
-    border: none;
-    margin: 0;
     font-size: 80%;
     padding: 0;
     height: 100%;
@@ -202,12 +227,12 @@ table {
 .warn-icon {
     display: inline-block;
     width: 70px;
-    padding-left: 20px;
+    padding-left: 10px;
 }
 
 .warn-content {
     display: inline-block;
-    width: calc(100% - 90px);
+    width: calc(100% - 80px);
     vertical-align: top;
 }
 
@@ -219,22 +244,32 @@ table {
 .warn {
     background-color: black;
     color: white;
-    padding: 5px;
-    width: 98%;
     margin-left: auto;
     margin-right: auto;
     font-size: 67.5%;
-    margin-top: 5px;
-    margin-bottom: 0;
     font-weight: 600;
-    padding: 5px;
+    text-align: center;
+}
+
+.update .warn-content {
+    font-size: 100%;
+    line-height: 130%;
+    padding-top: 5px;
 }
 
 .perim .warn {
     padding: 0;
     margin: 0;
     width: 100%;
-    font-size: 100%;
+    font-size: 105%;
+}
+
+.perim .warn-content {
+    font-size: 120%;
+    line-height: 130%;
+    padding-top: 5px;
+    padding-right: 75px;
+    width: calc(100% - 80px - 75px);
 }
 
 .upd, .fireid {
@@ -248,7 +283,7 @@ table {
 
 .cite {
     font-family: 'Roboto', sans-serif;
-    font-size: 45%;
+    font-size: 43%;
     width: 95%;
     margin: 13px auto;
 }
@@ -286,6 +321,14 @@ table {
 
 .data .detail {
     white-space: nowrap;
+}
+
+.detail-important {
+    background-color: red;
+    color: white;
+    padding: 2px;
+    width: 100%;
+    display: block;
 }
 
 .detail + .detail:before {
