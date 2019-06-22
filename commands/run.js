@@ -327,7 +327,7 @@ exports.handler = (argv) => {
     const xsortedKeys = _.sortBy(xkeys, (i) => -x[i].DailyAcres);
 
     for (const key1 of xsortedKeys) {
-      try {
+      try { // NOPMD
         logger.debug(' #[ Start Processing key %s', key1);
         const key = key1;
 
@@ -537,9 +537,7 @@ exports.handler = (argv) => {
         displayCities.biggest = null;
       }
 
-      const countyTag = cur.POOCounty ? util.hashTagify(cur.POOCounty + ' County') : null;
-
-      const extraTags = [countyTag, cur.unitMention].filter((x) => x).join(' ');
+      const extraTags = [cur.unitMention].filter((x) => (x && (x.startsWith('#') || x.startsWith('@')))).join(' ');
 
       const terrainImg = terrainPath || null;
 
