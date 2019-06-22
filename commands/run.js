@@ -24,6 +24,7 @@ const yaml = require('js-yaml');
 const pug = require('pug');
 const fs = require('fs');
 const del = require('del');
+const os = require('os');
 const deepDiff = require('deep-diff');
 const numeral = require('numeral');
 const promisify = require('util').promisify;
@@ -541,6 +542,10 @@ exports.handler = (argv) => {
       const extraTags = [countyTag, cur.unitMention].filter((x) => x).join(' ');
 
       const terrainImg = terrainPath || null;
+
+      // QRCode to trace source.
+      const qrcode = os.hostname() + '.' + updateId;
+
       const templateData = {
         lat: lat,
         lon: lon,
@@ -551,7 +556,10 @@ exports.handler = (argv) => {
         diff: oneDiff,
         extraTags: extraTags,
         isNew: isNew,
-        mapData: {events: events},
+        mapData: {
+          events: events,
+          qrcode: qrcode,
+        },
         terrainImg: terrainImg,
       };
       const html = genHtml(templateData);
@@ -575,6 +583,7 @@ exports.handler = (argv) => {
             mapData: {
               events: events,
               perimSourceLayer: cur.PerimeterData ? (cur.PerimeterData._Provenance ? cur.PerimeterData._Provenance.SourceLayer : null) : null,
+              qrcode: qrcode,
             },
             perimDateTime: perimDateTime,
             current: cur,

@@ -135,6 +135,24 @@ body {
     margin: 0;
 }
 
+#qrcode {
+    position: fixed;
+    bottom: 10px;
+    right: 0;
+    z-index: 999;
+    float: right;
+}
+
+.perim #qrcode {
+    bottom: auto;
+    top: 0;
+}
+
+.update .cite {
+    width: calc(100% - 130px);
+    margin: 13px 2px 13px 2px;
+}
+
 
 .update .main-warn {
     padding: 5px 0;
@@ -250,6 +268,8 @@ table {
     font-size: 120%;
     line-height: 130%;
     padding-top: 5px;
+    padding-right: 75px;
+    width: calc(100% - 80px - 75px);
 }
 
 .upd, .fireid {

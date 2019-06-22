@@ -27,6 +27,17 @@ function showMap(centerX, centerY, zoom, style, opt) {
   const customLayerCount = opts.customLayerCount || 0;
   let showAll = 'show:';
 
+  QRCode.toCanvas(document.getElementById('qrcode'), opts.qrcode, {errorCorrectionLevel: 'L'}, function(error) {
+    $('#qrcode').width(detail ? 75 : 125).height(detail ? 75 : 125);
+    if (detail) {
+      const gfxContext = document.getElementById('qrcode').getContext('2d');
+      // We're going to invert colors by subtracting from white.
+      gfxContext.globalCompositeOperation = 'difference';
+      gfxContext.fillStyle = 'white';
+      gfxContext.fillRect(0, 0, 1000, 1000);
+    }
+  });
+
   for (let s = 0; s < 100; s++) {
     showAll = showAll + s + ',';
   }

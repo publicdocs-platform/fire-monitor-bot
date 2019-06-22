@@ -16,6 +16,8 @@ html.perim
         script
             include ../node_modules/ol-helpers/index.js
         script
+            include ../node_modules/qrcode/build/qrcode.min.js
+        script
             include ../client/renderMap.js
         style
             include style.css
@@ -59,6 +61,7 @@ html.perim
                         each st in (data.subtitle || [])
                             .detailSubtitle
                                 | #{st}
+            canvas#qrcode        
         script
             | showMap(#{data.lon}, #{data.lat}, #{data.zoom}, 'perim', !{JSON.stringify(mapData)});
 
