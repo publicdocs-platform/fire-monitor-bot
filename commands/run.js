@@ -507,6 +507,7 @@ exports.handler = (argv) => {
         UnknownLocationSmallSize: !lat && !lon && (cur.DailyAcres || 0) < 1.1 && (cur.TotalIncidentPersonnel || 0) < 15,
         FalseAlarmType: cur.IncidentTypeCategory === 'FA' || cur.incidenttypecategory === 'FA',
         FalseAlarmName: cur.Fire_Name.toLowerCase().substr(0, 3) === 'fa ' || (cur.Fire_Name.toLowerCase().includes('false') && cur.Fire_Name.toLowerCase().includes('alarm')),
+        StepUpName: (cur.Fire_Name.toLowerCase().includes('step-up') || cur.Fire_Name.toLowerCase().includes('step up') || cur.Fire_Name.toLowerCase().includes('stepup')),
         // 3 hours with no info, might be stale
         OldEmergingFiresWithoutInfo: (cur.NFSAType || '').includes('Emerging') && !cur.DailyAcres && !cur.PercentContained && (cur.ModifiedOnDateTimeEpoch - cur.FireDiscoveryDateTimeEpoch > 1000 * 60 * 60 * 3),
         LACNoData: !cur.DailyAcres && !cur.PercentContained && cur.Fire_Name.toLowerCase().substr(0, 4) === 'lac-',
