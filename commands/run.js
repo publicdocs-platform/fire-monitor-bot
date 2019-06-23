@@ -607,9 +607,9 @@ exports.handler = (argv) => {
           detailRender = perimImg;
         }
 
-        // Tweet out in population and acre order.
-        const invPrio = Math.log10(cur.DailyAcres) * 1000 + nearPopulation;
-        const priority = numeral(Math.round(100000000000 - invPrio)).format('0000000000000');
+        // Tweet out in acre order. The priority is manifested via alpha-sorted filenames.
+        const invPrio = Math.ceil(cur.DailyAcres || 0);
+        const priority = numeral(Math.round(10000000 - invPrio)).format('00000000');
 
         let retweetSelectors = [];
         if (argv.retweetSelector && cur.DailyAcres >= argv.retweetMinAcres) {
