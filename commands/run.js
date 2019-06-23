@@ -371,28 +371,28 @@ exports.handler = (argv) => {
           continue;
         }
 
+        const updateId = 'UPD-' + cur.ModifiedOnDateTime + '-PER-' + (cur.PerimDateTime || 'none') + '-ID-' + i + '-NAME-' + cur.Name.replace(/[^a-z0-9]/gi, '') + '-S-' + cur.Source.charAt(0);
+
         let oneDiff = deepDiff(old, cur);
         oneDiff = _.keyBy(oneDiff, (o) => o.path.join('.'));
 
         if (!('DailyAcres' in oneDiff || 'PercentContained' in oneDiff || 'PerimeterData.Acres' in oneDiff)) {
           if (!argv.monitorPerims || !('PerimDateTime' in oneDiff)) {
             // Unless acreage, perim, or containment change, we don't report it.x
-            logger.info('     -) No perim date diff or not monitored %o', perimDateTime, {diff: oneDiff});
+            logger.info('     -) No perim date diff or not monitored %s %o', updateId, perimDateTime, {diff: oneDiff, updateId: updateId});
             continue;
           }
           // Only show perimeters changed after the filter.
           if (!perimDateTime || perimDateTime <= argv.perimAfter) {
-            logger.info('    -) No perim date or old %o diff %o', perimDateTime, {diff: oneDiff});
+            logger.info('    -) No perim date or old %s %o diff %o', updateId, perimDateTime, {diff: oneDiff, updateId: updateId});
             continue;
           }
         }
         if (!('PercentContained' in oneDiff || 'PerimeterData.Acres' in oneDiff) && old.DailyAcres && cur.DailyAcres && Math.abs(cur.DailyAcres - old.DailyAcres) < 1.1) {
           // May be spurious - due to rounding in GEOMAC vs NFSA.
-          logger.info('    -) Insufficient acreage change old %o cur %o', old.DailyAcres, cur.DailyAcres, {diff: oneDiff});
+          logger.info('    -) Insufficient acreage change old %s %o cur %o', updateId, old.DailyAcres, cur.DailyAcres, {diff: oneDiff, updateId: updateId});
           continue;
         }
-
-        const updateId = 'UPD-' + cur.ModifiedOnDateTime + '-PER-' + (cur.PerimDateTime || 'none') + '-ID-' + i + '-NAME-' + cur.Name.replace(/[^a-z0-9]/gi, '') + '-S-' + cur.Source.charAt(0);
 
         const diffs = yaml.safeDump(oneDiff, {skipInvalid: true});
         const isNew = !(i in last);
@@ -413,14 +413,14 @@ exports.handler = (argv) => {
 
         await promisify(intensiveProcessingSemaphore.take).bind(intensiveProcessingSemaphore)();
         try {
-          logger.info(' [# Entering internalProcessFire ' + updateId);
+          logger.info(' [# Entering internalProcessFire ' + updateId, {updateId: updateId});
           await internalProcessFire(logger, updateId, inciWeb, cur, perim, old, oneDiff, isNew, key, perimDateTime);
         } catch (err) {
-          logger.error('    $$$$ ERROR processing %s', updateId);
+          logger.error('    $$$$ ERROR processing %s', updateId, {updateId: updateId});
           logger.error(err);
         } finally {
           intensiveProcessingSemaphore.leave();
-          logger.info(' ]# Exiting internalProcessFire ' + updateId);
+          logger.info(' ]# Exiting internalProcessFire ' + updateId, {updateId: updateId});
         }
       } finally {
         logger.debug(' ]# End Processing key %s', key1);
@@ -446,7 +446,10 @@ exports.handler = (argv) => {
     return x;
 
     async function internalProcessFire(parentLogger, updateId, inciWeb, cur, perim, old, oneDiff, isNew, key, perimDateTime) {
-      const logger = parentLogger.child({labels: {updateId: updateId}});
+      const logger = parentLogger.child({
+        labels: {updateId: updateId},
+        updateId: updateId,
+      });
       const infoImg = argv.outputdir + '/img/IMG-TWEET-' + updateId + '.png';
       const mainWebpage = argv.outputdir + '/img/WEB-INFO-' + updateId + '.html';
       const perimImg = argv.outputdir + '/img/IMG-PERIM-' + updateId + '.jpeg';
@@ -519,6 +522,7 @@ exports.handler = (argv) => {
         FalseAlarmType: cur.IncidentTypeCategory === 'FA' || cur.incidenttypecategory === 'FA',
         FalseAlarmName: cur.Fire_Name.toLowerCase().substr(0, 3) === 'fa ' || (cur.Fire_Name.toLowerCase().includes('false') && cur.Fire_Name.toLowerCase().includes('alarm')),
         StepUpName: (cur.Fire_Name.toLowerCase().includes('step-up') || cur.Fire_Name.toLowerCase().includes('step up') || cur.Fire_Name.toLowerCase().includes('stepup')),
+        NonStatFRName: cur.Fire_Name.toLowerCase().startsWith('nonstat fr '),
         // 3 hours with no info, might be stale
         OldEmergingFiresWithoutInfo: (cur.NFSAType || '').includes('Emerging') && !cur.DailyAcres && !cur.PercentContained && (cur.ModifiedOnDateTimeEpoch - cur.FireDiscoveryDateTimeEpoch > 1000 * 60 * 60 * 3),
         LACNoData: !cur.DailyAcres && !cur.PercentContained && cur.Fire_Name.toLowerCase().substr(0, 4) === 'lac-',
