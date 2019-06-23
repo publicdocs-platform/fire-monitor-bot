@@ -304,12 +304,10 @@ exports.handler = (argv) => {
     const pruneTime = curTime - 1000 * 60 * 60 * 24 * argv.pruneDays;
 
     const globalUpdateId = 'Update-at-' + dateString(curTime);
-    {
-      logger.info('Saving ' + globalUpdateId);
-      const diffGlobal = deepDiff(last, x) || [];
-      const diffsGlobal = yaml.safeDump(diffGlobal, {skipInvalid: true});
-      fs.writeFileSync(argv.outputdir + '/data/GLOBAL-DIFF-' + globalUpdateId + '.yaml', diffsGlobal);
-    }
+    logger.info('Saving ' + globalUpdateId);
+    const diffGlobal = deepDiff(last, x) || [];
+    const diffsGlobal = yaml.safeDump(diffGlobal, {skipInvalid: true});
+    fs.writeFileSync(argv.outputdir + '/data/GLOBAL-DIFF-' + globalUpdateId + '.yaml', diffsGlobal);
 
     const perims1 = await geomac.getPerimeters(argv.userAgent, false);
     const perims2 = await geomac.getPerimeters(argv.userAgent, true);
