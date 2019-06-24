@@ -684,10 +684,10 @@
     google-gax "^1.0.0"
     through2 "^3.0.0"
 
-"@google-cloud/logging-winston@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@google-cloud/logging-winston/-/logging-winston-1.0.1.tgz#f5a3589c63cbb50c80dfaec52b816d6e68270d3b"
-  integrity sha512-H/BA6SFZuxd7n5pc9cBExQSUekr+ZlN9cHzVrYwcH6Eg9REL6pmOxe4OlQZbECd3KYtCZJpzWpc+O6Ir2yi2Jg==
+"@google-cloud/logging-winston@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@google-cloud/logging-winston/-/logging-winston-1.1.0.tgz#3cc5dcb35649c856ea715e6c99e272a195457614"
+  integrity sha512-tY6ne7uoV3bc70z1/gZ/y8ycDPbvRZIW1f3cFaTd2hizkkC/aPLoh++1gTjPLvvVghrTrADXH8Z1szO9BOgDYw==
   dependencies:
     "@google-cloud/logging" "^5.1.0"
     google-auth-library "^4.2.0"
