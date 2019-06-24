@@ -520,7 +520,7 @@ exports.handler = (argv) => {
         KnownLocationLowPop: lat && lon && nearPopulation <= 1000,
         UnknownLocationSmallSize: !lat && !lon && (cur.DailyAcres || 0) < 1.1 && (cur.TotalIncidentPersonnel || 0) < 15,
         FalseAlarmType: cur.IncidentTypeCategory === 'FA' || cur.incidenttypecategory === 'FA',
-        FalseAlarmName: cur.Fire_Name.toLowerCase().substr(0, 3) === 'fa ' || (cur.Fire_Name.toLowerCase().includes('false') && cur.Fire_Name.toLowerCase().includes('alarm')),
+        FalseAlarmName: cur.Fire_Name.toLowerCase().startsWith(' fa fire') || cur.Fire_Name.toLowerCase().startsWith(' fa') || cur.Fire_Name.toLowerCase().startsWith('fa ') || (cur.Fire_Name.toLowerCase().includes('false') && cur.Fire_Name.toLowerCase().includes('alarm')),
         StepUpName: (cur.Fire_Name.toLowerCase().includes('step-up') || cur.Fire_Name.toLowerCase().includes('step up') || cur.Fire_Name.toLowerCase().includes('stepup')),
         NonStatFRName: cur.Fire_Name.toLowerCase().startsWith('nonstat '),
         // 3 hours with no info, might be stale
