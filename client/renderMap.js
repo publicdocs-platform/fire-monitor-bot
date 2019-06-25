@@ -224,17 +224,8 @@ function showMap(centerX, centerY, zoom, style, opt) {
     const baseUrl = 'https://wildfire.cr.usgs.gov/arcgis/rest/services/geomac_dyn/MapServer/' + (opt.perimSourceLayer || '2');
     function styles(feat) {
       const sclr = 'rgba(255,0,0,1)';
-      const fclr = 'rgba(255,0,0,0.01)';
-      const sclr2 = 'rgba(255,160,0,1)';
-
-
       return [new ol.style.Style({
-        fill: new ol.style.Fill({
-          color: fclr,
-        }),
-        stroke: new ol.style.Stroke({color: sclr2, width: 2}),
-      }), new ol.style.Style({
-        stroke: new ol.style.Stroke({color: sclr, width: 1}),
+        stroke: new ol.style.Stroke({color: sclr, width: 4}),
       })];
     }
     const source = tiledVectorLayer(baseUrl, 1024, Library.GEOMAC.Fires.attribution);
@@ -252,13 +243,13 @@ function showMap(centerX, centerY, zoom, style, opt) {
       const center = ol.extent.getCenter(feat.getGeometry().getExtent());
 
       const namedTextStyle = function(feature) {
-        const title = feature.get('incidentname') + '\nPerim. of ' + Math.ceil(feature.get('gisacres')) + ' acres';
+        const title = feature.get('incidentname');
 
         return new ol.style.Text({
-          font: '14px Roboto',
+          font: '17px Roboto',
           text: title,
           fill: new ol.style.Fill({color: '#ffffff'}),
-          stroke: new ol.style.Stroke({color: '#000000', width: 2}),
+          stroke: new ol.style.Stroke({color: '#000000', width: 3}),
           baseline: 'bottom',
           offsetY: -17,
         });
@@ -497,8 +488,8 @@ function showMap(centerX, centerY, zoom, style, opt) {
 
   const infraredStyles = {
     'Last 24-48 hrs': {
-      sclr: 'rgba(255,255,0,0.4)',
-      fclr: 'rgba(255,255,0,0.1)',
+      sclr: 'rgba(255,255,0,0)',
+      fclr: 'rgba(255,255,0,0)',
       topZindex: -50,
     },
     'Last 12-24 hrs': {
@@ -565,7 +556,7 @@ function showMap(centerX, centerY, zoom, style, opt) {
   function afmKmlLayer(url) {
     const modisCredit = 'MODIS (RSAC/USFS/NASA)';
     const viirsCredit = 'VIIRS I (NASA/NOAA S-NPP)';
-    const legend = 'Rectangles indicate satellite inferences of &ge;1 fire in area (red: &le;12hrs, orange: &le;24hrs, yellow: &le;6dy)';
+    const legend = 'Rectangles indicate satellite inferences of &ge;1 fire in area (red: &le;12hrs, orange: &le;24hrs, as of the satellite readings which may be hours and days old)';
     const afmCredit = 'U.S. Forest Service Active Fire Mapping';
 
     function stylesFunc(feat) {

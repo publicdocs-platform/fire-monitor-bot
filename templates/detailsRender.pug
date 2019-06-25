@@ -1,5 +1,6 @@
 - const friendlyDate = (d) => new Date(d).toLocaleString('en-US', {timeZone:'UTC', hour12:true, year: 'numeric', day: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', timeZoneName: 'short'});
 - const mapData = Object.assign({}, {cities: data.cities ? data.cities.all : []}, data.mapData || {});
+- const numFormat = new Intl.NumberFormat('en-US', {maximumFractionDigits: 2});
 doctype html
 html.perim
     head
@@ -54,10 +55,17 @@ html.perim
                             span #{data.current.Fire_Name} Fire
                         else
                             span #{data.title}
+                        - const usePerimAcres = data.current.PerimDateTime && data.current.PerimeterData.Acres;
+                        - const rawAcres = usePerimAcres ? data.current.PerimeterData.Acres : data.current.DailyAcres;
+                        - const acres = rawAcres >= 100 ? Math.round(rawAcres) : rawAcres;
                         if data.perimDateTime
-                            span.perimDate Perimeter @#{friendlyDate(data.perimDateTime)} (entire fire is not shown here)
+                            if usePerimAcres
+                                span &nbsp;#{numFormat.format(acres)} perim. acres
+                                span.perimDate @#{friendlyDate(data.perimDateTime)} (entire fire not shown; satellite data not current)
+                            else
+                                span.perimDate Perimeter @#{friendlyDate(data.perimDateTime)} (entire fire not shown; satellite data not current)
                         else
-                            span.perimDate General Vicinity (entire fire is not shown here)
+                            span.perimDate General Vicinity (entire fire not shown; satellite data not current)
                         each st in (data.subtitle || [])
                             .detailSubtitle
                                 | #{st}
