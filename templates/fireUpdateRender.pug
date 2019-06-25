@@ -57,63 +57,66 @@ html.update
                                         if data.current.PerimDateTime && (data.current.PerimDateTime > data.current.ModifiedOnDateTime)
                                             br
                                             span.detail-important (Perimeter info. is more recent than report)
-                            if data.current.PercentContained || 0 === data.current.PercentContained
-                                tr.important
-                                    th(width='38%')
-                                        span.current #{numFormat.format(data.current.PercentContained)}%
-                                    td(width='62%')
-                                        | Contained*
-                                        if !data.isNew && 'PercentContained' in data.diff && (data.current.PercentContained - data.last.PercentContained > 0.5 || data.current.PercentContained - data.last.PercentContained < -0.5)
-                                            span.previous
-                                                if data.current.PercentContained > data.last.PercentContained
-                                                    span.deltaUp ▲
-                                                else
-                                                    span.deltaDown ▼
-                                                | from #{numFormat.format(data.last.PercentContained)}%
-                            - const usePerimAcres = data.current.PerimDateTime && (data.current.PerimDateTime > data.current.ModifiedOnDateTime) && data.current.PerimeterData.Acres && data.current.PerimeterData.Acres > (data.current.DailyAcres || 0);
-                            - const rawAcres = usePerimAcres ? data.current.PerimeterData.Acres : data.current.DailyAcres;
-                            if rawAcres && rawAcres > 0.1
-                                tr.important
-                                    - const acres = rawAcres >= 100 ? Math.round(rawAcres) : rawAcres;
-                                    th
-                                        span.current #{numFormat.format(acres)}
-                                    td
-                                        | Acres
-                                        if usePerimAcres
-                                            span.previous (by perimeter)
-                                        if !data.isNew && (acres - data.last.DailyAcres > 0.5 || acres - data.last.DailyAcres < -0.5)
-                                            span.previous
-                                                if acres > data.last.DailyAcres
-                                                    span.deltaUp ▲
-                                                else
-                                                    span.deltaDown ▼
-                                                | from #{numFormat.format(data.last.DailyAcres)}
-                            if data.current.TotalIncidentPersonnel
-                                tr.important
-                                    th 
-                                        span.current #{numFormat.format(data.current.TotalIncidentPersonnel)}
-                                    td
-                                        | Personnel
-                                        if !data.isNew && 'TotalIncidentPersonnel' in data.diff && data.last.TotalIncidentPersonnel
-                                            span.previous
-                                                if data.current.TotalIncidentPersonnel > data.last.TotalIncidentPersonnel
-                                                    span.deltaUp ▲
-                                                else
-                                                    span.deltaDown ▼
-                                                | from #{numFormat.format(data.last.TotalIncidentPersonnel)}
-                            if data.current.EstimatedCostToDate
-                                tr.important
-                                    th 
-                                        span.current #{currencyFormat.format(data.current.EstimatedCostToDate)}
-                                    td
-                                        | Est. Cost
-                                        if !data.isNew && 'EstimatedCostToDate' in data.diff && data.last.EstimatedCostToDate
-                                            span.previous
-                                                if data.current.EstimatedCostToDate > data.last.EstimatedCostToDate
-                                                    span.deltaUp ▲
-                                                else
-                                                    span.deltaDown ▼
-                                                | from #{currencyFormat.format(data.last.EstimatedCostToDate)}
+                            tr
+                                td(colspan=2)
+                                    table.data2col
+                                        if data.current.PercentContained || 0 === data.current.PercentContained
+                                            tr.important
+                                                th
+                                                    span.current #{numFormat.format(data.current.PercentContained)}%
+                                                td
+                                                    | Contained*
+                                                    if !data.isNew && 'PercentContained' in data.diff && (data.current.PercentContained - data.last.PercentContained > 0.5 || data.current.PercentContained - data.last.PercentContained < -0.5)
+                                                        span.previous
+                                                            if data.current.PercentContained > data.last.PercentContained
+                                                                span.deltaUp ▲
+                                                            else
+                                                                span.deltaDown ▼
+                                                            | from #{numFormat.format(data.last.PercentContained)}%
+                                        - const usePerimAcres = data.current.PerimDateTime && (data.current.PerimDateTime > data.current.ModifiedOnDateTime) && data.current.PerimeterData.Acres && data.current.PerimeterData.Acres > (data.current.DailyAcres || 0);
+                                        - const rawAcres = usePerimAcres ? data.current.PerimeterData.Acres : data.current.DailyAcres;
+                                        if rawAcres && rawAcres > 0.1
+                                            tr.important
+                                                - const acres = rawAcres >= 100 ? Math.round(rawAcres) : rawAcres;
+                                                th
+                                                    span.current #{numFormat.format(acres)}
+                                                td
+                                                    | Acres
+                                                    if usePerimAcres
+                                                        span.previous (by perimeter)
+                                                    if !data.isNew && (acres - data.last.DailyAcres > 0.5 || acres - data.last.DailyAcres < -0.5)
+                                                        span.previous
+                                                            if acres > data.last.DailyAcres
+                                                                span.deltaUp ▲
+                                                            else
+                                                                span.deltaDown ▼
+                                                            | from #{numFormat.format(data.last.DailyAcres)}
+                                        if data.current.TotalIncidentPersonnel
+                                            tr.important
+                                                th 
+                                                    span.current #{numFormat.format(data.current.TotalIncidentPersonnel)}
+                                                td
+                                                    | Personnel
+                                                    if !data.isNew && 'TotalIncidentPersonnel' in data.diff && data.last.TotalIncidentPersonnel
+                                                        span.previous
+                                                            if data.current.TotalIncidentPersonnel > data.last.TotalIncidentPersonnel
+                                                                span.deltaUp ▲
+                                                            else
+                                                                span.deltaDown ▼
+                                                            | from #{numFormat.format(data.last.TotalIncidentPersonnel)}
+                                        if data.current.EstimatedCostToDate
+                                            tr.important
+                                                th 
+                                                    span.current #{currencyFormat.format(data.current.EstimatedCostToDate)}
+                                                td
+                                                    | Est. Cost
+                                                    if !data.isNew && 'EstimatedCostToDate' in data.diff && data.last.EstimatedCostToDate
+                                                        span.previous
+                                                            if data.current.EstimatedCostToDate > data.last.EstimatedCostToDate
+                                                                span.deltaUp ▲
+                                                            else
+                                                                span.deltaDown ▼
+                                                            | from #{currencyFormat.format(data.last.EstimatedCostToDate)}
 
                             tr
                                 td.details(colspan=2)

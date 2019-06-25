@@ -204,7 +204,7 @@ table {
     font-size: 125%;
 }
 
-.data tr:nth-child(even) {
+.data2col tr:nth-child(even) {
     background: #eee;
 }
 
@@ -298,6 +298,12 @@ table {
 
 .innerWarn {
     padding: 5px;
+}
+
+table.data2col {
+    width: 100%;
+    margin-left: auto!important;
+    margin-right: auto!important;
 }
 
 .data td {
