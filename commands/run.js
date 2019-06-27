@@ -707,6 +707,7 @@ exports.handler = (argv) => {
     };
     cur.unitId = cur.pooresponsibleunit || cur.UniqueFireIdentifier.split('-')[1];
     cur.unitMention = units.unitTag(cur.unitId);
+    cur.Final_Fire_Name = util.fireName(cur.Fire_Name);
     return {i, cur, perimDateTime, old, inciWeb, perim};
   }
 
