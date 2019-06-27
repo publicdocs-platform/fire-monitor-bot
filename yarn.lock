@@ -741,10 +741,10 @@
   resolved "https://registry.yarnpkg.com/@google-cloud/promisify/-/promisify-1.0.0.tgz#1ae99ab8dd36807ee9923a81f8c6bc9159025fe9"
   integrity sha512-B1wYzEqvM71QQgzc47xH3np40dxT17G76gMYew0q/fSwU/iWu7nNfxOU8Ataormee5j/n27G1muKU85LRdecww==
 
-"@google-cloud/tasks@^1.1.1":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@google-cloud/tasks/-/tasks-1.1.1.tgz#3af5ba6bd61e941768882e57a1ab8361ab35dcf2"
-  integrity sha512-RmWJbHheeJoubFz0b2Tu784sNNfZF7n98iwGiaHapHnMKJVVktCWXdL15kK2ERrwkPeptvKkjJGixXLEXWg+KQ==
+"@google-cloud/tasks@^1.1.2":
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/@google-cloud/tasks/-/tasks-1.1.2.tgz#db406a12ce07ce85100bc9a5ec3992f8b2e9e500"
+  integrity sha512-7iBEQeeG8st4k98iDKHRx+DnqXjKLU8ZZQExR6dcSA+6OtvTaGt4s7DWgwG4RXg2IOwbXPXWNaySli5h2TTQvw==
   dependencies:
     google-gax "^1.0.0"
 
