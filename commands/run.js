@@ -436,12 +436,12 @@ exports.handler = (argv) => {
     fs.writeFileSync(argv.db, yaml.safeDump(x, {skipInvalid: true}));
 
     if (argv.postPersistCmd) {
-      const postPeristEnv = {
+      const postPeristEnv = Object.assign({}, process.env, {
         FIRE_MONITOR_BOT_DB: argv.db,
         FIRE_MONITOR_BOT_UPDATE_ID: globalUpdateId,
         FIRE_MONITOR_BOT_UPDATES: updates.join('\n'),
         FIRE_MONITOR_BOT_UPDATE_SUMMARY: updateNames.join(', '),
-      };
+      });
       try {
         const {stdout, stderr} = await exec(argv.postPersistCmd, {
           env: postPeristEnv,
