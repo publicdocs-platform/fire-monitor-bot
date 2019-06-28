@@ -448,7 +448,7 @@ exports.handler = (argv) => {
         });
         logger.debug('Post persist stdout: \n' + stdout, {stdout: stdout, env: postPeristEnv});
         if (stderr) {
-          logger.error('Post persist stderr: \n' + stderr, {stderr: stderr, env: postPeristEnv});
+          logger.debug('Post persist stderr: \n' + stderr, {stderr: stderr, env: postPeristEnv});
         }
       } catch (err) {
         logger.error('### Error in post persist command: ');
