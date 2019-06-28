@@ -323,6 +323,9 @@ exports.handler = (argv) => {
 
     const xkeys = _.keys(x);
     const xsortedKeys = _.sortBy(xkeys, (i) => -x[i].DailyAcres);
+    // Human summaries
+    const updates = [];
+    const updateNames = [];
 
     for (const key1 of xsortedKeys) {
       try { // NOPMD
@@ -372,6 +375,7 @@ exports.handler = (argv) => {
         }
 
         const updateId = 'UPD-' + cur.ModifiedOnDateTime + '-PER-' + (cur.PerimDateTime || 'none') + '-ID-' + i + '-NAME-' + cur.Name.replace(/[^a-z0-9]/gi, '') + '-S-' + cur.Source.charAt(0);
+        const updateSummary = cur.Final_Fire_Name + ' (' + i + ') @ ' + cur.ModifiedOnDateTime + '; perim @ ' + (cur.PerimDateTime || 'none') + '; via ' + cur.Source;
 
         let oneDiff = deepDiff(old, cur);
         oneDiff = _.keyBy(oneDiff, (o) => o.path.join('.'));
@@ -398,6 +402,8 @@ exports.handler = (argv) => {
         const isNew = !(i in last);
 
         logger.debug('    - Material update.', {diff: oneDiff});
+        updates.push(updateSummary);
+        updateNames.push(cur.Final_Fire_Name);
         const diffPath = argv.outputdir + '/data/DIFF-' + updateId + '.yaml';
 
         if (fs.existsSync(diffPath)) {
@@ -431,7 +437,13 @@ exports.handler = (argv) => {
 
     if (argv.postPersistCmd) {
       try {
-        await exec(argv.postPersistCmd);
+        await exec(argv.postPersistCmd, {
+          env: {
+            FIRE_MONITOR_BOT_DB: argv.db,
+            FIRE_MONITOR_BOT_UPDATE_ID: globalUpdateId,
+            FIRE_MONITOR_BOT_UPDATES: updates.join('\n'),
+            FIRE_MONITOR_BOT_UPDATE_SUMMARY: updateNames.join(', '),
+          }});
       } catch (err) {
         logger.error('### Error in post persist command: ');
         logger.error(err);
