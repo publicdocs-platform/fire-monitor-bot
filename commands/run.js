@@ -304,7 +304,7 @@ exports.handler = (argv) => {
     const pruneTime = curTime - 1000 * 60 * 60 * 24 * argv.pruneDays;
 
     const globalUpdateId = 'Update-at-' + dateString(curTime);
-    logger.info('Saving ' + globalUpdateId);
+    logger.info('Updating ' + globalUpdateId);
     const diffGlobal = deepDiff(last, x) || [];
     const diffsGlobal = yaml.safeDump(diffGlobal, {skipInvalid: true});
     fs.writeFileSync(argv.outputdir + '/data/GLOBAL-DIFF-' + globalUpdateId + '.yaml', diffsGlobal);
@@ -436,14 +436,20 @@ exports.handler = (argv) => {
     fs.writeFileSync(argv.db, yaml.safeDump(x, {skipInvalid: true}));
 
     if (argv.postPersistCmd) {
+      const postPeristEnv = {
+        FIRE_MONITOR_BOT_DB: argv.db,
+        FIRE_MONITOR_BOT_UPDATE_ID: globalUpdateId,
+        FIRE_MONITOR_BOT_UPDATES: updates.join('\n'),
+        FIRE_MONITOR_BOT_UPDATE_SUMMARY: updateNames.join(', '),
+      };
       try {
-        await exec(argv.postPersistCmd, {
-          env: {
-            FIRE_MONITOR_BOT_DB: argv.db,
-            FIRE_MONITOR_BOT_UPDATE_ID: globalUpdateId,
-            FIRE_MONITOR_BOT_UPDATES: updates.join('\n'),
-            FIRE_MONITOR_BOT_UPDATE_SUMMARY: updateNames.join(', '),
-          }});
+        const {stdout, stderr} = await exec(argv.postPersistCmd, {
+          env: postPeristEnv,
+        });
+        logger.debug('Post persist stdout: \n' + stdout, {stdout: stdout, env: postPeristEnv});
+        if (stderr) {
+          logger.error('Post persist stderr: \n' + stderr, {stderr: stderr, env: postPeristEnv});
+        }
       } catch (err) {
         logger.error('### Error in post persist command: ');
         logger.error(err);
@@ -740,7 +746,7 @@ exports.handler = (argv) => {
         } finally {
         }
 
-        logger.info('Next round');
+        logger.debug('Main loop instance complete');
       }
       setTimeout(function() {
         mainLoop(false, x);
