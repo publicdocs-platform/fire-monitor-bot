@@ -402,7 +402,8 @@ exports.handler = (argv) => {
         const isNew = !(i in last);
 
         logger.debug('    - Material update.', {diff: oneDiff});
-        updates.push(updateSummary);
+        const uniqueUpdateId = os.hostname() + '.' + updateId;
+        updates.push(updateSummary + '; UUID:' + uniqueUpdateId);
         updateNames.push(cur.Final_Fire_Name);
         const diffPath = argv.outputdir + '/data/DIFF-' + updateId + '.yaml';
 
@@ -420,7 +421,7 @@ exports.handler = (argv) => {
         await promisify(intensiveProcessingSemaphore.take).bind(intensiveProcessingSemaphore)();
         try {
           logger.info(' [# Entering internalProcessFire ' + updateId, {updateId: updateId});
-          await internalProcessFire(logger, updateId, inciWeb, cur, perim, old, oneDiff, isNew, key, perimDateTime);
+          await internalProcessFire(logger, updateId, inciWeb, cur, perim, old, oneDiff, isNew, key, perimDateTime, uniqueUpdateId);
         } catch (err) {
           logger.error('    $$$$ ERROR processing %s', updateId, {updateId: updateId});
           logger.error(err);
@@ -463,7 +464,7 @@ exports.handler = (argv) => {
 
     return x;
 
-    async function internalProcessFire(parentLogger, updateId, inciWeb, cur, perim, old, oneDiff, isNew, key, perimDateTime) {
+    async function internalProcessFire(parentLogger, updateId, inciWeb, cur, perim, old, oneDiff, isNew, key, perimDateTime, uniqueUpdateId) {
       const logger = parentLogger.child({
         labels: {updateId: updateId},
         updateId: updateId,
@@ -574,7 +575,7 @@ exports.handler = (argv) => {
       const terrainImg = terrainPath || null;
 
       // QRCode to trace source.
-      const qrcode = os.hostname() + '.' + updateId;
+      const qrcode = uniqueUpdateId;
 
       const templateData = {
         lat: lat,
