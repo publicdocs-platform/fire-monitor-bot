@@ -450,7 +450,18 @@ exports.handler = (argv) => {
       }
     }
 
-    fs.writeFileSync(argv.db, yaml.safeDump(currentDb, {skipInvalid: true}));
+    const dbMetaInfo = {
+      WARNING: 'DO NOT USE FOR HEALTH, SAFETY, EMERGENCY, or EVACUATION PURPOSES. Consult local public officials instead.\n'+
+               'Info is APPROXIMATE, often INCORRECT and OUT-OF-DATE, NOT REAL-TIME, and NOT REVIEWED BY A HUMAN BEING.\n'+
+               'For information only. USE AT YOUR OWN RISK — FIRES MAY BE CLOSER AND LARGER THAN THEY APPEAR HERE.\n'+
+               'Unofficial. Not affiliated with or endorsed by any government agencies.\n'+
+               'No claim to original government works.  Source data may be modified and combined with other data.\n'+
+               'To the maximum extent permitted by law: (1) all content is provided to you on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, WHETHER EXPRESS, IMPLIED, STATUTORY, OR OTHER (INCLUDING, WITHOUT LIMITATION, ANY WARRANTIES OR CONDNTIONS OF TITLE, MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR NONINFRINGEMENT); and (2) IN NO EVENT WILL ANY AUTHOR OR DATA PROVIDER BE LIABLE TO YOU ON ANY LEGAL THEORY (INCLUDING, WITHOUT LIMITATION, NEGLIGENCE) OR OTHERWISE FOR ANY DIRECT, SPECIAL, INDIRECT, INCIDENTAL, CONSEQUENTIAL, PUNITIVE, EXEMPLARY, OR OTHER LOSSES, COSTS, EXPENSES, OR DAMAGES arising out of your use of this content, even if the author or data provider has been advised of the possibility of such losses, costs, expenses, or damages.',
+      Host: os.hostname(),
+      UpdateId: globalUpdateId,
+    };
+
+    fs.writeFileSync(argv.db, yaml.safeDump({__META: dbMetaInfo, Database: currentDb}, {skipInvalid: true}));
 
     if (argv.postPersistCmd) {
       const postPeristEnv = Object.assign({}, process.env, {
@@ -777,6 +788,9 @@ exports.handler = (argv) => {
   let persist = undefined;
   if (fs.existsSync(argv.db)) {
     persist = yaml.safeLoad(fs.readFileSync(argv.db));
+    if (persist.__META) {
+      persist = persist.Database;
+    }
     if (argv.redo) {
       argv.redo.split(',').map((x) => {
         delete persist[x]; return 0;
