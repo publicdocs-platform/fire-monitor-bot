@@ -17,9 +17,9 @@ limitations under the License.
 */
 'use strict';
 
-
 require('./envconfig');
 require('./lib/logging');
+require('./lib/monitoring');
 
 const yargs = require('yargs');
 const pkgVersion = require('./package.json').version;
