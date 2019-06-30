@@ -19,6 +19,10 @@
     "lint": "eslint . --fix"
   },
   "dependencies": {
+    "@opencensus/core": "^0.0.14",
+    "@opencensus/exporter-stackdriver": "^0.0.14",
+    "@opencensus/exporter-zpages": "^0.0.14",
+    "@opencensus/nodejs": "^0.0.14",
     "@publicdocs/togeojson": "https://github.com/publicdocs-platform/togeojson",
     "@turf/bearing": "^6.0.1",
     "@turf/distance": "^6.0.1",

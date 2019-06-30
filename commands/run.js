@@ -27,11 +27,14 @@ const del = require('del');
 const os = require('os');
 const deepDiff = require('deep-diff');
 const numeral = require('numeral');
+const assert = require('assert').strict;
 const promisify = require('util').promisify;
 const exec = promisify(require('child_process').exec);
+const {globalStats, MeasureUnit} = require('@opencensus/core');
 
 const envconfig = require('../envconfig');
 const logging = require('../lib/logging');
+const monitoring = require('../lib/monitoring');
 const logger = logging.child({labels: {system: 'run'}});
 const util = require('../lib/util');
 const afm = require('../lib/afm');
@@ -45,6 +48,36 @@ const server = require('../lib/server');
 const files = require('../lib/files');
 const units = require('../lib/units');
 
+// Metrics
+const monNumLoopsStarted = globalStats.createMeasureInt64('loops_started', MeasureUnit.UNIT, 'The number of main loops started');
+const monNumLoopsFinished = globalStats.createMeasureInt64('loops_finished', MeasureUnit.UNIT, 'The number of main loops finished (error or success)');
+const monNumLoopsErrored = globalStats.createMeasureInt64('loops_errored', MeasureUnit.UNIT, 'The number of main loops errored');
+const monNumLoopsSucceeded = globalStats.createMeasureInt64('loops_success', MeasureUnit.UNIT, 'The number of main loops succeeded');
+const monLoopLatencySec = globalStats.createMeasureDouble('loop_latency', MeasureUnit.SEC, 'The loop latency in seconds');
+
+const monNumFiresProcessed = globalStats.createMeasureInt64('fires_processed', MeasureUnit.UNIT, 'The number of fires processed');
+const monNumFireMaterialUpdatesProcessed = globalStats.createMeasureInt64('fire_material_updates', MeasureUnit.UNIT, 'The number of fire material updates');
+const monFireMaterialUpdateProcessLatencySec = globalStats.createMeasureDouble('fire_material_update_latency', MeasureUnit.SEC, 'The latency of a material update');
+
+monitoring.monitorDist('run', monLoopLatencySec,
+    [0, 1, 2, 4, 8, 16, 16 * 2, 16 * 3, 16 * 4, 32 * 3, 32 * 4, 32 * 5, 32 * 6, 32 * 7, 32 * 8, 64 * 5, 64 * 6, 64 * 7, 64 * 8]
+);
+monitoring.monitorLast('run', monLoopLatencySec);
+monitoring.monitorSum('run', monLoopLatencySec);
+
+monitoring.monitorDist('run', monFireMaterialUpdateProcessLatencySec,
+    [0, 1, 2, 4, 8, 16, 16 * 2, 16 * 3, 16 * 4, 32 * 3, 32 * 4, 32 * 5, 32 * 6, 32 * 7, 32 * 8, 64 * 5, 64 * 6, 64 * 7, 64 * 8]
+);
+monitoring.monitorLast('run', monFireMaterialUpdateProcessLatencySec);
+monitoring.monitorSum('run', monFireMaterialUpdateProcessLatencySec);
+
+monitoring.monitorSum('run', monNumLoopsStarted);
+monitoring.monitorSum('run', monNumLoopsFinished);
+monitoring.monitorSum('run', monNumLoopsErrored);
+monitoring.monitorSum('run', monNumLoopsSucceeded);
+
+monitoring.monitorSum('run', monNumFireMaterialUpdatesProcessed);
+monitoring.monitorSum('run', monNumFiresProcessed);
 
 exports.command = 'run';
 
@@ -317,8 +350,9 @@ exports.handler = (argv) => {
     const oldDbKeys = _.keys(previousDb);
 
     fireLoop: for (const key1 of currentDbKeysSorted) {
+      logger.debug(' #[ Start Processing key %s', key1);
+      const start = process.hrtime();
       try { // NOPMD
-        logger.debug(' #[ Start Processing key %s', key1);
         let i = key1;
 
         // cur is a *reference* to currentDb[i]
@@ -330,41 +364,41 @@ exports.handler = (argv) => {
         const oldMatchingKeys = _.intersection(oldDbKeys, cur._CorrelationIds);
         let old = {};
         for (const oldKey of oldMatchingKeys) {
-          if (!old || old.ModifiedOnDateTime < previousDb[oldKey].ModifiedOnDateTime) {
+          if (!old || !old.ModifiedOnDateTime || old.ModifiedOnDateTime < previousDb[oldKey].ModifiedOnDateTime) {
             old = _.cloneDeep(previousDb[oldKey]);
-          }
-          if (previousDb[oldKey].ModifiedOnDateTime >= cur.ModifiedOnDateTime) {
-            logger.debug('  -) Previous record id %s (cur id %s) not updated old %o new %o', oldKey, i, previousDb[oldKey].ModifiedOnDateTime, cur.ModifiedOnDateTime, {
-              x: currentDb[i],
-              last: previousDb[oldKey],
-              cur: cur,
-            });
-            const curPerimData = _.cloneDeep(cur.PerimeterData);
-            const curCorrelates = _.union(cur._CorrelationIds, previousDb[oldKey]._CorrelationIds);
-            if (i !== oldKey) {
-              delete currentDb[i];
-              i = oldKey;
-            }
-            // Keep the newer data around.
-            currentDb[i] = _.cloneDeep(previousDb[i]);
-            // Except perimeters, which still need to be checked.
-            currentDb[i].PerimDateTime = perimDateTime;
-            currentDb[i].PerimeterData = curPerimData;
-            currentDb[i].UniqueFireIdentifier = i;
-            currentDb[i]._CorrelationIds = curCorrelates;
-            // cur is a *reference* to x[i]
-            cur = currentDb[i];
-
-            // Only skip the update if perimeter is ALSO not up to date.
-            if (!perimDateTime || (previousDb[i].PerimDateTime && previousDb[i].PerimDateTime >= perimDateTime)) {
-              logger.debug('  -) Previous perim ALSO not updated old %o new %o', previousDb[i].PerimDateTime, perimDateTime, {
+            if (old.ModifiedOnDateTime >= cur.ModifiedOnDateTime) {
+              logger.debug('  -) Previous record id %s (cur id %s) not updated old %o new %o', oldKey, i, old.ModifiedOnDateTime, cur.ModifiedOnDateTime, {
                 x: currentDb[i],
-                last: previousDb[i],
+                last: old,
                 cur: cur,
               });
-              currentDb[i].PerimDateTime = previousDb[i].PerimDateTime;
-              currentDb[i].PerimeterData = _.cloneDeep(previousDb[i].PerimeterData);
-              continue fireLoop;
+              // Keep the newer data around.
+              const curPerimData = _.cloneDeep(cur.PerimeterData);
+              const curCorrelates = _.union(cur._CorrelationIds, old._CorrelationIds);
+              if (i !== oldKey) {
+                delete currentDb[i];
+                i = oldKey;
+              }
+              currentDb[i] = _.cloneDeep(old);
+              // Except perimeters, which still need to be checked.
+              currentDb[i].PerimDateTime = perimDateTime;
+              currentDb[i].PerimeterData = curPerimData;
+              assert.equal(currentDb[i].UniqueFireIdentifier, i);
+              currentDb[i]._CorrelationIds = curCorrelates;
+              // cur is a *reference* to x[i]
+              cur = currentDb[i];
+
+              // Only skip the update if perimeter is ALSO not up to date.
+              if (!perimDateTime || (old.PerimDateTime && old.PerimDateTime >= perimDateTime)) {
+                logger.debug('  -) Previous perim ALSO not updated old %o new %o', old.PerimDateTime, perimDateTime, {
+                  x: currentDb[i],
+                  last: old,
+                  cur: cur,
+                });
+                currentDb[i].PerimDateTime = old.PerimDateTime;
+                currentDb[i].PerimeterData = _.cloneDeep(old.PerimeterData);
+                continue fireLoop;
+              }
             }
           }
         }
@@ -379,8 +413,10 @@ exports.handler = (argv) => {
 
         if (!cur.ModifiedOnDateTimeEpoch || cur.ModifiedOnDateTimeEpoch < pruneTime) {
           logger.debug(' #! Pruning %s %s -> last mod %s', i, cur.Name, cur.ModifiedOnDateTime, {cur: cur, x: currentDb[i]});
+          if (!_.isEmpty(_.intersection(oldDbKeys, cur._CorrelationIds))) {
+            updates.push('🗑️' + updateSummary);
+          }
           delete currentDb[i];
-          updates.push('🗑️' + updateSummary);
           continue;
         }
 
@@ -425,27 +461,36 @@ exports.handler = (argv) => {
           continue;
         }
 
-        updates.push('📣' + updateSummary + '\n   UUID: ' + uniqueUpdateId);
-        updateNames.push(cur.Final_Fire_Name);
-
         fs.writeFileSync(diffPath, diffs);
         if (argv.realFireNames) {
           cur.Hashtag = util.fireName(cur.Name);
         }
 
         await promisify(intensiveProcessingSemaphore.take).bind(intensiveProcessingSemaphore)();
+        let didProcess = false;
+        let didError = false;
+        logger.info(' [# Entering internalProcessFire ' + updateId, {updateId: updateId});
+        logger.info('   ' + _.last(updates), {updateId: updateId});
         try {
-          logger.info(' [# Entering internalProcessFire ' + updateId, {updateId: updateId});
-          logger.info('   ' + _.last(updates), {updateId: updateId});
-          await internalProcessFire(logger, updateId, inciWeb, cur, perim, old, oneDiff, isNew, i, perimDateTime, uniqueUpdateId);
+          didProcess = await internalProcessFire(logger, updateId, inciWeb, cur, perim, old, oneDiff, isNew, i, perimDateTime, uniqueUpdateId);
         } catch (err) {
+          didError = true;
           logger.error('    $$$$ ERROR processing %s', updateId, {updateId: updateId});
           logger.error(err);
         } finally {
           intensiveProcessingSemaphore.leave();
+
+          updates.push((didProcess ? '📣' : (didError ? '🚫' : '🔇')) + updateSummary + '\n   UUID: ' + uniqueUpdateId);
+          if (didProcess) {
+            updateNames.push(cur.Final_Fire_Name);
+            const duration = process.hrtime(start);
+            const latency = duration[0] + (duration[1]/1000000.0)/1000.0;
+            globalStats.record([{measure: monNumFireMaterialUpdatesProcessed, value: 1}, {measure: monFireMaterialUpdateProcessLatencySec, value: latency}]);
+          }
           logger.info(' ]# Exiting internalProcessFire ' + updateId, {updateId: updateId});
         }
       } finally {
+        globalStats.record([{measure: monNumFiresProcessed, value: 1}]);
         logger.debug(' ]# End Processing key %s', key1);
       }
     }
@@ -458,7 +503,6 @@ exports.handler = (argv) => {
                'No claim to original government works.  Source data may be modified and combined with other data.\n'+
                'To the maximum extent permitted by law: (1) all content is provided to you on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, WHETHER EXPRESS, IMPLIED, STATUTORY, OR OTHER (INCLUDING, WITHOUT LIMITATION, ANY WARRANTIES OR CONDNTIONS OF TITLE, MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR NONINFRINGEMENT); and (2) IN NO EVENT WILL ANY AUTHOR OR DATA PROVIDER BE LIABLE TO YOU ON ANY LEGAL THEORY (INCLUDING, WITHOUT LIMITATION, NEGLIGENCE) OR OTHERWISE FOR ANY DIRECT, SPECIAL, INDIRECT, INCIDENTAL, CONSEQUENTIAL, PUNITIVE, EXEMPLARY, OR OTHER LOSSES, COSTS, EXPENSES, OR DAMAGES arising out of your use of this content, even if the author or data provider has been advised of the possibility of such losses, costs, expenses, or damages.',
       Host: os.hostname(),
-      UpdateId: globalUpdateId,
     };
 
     fs.writeFileSync(argv.db, yaml.safeDump({__META: dbMetaInfo, Database: currentDb}, {skipInvalid: true}));
@@ -577,7 +621,7 @@ exports.handler = (argv) => {
       for (const filterKey in displayFilters) {
         if (displayFilters[filterKey]) {
           logger.info('     >) Skipping %s -> filter %s', updateId, filterKey);
-          return;
+          return false;
         }
       }
 
@@ -628,6 +672,7 @@ exports.handler = (argv) => {
       await renderUpdateImage();
       await perimAndSaveProcess();
 
+      return true;
 
       async function perimAndSaveProcess() {
         const detailImg = (lat && lon) || (perim.length > 0 && !(perim.length === 1 && perim[0].length === 1 && perim[0][0].length === 2));
@@ -764,6 +809,8 @@ exports.handler = (argv) => {
     (async function() {
       let x = last;
       if (!argv.twitterOnly) {
+        globalStats.record([{measure: monNumLoopsStarted, value: 1}]);
+        const start = process.hrtime();
         try {
           if (!argv.ignoreSatellites) {
             await afm.refreshAfmSatelliteData(argv.outputdir + '/kml/');
@@ -771,12 +818,15 @@ exports.handler = (argv) => {
           await units.loadUnits(argv.unitsIdPath, argv.unitsSocialPath);
           await dailyMap();
           x = await internalLoop(first, last);
+          globalStats.record([{measure: monNumLoopsSucceeded, value: 1}]);
         } catch (err) {
+          globalStats.record([{measure: monNumLoopsErrored, value: 1}]);
           logger.error('>> Main loop error');
           logger.error(err);
-        } finally {
         }
-
+        const duration = process.hrtime(start);
+        const latency = duration[0] + (duration[1]/1000000.0)/1000.0;
+        globalStats.record([{measure: monNumLoopsFinished, value: 1}, {measure: monLoopLatencySec, value: latency}]);
         logger.debug('Main loop instance complete');
       }
       setTimeout(function() {
@@ -864,7 +914,8 @@ function mergeCalfireIncidentsIntoDb(calfireIncidents, currentDb, mergeDistanceM
     if (matchingDbItems.length === 0) {
       currentDb[calfireId] = util.mergedCalfireFire(calfireItem, null);
     } else if (matchingDbItems.length === 1) {
-      currentDb[matchingDbItems[0].UniqueFireIdentifier] = util.mergedCalfireFire(calfireItem, matchingDbItems[0]);
+      currentDb[calfireId] = util.mergedCalfireFire(calfireItem, matchingDbItems[0]);
+      delete currentDb[matchingDbItems[0].UniqueFireIdentifier];
     } else {
       logger.error('Multiple NG incidents match CALFIRE fire = %s', searchName,
           {
