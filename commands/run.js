@@ -123,6 +123,11 @@ exports.builder = {
     default: 60 * 5 + 11,
     desc: 'Seconds between twitter posts',
   },
+  mergeDistanceMaxMiles: {
+    number: true,
+    default: 5.0,
+    desc: 'Max miles to merge fires with same name from multiple sources',
+  },
   pruneDays: {
     number: true,
     default: 1,
@@ -273,7 +278,7 @@ exports.handler = (argv) => {
     const calfireIncidents = argv.ingestCalfire ? await calfire.getFires(argv.userAgent) : {};
 
     mergeNfsaAndGeomacIncidentsIntoDb(nfsaIncidents, geomacIncidents, currentDb);
-    mergeCalfireIncidentsIntoDb(calfireIncidents, currentDb);
+    mergeCalfireIncidentsIntoDb(calfireIncidents, currentDb, argv.mergeDistanceMaxMiles);
 
     const curTime = new Date().getTime();
     const pruneTime = curTime - 1000 * 60 * 60 * 24 * argv.pruneDays;
@@ -756,25 +761,26 @@ function mergeNfsaAndGeomacIncidentsIntoDb(nfsaIncidents, geomacIncidents, curre
   });
 }
 
-function mergeCalfireIncidentsIntoDb(calfireIncidents, currentDb) {
+function mergeCalfireIncidentsIntoDb(calfireIncidents, currentDb, mergeDistanceMax) {
   for (const calfireId of _.keys(calfireIncidents)) {
     const calfireItem = calfireIncidents[calfireId];
     const searchName = util.fireName(calfireItem.Name);
     const matchingDbItems = _.filter(currentDb, (o) => {
-      return o.UniqueFireIdentifier.substr(5, 2) === 'CA' && util.fireName(o.Name) === searchName;
+      return o.UniqueFireIdentifier.substr(5, 2) === 'CA' &&
+          util.fireName(o.Name) === searchName &&
+          geocoding.distance(o.Lon, o.Lat, calfireItem.Lon, calfireItem.Lat) <= mergeDistanceMax;
     });
     if (matchingDbItems.length === 0) {
       currentDb[calfireId] = util.mergedCalfireFire(calfireItem, null);
     } else if (matchingDbItems.length === 1) {
       currentDb[matchingDbItems[0].UniqueFireIdentifier] = util.mergedCalfireFire(calfireItem, matchingDbItems[0]);
     } else {
-      logger.error('Multiple NG incidents match CALFIRE fire %s', searchName,
+      logger.error('Multiple NG incidents match CALFIRE fire = %s', searchName,
           {
             calfireItem: calfireItem,
             matchingDbItems: matchingDbItems,
           }
       );
-      throw new Error('Multiple NG incidents match CALFIRE fire');
     }
   }
 }
