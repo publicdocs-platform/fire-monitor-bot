@@ -18,8 +18,8 @@ and MAY BE INCORRECT OR OUT-OF-DATE. USE AT YOUR OWN RISK.
 
 ## Features
 
-* Sources fire summary from the National Fire Situational Awareness tool and from GeoMAC
-* Sources perimeter info from GeoMAC
+* Sources fire summary from the NWCG NFSA, USGS GeoMAC, and CAL FIRE
+* Sources perimeter info from USGS GeoMAC
 * Sources satellite fire detection from MODIS and VIIRS I (NASA/NOAA via Forest Service Active Fire Mapping)
 * Creates a multi-layer base map from USGS, US Census Bureau and other federal govt data sets
 * Determines location of fire relative to named populated places from the Census Bureau
