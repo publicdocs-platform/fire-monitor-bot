@@ -18,7 +18,7 @@ limitations under the License.
 // This function is used in the rendering templates.
 
 /* exported showMap */
-function showMap(centerX, centerY, zoom, style, opt) {
+function showMap(centerX, centerY, zoom, style, opt, source) {
   const opts = opt || {};
   const detail = style === 'perim';
   const cities = opts.cities || {closest: [], biggest: []};
@@ -647,6 +647,11 @@ function showMap(centerX, centerY, zoom, style, opt) {
     });
   }
 
+  const globalAttributions = {
+    'NFSA': ['NWCG/NFSA'],
+    'GEOMAC': ['USGS GeoMAC'],
+    'CALFIRE': ['CAL FIRE'],
+  };
 
   function eventsVectorLayer(events) {
     function eventFeature(evt) {
@@ -680,7 +685,7 @@ function showMap(centerX, centerY, zoom, style, opt) {
     return new ol.layer.Vector({
       source: new ol.source.Vector({
         features: (new ol.format.GeoJSON({dataProjection: 'EPSG:3857', featureProjection: 'EPSG:3857'})).readFeatures(allFeats),
-        attributions: ['NWCG', 'NFSA', 'USGS GeoMAC'],
+        attributions: globalAttributions[source],
       }),
       style: style,
       declutter: false,

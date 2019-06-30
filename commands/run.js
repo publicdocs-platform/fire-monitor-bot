@@ -40,6 +40,7 @@ const maprender = require('../lib/maprender');
 const render = require('../lib/render');
 const geocoding = require('../lib/geocoding');
 const geomac = require('../lib/geomac');
+const calfire = require('../lib/calfire');
 const server = require('../lib/server');
 const files = require('../lib/files');
 const units = require('../lib/units');
@@ -124,7 +125,7 @@ exports.builder = {
   },
   pruneDays: {
     number: true,
-    default: 45,
+    default: 1,
     desc: 'Days before pruning stale entries',
   },
   twitterThreadQueryPrefix: {
@@ -157,6 +158,11 @@ exports.builder = {
     default: 'general',
     desc: 'Account selector to use for retweeting',
   },
+  ingestCalfire: {
+    boolean: true,
+    default: true,
+    desc: 'Whether to ingest CAL FIRE incidents',
+  },
 };
 
 exports.handler = (argv) => {
@@ -172,7 +178,7 @@ exports.handler = (argv) => {
   server.run(argv.port, argv.outputdir);
 
 
-  const processFire = function(e, proj) {
+  const processNfsaFire = function(e, proj) {
     const entry = e.attributes;
     const ret = {};
     const to = proj4(proj, 'EPSG:4326', [e.geometry.x, e.geometry.y]);
@@ -189,9 +195,9 @@ exports.handler = (argv) => {
       }
     }
     ret.Source = 'NFSA';
+    ret._CorrelationIds = [ret.UniqueFireIdentifier];
     ret.ModifiedOnDateTime_Raw = ret.ModifiedOnDateTime;
     ret.ModifiedOnDateTimeEpoch_Raw = ret.ModifiedOnDateTimeEpoch;
-
     if (ret.ICS209ReportDateTime) {
       ret.ModifiedOnDateTime = ret.ICS209ReportDateTime;
       ret.ModifiedOnDateTimeEpoch = ret.ICS209ReportDateTimeEpoch;
@@ -259,53 +265,22 @@ exports.handler = (argv) => {
     };
   })();
 
-  async function internalLoop(first, last) {
-    const prov = util.createProvenance(dataOptions);
-    const layers = await rp(dataOptions);
+  async function internalLoop(isFirstRun, previousDb) {
+    const currentDb = _.cloneDeep(previousDb);
 
-    const x = _.cloneDeep(last);
+    const nfsaIncidents = await getNfsaFires(dataOptions, argv, processNfsaFire);
+    const geomacIncidents = await geomac.getFires(argv.userAgent);
+    const calfireIncidents = argv.ingestCalfire ? await calfire.getFires(argv.userAgent) : {};
 
-    const dataSetName = 'Active Incidents';
-
-    const dataSet = _.find(layers, (p) => p.name === dataSetName);
-
-    const requiredLayerNames = ['Large WF'];
-    if (argv.emergingNew) {
-      requiredLayerNames.unshift('Emerging WF < 24 hours');
-    }
-    if (argv.emergingOld) {
-      requiredLayerNames.unshift('Emerging WF > 24 hours');
-    }
-
-    const filteredLayers = dataSet.layerConfigs.filter((f) => requiredLayerNames.includes(f.featureCollection.layerDefinition.name));
-    const layerFeatures = filteredLayers.map((x) => {
-      return x.featureCollection.featureSet.features.map((y) => {
-        const r = processFire(y, 'EPSG:'+ x.featureCollection.featureSet.spatialReference.latestWkid);
-        r.NFSAType = x.featureCollection.layerDefinition.name;
-        return r;
-      });
-    });
-
-    const data0 = _.flatten(layerFeatures);
-    const data = data0.map((e) => Object.assign(e, {_Provenance: _.cloneDeep(prov)}));
-    const nfsaData = _.keyBy(data, (o) => o.UniqueFireIdentifier);
-    const gm = await geomac.getFires(argv.userAgent);
-
-    const keys = _.union(_.keys(nfsaData), _.keys(gm));
-    keys.map((key) => {
-      const merged = util.mergedNfsaGeomacFire(nfsaData[key], gm[key]);
-      x[key] = merged;
-      if (!merged) {
-        logger.warn('Missing ' + key);
-      }
-    });
+    mergeNfsaAndGeomacIncidentsIntoDb(nfsaIncidents, geomacIncidents, currentDb);
+    mergeCalfireIncidentsIntoDb(calfireIncidents, currentDb);
 
     const curTime = new Date().getTime();
     const pruneTime = curTime - 1000 * 60 * 60 * 24 * argv.pruneDays;
 
     const globalUpdateId = 'Update-at-' + dateString(curTime);
     logger.info('Updating ' + globalUpdateId);
-    const diffGlobal = deepDiff(last, x) || [];
+    const diffGlobal = deepDiff(previousDb, currentDb) || [];
     const diffsGlobal = yaml.safeDump(diffGlobal, {skipInvalid: true});
     fs.writeFileSync(argv.outputdir + '/data/GLOBAL-DIFF-' + globalUpdateId + '.yaml', diffsGlobal);
 
@@ -321,56 +296,55 @@ exports.handler = (argv) => {
       }
     });
 
-    const xkeys = _.keys(x);
-    const xsortedKeys = _.sortBy(xkeys, (i) => -x[i].DailyAcres);
+    const currentDbKeys = _.keys(currentDb);
+    const currentDbKeysSorted = _.sortBy(currentDbKeys, (i) => -currentDb[i].DailyAcres);
     // Human summaries
     const updates = [];
     const updateNames = [];
 
-    for (const key1 of xsortedKeys) {
+    for (const key1 of currentDbKeysSorted) {
       try { // NOPMD
         logger.debug(' #[ Start Processing key %s', key1);
-        const key = key1;
+        const i = key1;
 
-        // cur is a *reference* to x[i]
-        let {i, cur, perimDateTime, old, inciWeb, perim} = preDiffFireProcess(key, x, last, perims);
+        // cur is a *reference* to currentDb[i]
+        let {cur, perimDateTime, old, inciWeb, perim} = preDiffFireProcess(i, currentDb, previousDb, perims);
 
-        if (first) {
+        if (isFirstRun) {
           continue;
         }
 
-
-        if (i in last && last[i].ModifiedOnDateTime >= cur.ModifiedOnDateTime) {
-          logger.debug('  -) Previous record not updated old %o new %o', last[i].ModifiedOnDateTime, cur.ModifiedOnDateTime, {
-            x: x[i],
-            last: last[i],
+        if (i in previousDb && previousDb[i].ModifiedOnDateTime >= cur.ModifiedOnDateTime) {
+          logger.debug('  -) Previous record not updated old %o new %o', previousDb[i].ModifiedOnDateTime, cur.ModifiedOnDateTime, {
+            x: currentDb[i],
+            last: previousDb[i],
             cur: cur,
           });
           const curPerimData = _.cloneDeep(cur.PerimeterData);
           // Keep the newer data around.
-          x[i] = _.cloneDeep(last[i]);
+          currentDb[i] = _.cloneDeep(previousDb[i]);
           // Except perimeters, which still need to be checked.
-          x[i].PerimDateTime = perimDateTime;
-          x[i].PerimeterData = curPerimData;
+          currentDb[i].PerimDateTime = perimDateTime;
+          currentDb[i].PerimeterData = curPerimData;
           // cur is a *reference* to x[i]
-          cur = x[i];
+          cur = currentDb[i];
 
           // Only skip the update if perimeter is ALSO not up to date.
-          if (!perimDateTime || (last[i].PerimDateTime && last[i].PerimDateTime >= perimDateTime)) {
-            logger.debug('  -) Previous perim ALSO not updated old %o new %o', last[i].PerimDateTime, perimDateTime, {
-              x: x[i],
-              last: last[i],
+          if (!perimDateTime || (previousDb[i].PerimDateTime && previousDb[i].PerimDateTime >= perimDateTime)) {
+            logger.debug('  -) Previous perim ALSO not updated old %o new %o', previousDb[i].PerimDateTime, perimDateTime, {
+              x: currentDb[i],
+              last: previousDb[i],
               cur: cur,
             });
-            x[i].PerimDateTime = last[i].PerimDateTime;
-            x[i].PerimeterData = _.cloneDeep(last[i].PerimeterData);
+            currentDb[i].PerimDateTime = previousDb[i].PerimDateTime;
+            currentDb[i].PerimeterData = _.cloneDeep(previousDb[i].PerimeterData);
             continue;
           }
         }
 
         if (!cur.ModifiedOnDateTimeEpoch || cur.ModifiedOnDateTimeEpoch < pruneTime) {
-          logger.debug(' #! Pruning %s %s -> last mod %s', i, cur.Name, cur.ModifiedOnDateTime, {cur: cur, x: x[i]});
-          delete x[i];
+          logger.debug(' #! Pruning %s %s -> last mod %s', i, cur.Name, cur.ModifiedOnDateTime, {cur: cur, x: currentDb[i]});
+          delete currentDb[i];
           continue;
         }
 
@@ -399,7 +373,7 @@ exports.handler = (argv) => {
         }
 
         const diffs = yaml.safeDump(oneDiff, {skipInvalid: true});
-        const isNew = !(i in last);
+        const isNew = !(i in previousDb);
 
         logger.debug('    - Material update.', {diff: oneDiff});
         const uniqueUpdateId = os.hostname() + '.' + updateId;
@@ -421,7 +395,7 @@ exports.handler = (argv) => {
         await promisify(intensiveProcessingSemaphore.take).bind(intensiveProcessingSemaphore)();
         try {
           logger.info(' [# Entering internalProcessFire ' + updateId, {updateId: updateId});
-          await internalProcessFire(logger, updateId, inciWeb, cur, perim, old, oneDiff, isNew, key, perimDateTime, uniqueUpdateId);
+          await internalProcessFire(logger, updateId, inciWeb, cur, perim, old, oneDiff, isNew, i, perimDateTime, uniqueUpdateId);
         } catch (err) {
           logger.error('    $$$$ ERROR processing %s', updateId, {updateId: updateId});
           logger.error(err);
@@ -434,7 +408,7 @@ exports.handler = (argv) => {
       }
     }
 
-    fs.writeFileSync(argv.db, yaml.safeDump(x, {skipInvalid: true}));
+    fs.writeFileSync(argv.db, yaml.safeDump(currentDb, {skipInvalid: true}));
 
     if (argv.postPersistCmd) {
       const postPeristEnv = Object.assign({}, process.env, {
@@ -462,7 +436,7 @@ exports.handler = (argv) => {
       while (true) { }
     }
 
-    return x;
+    return currentDb;
 
     async function internalProcessFire(parentLogger, updateId, inciWeb, cur, perim, old, oneDiff, isNew, key, perimDateTime, uniqueUpdateId) {
       const logger = parentLogger.child({
@@ -684,9 +658,8 @@ exports.handler = (argv) => {
 
 
   function preDiffFireProcess(key, x, last, perims) {
-    const i = key;
-    const cur = x[i];
-    const old = last[i] || {};
+    const cur = x[key];
+    const old = last[key] || {};
     let perimAcres = null;
     let perim = [];
     let perimDateTime = null;
@@ -727,7 +700,7 @@ exports.handler = (argv) => {
     cur.unitId = cur.pooresponsibleunit || cur.UniqueFireIdentifier.split('-')[1];
     cur.unitMention = units.unitTag(cur.unitId);
     cur.Final_Fire_Name = util.fireName(cur.Fire_Name);
-    return {i, cur, perimDateTime, old, inciWeb, perim};
+    return {cur, perimDateTime, old, inciWeb, perim};
   }
 
   const mainLoop = function(first, last) {
@@ -775,4 +748,60 @@ exports.handler = (argv) => {
   });
 };
 
+
+function mergeNfsaAndGeomacIncidentsIntoDb(nfsaIncidents, geomacIncidents, currentDb) {
+  const keys = _.union(_.keys(nfsaIncidents), _.keys(geomacIncidents));
+  keys.map((key) => {
+    currentDb[key] = util.mergedNfsaGeomacFire(nfsaIncidents[key], geomacIncidents[key]);
+  });
+}
+
+function mergeCalfireIncidentsIntoDb(calfireIncidents, currentDb) {
+  for (const calfireId of _.keys(calfireIncidents)) {
+    const calfireItem = calfireIncidents[calfireId];
+    const searchName = util.fireName(calfireItem.Name);
+    const matchingDbItems = _.filter(currentDb, (o) => {
+      return o.UniqueFireIdentifier.substr(5, 2) === 'CA' && util.fireName(o.Name) === searchName;
+    });
+    if (matchingDbItems.length === 0) {
+      currentDb[calfireId] = util.mergedCalfireFire(calfireItem, null);
+    } else if (matchingDbItems.length === 1) {
+      currentDb[matchingDbItems[0].UniqueFireIdentifier] = util.mergedCalfireFire(calfireItem, matchingDbItems[0]);
+    } else {
+      logger.error('Multiple NG incidents match CALFIRE fire %s', searchName,
+          {
+            calfireItem: calfireItem,
+            matchingDbItems: matchingDbItems,
+          }
+      );
+      throw new Error('Multiple NG incidents match CALFIRE fire');
+    }
+  }
+}
+
+async function getNfsaFires(dataOptions, argv, processNfsaFire) {
+  const prov = util.createProvenance(dataOptions);
+  const layers = await rp(dataOptions);
+  const dataSetName = 'Active Incidents';
+  const dataSet = _.find(layers, (p) => p.name === dataSetName);
+  const requiredLayerNames = ['Large WF'];
+  if (argv.emergingNew) {
+    requiredLayerNames.unshift('Emerging WF < 24 hours');
+  }
+  if (argv.emergingOld) {
+    requiredLayerNames.unshift('Emerging WF > 24 hours');
+  }
+  const filteredLayers = dataSet.layerConfigs.filter((f) => requiredLayerNames.includes(f.featureCollection.layerDefinition.name));
+  const layerFeatures = filteredLayers.map((x) => {
+    return x.featureCollection.featureSet.features.map((y) => {
+      const r = processNfsaFire(y, 'EPSG:' + x.featureCollection.featureSet.spatialReference.latestWkid);
+      r.NFSAType = x.featureCollection.layerDefinition.name;
+      return r;
+    });
+  });
+  const data0 = _.flatten(layerFeatures);
+  const data = data0.map((e) => Object.assign(e, {_Provenance: _.cloneDeep(prov)}));
+  const nfsaData = _.keyBy(data, (o) => o.UniqueFireIdentifier);
+  return nfsaData;
+}
 
