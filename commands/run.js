@@ -40,6 +40,7 @@ const maprender = require('../lib/maprender');
 const render = require('../lib/render');
 const geocoding = require('../lib/geocoding');
 const geomac = require('../lib/geomac');
+const calfire = require('../lib/calfire');
 const server = require('../lib/server');
 const files = require('../lib/files');
 const units = require('../lib/units');
@@ -122,9 +123,14 @@ exports.builder = {
     default: 60 * 5 + 11,
     desc: 'Seconds between twitter posts',
   },
+  mergeDistanceMaxMiles: {
+    number: true,
+    default: 5.0,
+    desc: 'Max miles to merge fires with same name from multiple sources',
+  },
   pruneDays: {
     number: true,
-    default: 45,
+    default: 1,
     desc: 'Days before pruning stale entries',
   },
   twitterThreadQueryPrefix: {
@@ -157,6 +163,11 @@ exports.builder = {
     default: 'general',
     desc: 'Account selector to use for retweeting',
   },
+  ingestCalfire: {
+    boolean: true,
+    default: true,
+    desc: 'Whether to ingest CAL FIRE incidents',
+  },
 };
 
 exports.handler = (argv) => {
@@ -172,7 +183,7 @@ exports.handler = (argv) => {
   server.run(argv.port, argv.outputdir);
 
 
-  const processFire = function(e, proj) {
+  const processNfsaFire = function(e, proj) {
     const entry = e.attributes;
     const ret = {};
     const to = proj4(proj, 'EPSG:4326', [e.geometry.x, e.geometry.y]);
@@ -189,9 +200,9 @@ exports.handler = (argv) => {
       }
     }
     ret.Source = 'NFSA';
+    ret._CorrelationIds = [ret.UniqueFireIdentifier];
     ret.ModifiedOnDateTime_Raw = ret.ModifiedOnDateTime;
     ret.ModifiedOnDateTimeEpoch_Raw = ret.ModifiedOnDateTimeEpoch;
-
     if (ret.ICS209ReportDateTime) {
       ret.ModifiedOnDateTime = ret.ICS209ReportDateTime;
       ret.ModifiedOnDateTimeEpoch = ret.ICS209ReportDateTimeEpoch;
@@ -259,53 +270,29 @@ exports.handler = (argv) => {
     };
   })();
 
-  async function internalLoop(first, last) {
-    const prov = util.createProvenance(dataOptions);
-    const layers = await rp(dataOptions);
+  async function internalLoop(isFirstRun, previousDb) {
+    const currentDb = _.cloneDeep(previousDb);
 
-    const x = _.cloneDeep(last);
+    const async = {
+      nfsaIncidents: getNfsaFires(dataOptions, argv, processNfsaFire),
+      geomacIncidents: geomac.getFires(argv.userAgent),
+      calfireIncidents: argv.ingestCalfire ? calfire.getFires(argv.userAgent) : {},
+    };
 
-    const dataSetName = 'Active Incidents';
+    const nfsaIncidents = await async.calfireIncidents;
+    const geomacIncidents = await async.geomacIncidents;
+    const calfireIncidents = await async.calfireIncidents;
 
-    const dataSet = _.find(layers, (p) => p.name === dataSetName);
-
-    const requiredLayerNames = ['Large WF'];
-    if (argv.emergingNew) {
-      requiredLayerNames.unshift('Emerging WF < 24 hours');
-    }
-    if (argv.emergingOld) {
-      requiredLayerNames.unshift('Emerging WF > 24 hours');
-    }
-
-    const filteredLayers = dataSet.layerConfigs.filter((f) => requiredLayerNames.includes(f.featureCollection.layerDefinition.name));
-    const layerFeatures = filteredLayers.map((x) => {
-      return x.featureCollection.featureSet.features.map((y) => {
-        const r = processFire(y, 'EPSG:'+ x.featureCollection.featureSet.spatialReference.latestWkid);
-        r.NFSAType = x.featureCollection.layerDefinition.name;
-        return r;
-      });
-    });
-
-    const data0 = _.flatten(layerFeatures);
-    const data = data0.map((e) => Object.assign(e, {_Provenance: _.cloneDeep(prov)}));
-    const nfsaData = _.keyBy(data, (o) => o.UniqueFireIdentifier);
-    const gm = await geomac.getFires(argv.userAgent);
-
-    const keys = _.union(_.keys(nfsaData), _.keys(gm));
-    keys.map((key) => {
-      const merged = util.mergedNfsaGeomacFire(nfsaData[key], gm[key]);
-      x[key] = merged;
-      if (!merged) {
-        logger.warn('Missing ' + key);
-      }
-    });
+    mergeNfsaAndGeomacIncidentsIntoDb(nfsaIncidents, geomacIncidents, currentDb);
+    mergeCalfireIncidentsIntoDb(calfireIncidents, currentDb, argv.mergeDistanceMaxMiles);
+    mergeDupeFires(currentDb, argv.mergeDistanceMaxMiles);
 
     const curTime = new Date().getTime();
     const pruneTime = curTime - 1000 * 60 * 60 * 24 * argv.pruneDays;
 
     const globalUpdateId = 'Update-at-' + dateString(curTime);
     logger.info('Updating ' + globalUpdateId);
-    const diffGlobal = deepDiff(last, x) || [];
+    const diffGlobal = deepDiff(previousDb, currentDb) || [];
     const diffsGlobal = yaml.safeDump(diffGlobal, {skipInvalid: true});
     fs.writeFileSync(argv.outputdir + '/data/GLOBAL-DIFF-' + globalUpdateId + '.yaml', diffsGlobal);
 
@@ -321,61 +308,81 @@ exports.handler = (argv) => {
       }
     });
 
-    const xkeys = _.keys(x);
-    const xsortedKeys = _.sortBy(xkeys, (i) => -x[i].DailyAcres);
+    const currentDbKeys = _.keys(currentDb);
+    const currentDbKeysSorted = _.sortBy(currentDbKeys, (i) => -currentDb[i].DailyAcres);
     // Human summaries
     const updates = [];
     const updateNames = [];
 
-    for (const key1 of xsortedKeys) {
+    const oldDbKeys = _.keys(previousDb);
+
+    fireLoop: for (const key1 of currentDbKeysSorted) {
       try { // NOPMD
         logger.debug(' #[ Start Processing key %s', key1);
-        const key = key1;
+        let i = key1;
 
-        // cur is a *reference* to x[i]
-        let {i, cur, perimDateTime, old, inciWeb, perim} = preDiffFireProcess(key, x, last, perims);
-
-        if (first) {
+        // cur is a *reference* to currentDb[i]
+        let {cur, perimDateTime, inciWeb, perim} = preDiffFireProcess(i, currentDb, previousDb, perims);
+        if (isFirstRun) {
           continue;
         }
 
-
-        if (i in last && last[i].ModifiedOnDateTime >= cur.ModifiedOnDateTime) {
-          logger.debug('  -) Previous record not updated old %o new %o', last[i].ModifiedOnDateTime, cur.ModifiedOnDateTime, {
-            x: x[i],
-            last: last[i],
-            cur: cur,
-          });
-          const curPerimData = _.cloneDeep(cur.PerimeterData);
-          // Keep the newer data around.
-          x[i] = _.cloneDeep(last[i]);
-          // Except perimeters, which still need to be checked.
-          x[i].PerimDateTime = perimDateTime;
-          x[i].PerimeterData = curPerimData;
-          // cur is a *reference* to x[i]
-          cur = x[i];
-
-          // Only skip the update if perimeter is ALSO not up to date.
-          if (!perimDateTime || (last[i].PerimDateTime && last[i].PerimDateTime >= perimDateTime)) {
-            logger.debug('  -) Previous perim ALSO not updated old %o new %o', last[i].PerimDateTime, perimDateTime, {
-              x: x[i],
-              last: last[i],
+        const oldMatchingKeys = _.intersection(oldDbKeys, cur._CorrelationIds);
+        let old = {};
+        for (const oldKey of oldMatchingKeys) {
+          if (!old || old.ModifiedOnDateTime < previousDb[oldKey].ModifiedOnDateTime) {
+            old = _.cloneDeep(previousDb[oldKey]);
+          }
+          if (previousDb[oldKey].ModifiedOnDateTime >= cur.ModifiedOnDateTime) {
+            logger.debug('  -) Previous record id %s (cur id %s) not updated old %o new %o', oldKey, i, previousDb[oldKey].ModifiedOnDateTime, cur.ModifiedOnDateTime, {
+              x: currentDb[i],
+              last: previousDb[oldKey],
               cur: cur,
             });
-            x[i].PerimDateTime = last[i].PerimDateTime;
-            x[i].PerimeterData = _.cloneDeep(last[i].PerimeterData);
-            continue;
+            const curPerimData = _.cloneDeep(cur.PerimeterData);
+            const curCorrelates = _.union(cur._CorrelationIds, previousDb[oldKey]._CorrelationIds);
+            if (i !== oldKey) {
+              delete currentDb[i];
+              i = oldKey;
+            }
+            // Keep the newer data around.
+            currentDb[i] = _.cloneDeep(previousDb[i]);
+            // Except perimeters, which still need to be checked.
+            currentDb[i].PerimDateTime = perimDateTime;
+            currentDb[i].PerimeterData = curPerimData;
+            currentDb[i].UniqueFireIdentifier = i;
+            currentDb[i]._CorrelationIds = curCorrelates;
+            // cur is a *reference* to x[i]
+            cur = currentDb[i];
+
+            // Only skip the update if perimeter is ALSO not up to date.
+            if (!perimDateTime || (previousDb[i].PerimDateTime && previousDb[i].PerimDateTime >= perimDateTime)) {
+              logger.debug('  -) Previous perim ALSO not updated old %o new %o', previousDb[i].PerimDateTime, perimDateTime, {
+                x: currentDb[i],
+                last: previousDb[i],
+                cur: cur,
+              });
+              currentDb[i].PerimDateTime = previousDb[i].PerimDateTime;
+              currentDb[i].PerimeterData = _.cloneDeep(previousDb[i].PerimeterData);
+              continue fireLoop;
+            }
           }
         }
 
+        const updateId = 'UPD-' + cur.ModifiedOnDateTime + '-PER-' + (cur.PerimDateTime || 'none') + '-ID-' + i + '-NAME-' + cur.Name.replace(/[^a-z0-9]/gi, '') + '-S-' + cur.Source.charAt(0);
+        const updateSummary =
+          `🔥 ${cur.Final_Fire_Name} (${i}) ${cur.Hashtag}
+           🕒 ${cur.ModifiedOnDateTime}
+           ⏰ Perim ${cur.PerimDateTime || 'none'}
+           ℹ️ ${cur.Source}
+           🆔 ${updateId}`;
+
         if (!cur.ModifiedOnDateTimeEpoch || cur.ModifiedOnDateTimeEpoch < pruneTime) {
-          logger.debug(' #! Pruning %s %s -> last mod %s', i, cur.Name, cur.ModifiedOnDateTime, {cur: cur, x: x[i]});
-          delete x[i];
+          logger.debug(' #! Pruning %s %s -> last mod %s', i, cur.Name, cur.ModifiedOnDateTime, {cur: cur, x: currentDb[i]});
+          delete currentDb[i];
+          updates.push('🗑️' + updateSummary);
           continue;
         }
-
-        const updateId = 'UPD-' + cur.ModifiedOnDateTime + '-PER-' + (cur.PerimDateTime || 'none') + '-ID-' + i + '-NAME-' + cur.Name.replace(/[^a-z0-9]/gi, '') + '-S-' + cur.Source.charAt(0);
-        const updateSummary = cur.Final_Fire_Name + ' (' + i + ') @ ' + cur.ModifiedOnDateTime + '; perim @ ' + (cur.PerimDateTime || 'none') + '; via ' + cur.Source + '; id: ' + updateId;
 
         let oneDiff = deepDiff(old, cur);
         oneDiff = _.keyBy(oneDiff, (o) => o.path.join('.'));
@@ -384,34 +391,42 @@ exports.handler = (argv) => {
           if (!argv.monitorPerims || !('PerimDateTime' in oneDiff)) {
             // Unless acreage, perim, or containment change, we don't report it.x
             logger.info('     -) No perim date diff or not monitored %s %o', updateId, perimDateTime, {diff: oneDiff, updateId: updateId});
+            updates.push('⏭️' + updateSummary);
             continue;
           }
           // Only show perimeters changed after the filter.
           if (!perimDateTime || perimDateTime <= argv.perimAfter) {
             logger.info('    -) No perim date or old %s %o diff %o', updateId, perimDateTime, {diff: oneDiff, updateId: updateId});
+            updates.push('⏭️' + updateSummary);
             continue;
           }
         }
         if (!('PercentContained' in oneDiff || 'PerimeterData.Acres' in oneDiff) && old.DailyAcres && cur.DailyAcres && Math.abs(cur.DailyAcres - old.DailyAcres) < 1.1) {
           // May be spurious - due to rounding in GEOMAC vs NFSA.
           logger.info('    -) Insufficient acreage change old %s %o cur %o', updateId, old.DailyAcres, cur.DailyAcres, {diff: oneDiff, updateId: updateId});
+          updates.push('⏭️' + updateSummary);
           continue;
         }
 
         const diffs = yaml.safeDump(oneDiff, {skipInvalid: true});
-        const isNew = !(i in last);
+        const isNew = !(i in previousDb);
 
         logger.debug('    - Material update.', {diff: oneDiff});
         const uniqueUpdateId = os.hostname() + '.' + updateId;
-        updates.push(updateSummary + '; UUID:' + uniqueUpdateId);
-        updateNames.push(cur.Final_Fire_Name);
         const diffPath = argv.outputdir + '/data/DIFF-' + updateId + '.yaml';
 
         if (fs.existsSync(diffPath)) {
-          logger.error('    $$$$ ANOMALY DETECTED - REPEATING UPDATE %s - SKIPPED', updateId);
+          logger.error('    $$$$ ANOMALY DETECTED - REPEATING UPDATE %s - SKIPPED', updateId, {
+            updateId: updateId,
+            diffs: diffs,
+          });
+          updates.push('⚠️ ANOMALY ' + updateSummary + '\n   UUID: ' + uniqueUpdateId);
           fs.writeFileSync(argv.outputdir + '/data/ANOMALY-DIFF-' + updateId + '.' + globalUpdateId + '-INSTANT-' + new Date().toISOString() + '.yaml', diffs);
           continue;
         }
+
+        updates.push('📣' + updateSummary + '\n   UUID: ' + uniqueUpdateId);
+        updateNames.push(cur.Final_Fire_Name);
 
         fs.writeFileSync(diffPath, diffs);
         if (argv.realFireNames) {
@@ -421,7 +436,8 @@ exports.handler = (argv) => {
         await promisify(intensiveProcessingSemaphore.take).bind(intensiveProcessingSemaphore)();
         try {
           logger.info(' [# Entering internalProcessFire ' + updateId, {updateId: updateId});
-          await internalProcessFire(logger, updateId, inciWeb, cur, perim, old, oneDiff, isNew, key, perimDateTime, uniqueUpdateId);
+          logger.info('   ' + _.last(updates), {updateId: updateId});
+          await internalProcessFire(logger, updateId, inciWeb, cur, perim, old, oneDiff, isNew, i, perimDateTime, uniqueUpdateId);
         } catch (err) {
           logger.error('    $$$$ ERROR processing %s', updateId, {updateId: updateId});
           logger.error(err);
@@ -434,13 +450,13 @@ exports.handler = (argv) => {
       }
     }
 
-    fs.writeFileSync(argv.db, yaml.safeDump(x, {skipInvalid: true}));
+    fs.writeFileSync(argv.db, yaml.safeDump(currentDb, {skipInvalid: true}));
 
     if (argv.postPersistCmd) {
       const postPeristEnv = Object.assign({}, process.env, {
         FIRE_MONITOR_BOT_DB: argv.db,
         FIRE_MONITOR_BOT_UPDATE_ID: globalUpdateId,
-        FIRE_MONITOR_BOT_UPDATES: updates.join('\n'),
+        FIRE_MONITOR_BOT_UPDATES: updates.join('\n\n'),
         FIRE_MONITOR_BOT_UPDATE_SUMMARY: updateNames.join(', '),
       });
       try {
@@ -462,7 +478,7 @@ exports.handler = (argv) => {
       while (true) { }
     }
 
-    return x;
+    return currentDb;
 
     async function internalProcessFire(parentLogger, updateId, inciWeb, cur, perim, old, oneDiff, isNew, key, perimDateTime, uniqueUpdateId) {
       const logger = parentLogger.child({
@@ -488,7 +504,7 @@ exports.handler = (argv) => {
       if (perim.length > 1 && argv.locations) {
         rr = await maprender.getMapBounds(perim, 1450 / 2, 1200 / 2, 15);
       } else {
-        logger.info('     >> Missing perimeter - %s', updateId);
+        logger.debug('     >> Missing perimeter - %s', updateId);
       }
       const events = [{lon: cur.Lon, lat: cur.Lat}];
       const center = rr ? rr.center : [cur.Lon, cur.Lat];
@@ -499,10 +515,10 @@ exports.handler = (argv) => {
       const lon = center ? center[0] : cur.Lon;
       // MultiPolygon -> Coordinates
       const points = _.flattenDepth(perim, 2);
-      const useful = 100 + Math.sqrt(0.0015625 /* mi2 per acre*/ * cur.DailyAcres);
+      const meaningfulDistanceMi = 100 + Math.sqrt(0.0015625 /* mi2 per acre*/ * cur.DailyAcres);
       const cities2 = lat ? _.sortBy(geocoding.nearestCities(lat, lon, 1000, 500)
           .map((x) => {
-            if (x.distance < useful) {
+            if (x.distance < meaningfulDistanceMi) {
               x.useful = true;
               const pointDists = points.map((pp) => geocoding.distance(pp[0], pp[1], x.lon, x.lat));
               const minPointIndex = _.minBy(_.range(0, points.length), (idx) => pointDists[idx]);
@@ -684,22 +700,25 @@ exports.handler = (argv) => {
 
 
   function preDiffFireProcess(key, x, last, perims) {
-    const i = key;
-    const cur = x[i];
-    const old = last[i] || {};
+    const cur = x[key];
     let perimAcres = null;
     let perim = [];
     let perimDateTime = null;
     let inciWeb = null;
     let perimProvenance = null;
-    if (cur.UniqueFireIdentifier in perims) {
-      const p = perims[cur.UniqueFireIdentifier];
-      perim = p.geometry.coords || [];
-      perimDateTime = p.attributes.perimeterdatetime;
-      inciWeb = p.attributes.inciwebid;
-      perimAcres = p.attributes.gisacres;
-      perimProvenance = p._Provenance;
+
+    // Get latest perimeter of all matching fires.
+    for (const corrId of cur._CorrelationIds) {
+      if (corrId in perims && (!perimDateTime || perimDateTime < p.attributes.perimeterdatetime)) {
+        const p = perims[cur.UniqueFireIdentifier];
+        perim = p.geometry.coords || [];
+        perimDateTime = p.attributes.perimeterdatetime;
+        inciWeb = p.attributes.inciwebid;
+        perimAcres = p.attributes.gisacres;
+        perimProvenance = p._Provenance;
+      }
     }
+
     const children = _.values(perims)
         .filter((p) => {
           const b = (p.attributes.complexname || '').toLowerCase() === (cur.Fire_Name || '').toLowerCase();
@@ -727,7 +746,7 @@ exports.handler = (argv) => {
     cur.unitId = cur.pooresponsibleunit || cur.UniqueFireIdentifier.split('-')[1];
     cur.unitMention = units.unitTag(cur.unitId);
     cur.Final_Fire_Name = util.fireName(cur.Fire_Name);
-    return {i, cur, perimDateTime, old, inciWeb, perim};
+    return {cur, perimDateTime, inciWeb, perim};
   }
 
   const mainLoop = function(first, last) {
@@ -775,4 +794,97 @@ exports.handler = (argv) => {
   });
 };
 
+
+function mergeNfsaAndGeomacIncidentsIntoDb(nfsaIncidents, geomacIncidents, currentDb) {
+  const keys = _.union(_.keys(nfsaIncidents), _.keys(geomacIncidents));
+  keys.map((key) => {
+    currentDb[key] = util.mergedNfsaGeomacFire(nfsaIncidents[key], geomacIncidents[key]);
+  });
+}
+
+function mergeDupeFires(currentDb, mergeDistanceMax) {
+  for (const id of _.keys(currentDb)) {
+    const item = currentDb[id];
+    if (!item) {
+      // Already deleted!
+      continue;
+    }
+    const searchName = util.fireName(item.Name);
+    const matchingDbItems = _.filter(currentDb, (o) => {
+      return !_.isEmpty(_.intersection(o._CorrelationIds, item._CorrelationIds)) ||
+          (util.fireName(o.Name) === searchName &&
+           geocoding.distance(o.Lon, o.Lat, item.Lon, item.Lat) <= mergeDistanceMax);
+    });
+
+    if (matchingDbItems.length > 1) {
+      // Preserve only the key/value with the most recent data,
+      // but preserve all correlation ids.
+      const bestItems = _.sortBy(matchingDbItems, (c) => (c.ModifiedOnDateTime + c.Source)).reverse();
+      const bestItemId = bestItems[0].UniqueFireIdentifier;
+      const corrIds = _.reduce(bestItems, (c, d) => _.union(c, d._CorrelationIds), []);
+      currentDb[bestItemId]._CorrelationIds = corrIds;
+      logger.debug(' ! NON-Unique fire %s , with best id %s', id, bestItemId);
+      _.map(bestItems, (k) => {
+        if (k.UniqueFireIdentifier !== bestItemId) {
+          logger.debug('  >! non-unique fire %s , with best id %s - removing %s', id, bestItemId, k.UniqueFireIdentifier);
+          delete currentDb[k.UniqueFireIdentifier];
+        }
+      });
+    } else {
+      // Don't need to do anything!
+      logger.debug('Unique fire %s', id);
+    }
+  }
+}
+
+function mergeCalfireIncidentsIntoDb(calfireIncidents, currentDb, mergeDistanceMax) {
+  for (const calfireId of _.keys(calfireIncidents)) {
+    const calfireItem = calfireIncidents[calfireId];
+    const searchName = util.fireName(calfireItem.Name);
+    const matchingDbItems = _.filter(currentDb, (o) => {
+      return o.Source !== 'CALFIRE' &&
+          o.UniqueFireIdentifier.substr(5, 2) === 'CA' &&
+          util.fireName(o.Name) === searchName &&
+          geocoding.distance(o.Lon, o.Lat, calfireItem.Lon, calfireItem.Lat) <= mergeDistanceMax;
+    });
+    if (matchingDbItems.length === 0) {
+      currentDb[calfireId] = util.mergedCalfireFire(calfireItem, null);
+    } else if (matchingDbItems.length === 1) {
+      currentDb[matchingDbItems[0].UniqueFireIdentifier] = util.mergedCalfireFire(calfireItem, matchingDbItems[0]);
+    } else {
+      logger.error('Multiple NG incidents match CALFIRE fire = %s', searchName,
+          {
+            calfireItem: calfireItem,
+            matchingDbItems: matchingDbItems,
+          }
+      );
+    }
+  }
+}
+
+async function getNfsaFires(dataOptions, argv, processNfsaFire) {
+  const prov = util.createProvenance(dataOptions);
+  const layers = await rp(dataOptions);
+  const dataSetName = 'Active Incidents';
+  const dataSet = _.find(layers, (p) => p.name === dataSetName);
+  const requiredLayerNames = ['Large WF'];
+  if (argv.emergingNew) {
+    requiredLayerNames.unshift('Emerging WF < 24 hours');
+  }
+  if (argv.emergingOld) {
+    requiredLayerNames.unshift('Emerging WF > 24 hours');
+  }
+  const filteredLayers = dataSet.layerConfigs.filter((f) => requiredLayerNames.includes(f.featureCollection.layerDefinition.name));
+  const layerFeatures = filteredLayers.map((x) => {
+    return x.featureCollection.featureSet.features.map((y) => {
+      const r = processNfsaFire(y, 'EPSG:' + x.featureCollection.featureSet.spatialReference.latestWkid);
+      r.NFSAType = x.featureCollection.layerDefinition.name;
+      return r;
+    });
+  });
+  const data0 = _.flatten(layerFeatures);
+  const data = data0.map((e) => Object.assign(e, {_Provenance: _.cloneDeep(prov)}));
+  const nfsaData = _.keyBy(data, (o) => o.UniqueFireIdentifier);
+  return nfsaData;
+}
 
