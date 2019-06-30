@@ -273,9 +273,15 @@ exports.handler = (argv) => {
   async function internalLoop(isFirstRun, previousDb) {
     const currentDb = _.cloneDeep(previousDb);
 
-    const nfsaIncidents = await getNfsaFires(dataOptions, argv, processNfsaFire);
-    const geomacIncidents = await geomac.getFires(argv.userAgent);
-    const calfireIncidents = argv.ingestCalfire ? await calfire.getFires(argv.userAgent) : {};
+    const async = {
+      nfsaIncidents: getNfsaFires(dataOptions, argv, processNfsaFire),
+      geomacIncidents: geomac.getFires(argv.userAgent),
+      calfireIncidents: argv.ingestCalfire ? calfire.getFires(argv.userAgent) : {},
+    };
+
+    const nfsaIncidents = await async.calfireIncidents;
+    const geomacIncidents = await async.geomacIncidents;
+    const calfireIncidents = await async.calfireIncidents;
 
     mergeNfsaAndGeomacIncidentsIntoDb(nfsaIncidents, geomacIncidents, currentDb);
     mergeCalfireIncidentsIntoDb(calfireIncidents, currentDb, argv.mergeDistanceMaxMiles);
