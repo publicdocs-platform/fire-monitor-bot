@@ -327,12 +327,6 @@ exports.handler = (argv) => {
           continue;
         }
 
-        if (!cur.ModifiedOnDateTimeEpoch || cur.ModifiedOnDateTimeEpoch < pruneTime) {
-          logger.debug(' #! Pruning %s %s -> last mod %s', i, cur.Name, cur.ModifiedOnDateTime, {cur: cur, x: currentDb[i]});
-          delete currentDb[i];
-          continue;
-        }
-
         const oldMatchingKeys = _.intersection(oldDbKeys, cur._CorrelationIds);
         let old = {};
         for (const oldKey of oldMatchingKeys) {
@@ -383,6 +377,13 @@ exports.handler = (argv) => {
            ℹ️ ${cur.Source}
            🆔 ${updateId}`;
 
+        if (!cur.ModifiedOnDateTimeEpoch || cur.ModifiedOnDateTimeEpoch < pruneTime) {
+          logger.debug(' #! Pruning %s %s -> last mod %s', i, cur.Name, cur.ModifiedOnDateTime, {cur: cur, x: currentDb[i]});
+          delete currentDb[i];
+          updates.push('🗑️' + updateSummary);
+          continue;
+        }
+
         let oneDiff = deepDiff(old, cur);
         oneDiff = _.keyBy(oneDiff, (o) => o.path.join('.'));
 
@@ -390,17 +391,20 @@ exports.handler = (argv) => {
           if (!argv.monitorPerims || !('PerimDateTime' in oneDiff)) {
             // Unless acreage, perim, or containment change, we don't report it.x
             logger.info('     -) No perim date diff or not monitored %s %o', updateId, perimDateTime, {diff: oneDiff, updateId: updateId});
+            updates.push('⏭️' + updateSummary);
             continue;
           }
           // Only show perimeters changed after the filter.
           if (!perimDateTime || perimDateTime <= argv.perimAfter) {
             logger.info('    -) No perim date or old %s %o diff %o', updateId, perimDateTime, {diff: oneDiff, updateId: updateId});
+            updates.push('⏭️' + updateSummary);
             continue;
           }
         }
         if (!('PercentContained' in oneDiff || 'PerimeterData.Acres' in oneDiff) && old.DailyAcres && cur.DailyAcres && Math.abs(cur.DailyAcres - old.DailyAcres) < 1.1) {
           // May be spurious - due to rounding in GEOMAC vs NFSA.
           logger.info('    -) Insufficient acreage change old %s %o cur %o', updateId, old.DailyAcres, cur.DailyAcres, {diff: oneDiff, updateId: updateId});
+          updates.push('⏭️' + updateSummary);
           continue;
         }
 
@@ -409,15 +413,20 @@ exports.handler = (argv) => {
 
         logger.debug('    - Material update.', {diff: oneDiff});
         const uniqueUpdateId = os.hostname() + '.' + updateId;
-        updates.push(updateSummary + '\n   UUID: ' + uniqueUpdateId);
-        updateNames.push(cur.Final_Fire_Name);
         const diffPath = argv.outputdir + '/data/DIFF-' + updateId + '.yaml';
 
         if (fs.existsSync(diffPath)) {
-          logger.error('    $$$$ ANOMALY DETECTED - REPEATING UPDATE %s - SKIPPED', updateId);
+          logger.error('    $$$$ ANOMALY DETECTED - REPEATING UPDATE %s - SKIPPED', updateId, {
+            updateId: updateId,
+            diffs: diffs,
+          });
+          updates.push('⚠️ ANOMALY ' + updateSummary + '\n   UUID: ' + uniqueUpdateId);
           fs.writeFileSync(argv.outputdir + '/data/ANOMALY-DIFF-' + updateId + '.' + globalUpdateId + '-INSTANT-' + new Date().toISOString() + '.yaml', diffs);
           continue;
         }
+
+        updates.push('📣' + updateSummary + '\n   UUID: ' + uniqueUpdateId);
+        updateNames.push(cur.Final_Fire_Name);
 
         fs.writeFileSync(diffPath, diffs);
         if (argv.realFireNames) {
@@ -427,6 +436,7 @@ exports.handler = (argv) => {
         await promisify(intensiveProcessingSemaphore.take).bind(intensiveProcessingSemaphore)();
         try {
           logger.info(' [# Entering internalProcessFire ' + updateId, {updateId: updateId});
+          logger.info('   ' + _.last(updates), {updateId: updateId});
           await internalProcessFire(logger, updateId, inciWeb, cur, perim, old, oneDiff, isNew, i, perimDateTime, uniqueUpdateId);
         } catch (err) {
           logger.error('    $$$$ ERROR processing %s', updateId, {updateId: updateId});
@@ -446,7 +456,7 @@ exports.handler = (argv) => {
       const postPeristEnv = Object.assign({}, process.env, {
         FIRE_MONITOR_BOT_DB: argv.db,
         FIRE_MONITOR_BOT_UPDATE_ID: globalUpdateId,
-        FIRE_MONITOR_BOT_UPDATES: updates.join('\n'),
+        FIRE_MONITOR_BOT_UPDATES: updates.join('\n\n'),
         FIRE_MONITOR_BOT_UPDATE_SUMMARY: updateNames.join(', '),
       });
       try {
@@ -494,7 +504,7 @@ exports.handler = (argv) => {
       if (perim.length > 1 && argv.locations) {
         rr = await maprender.getMapBounds(perim, 1450 / 2, 1200 / 2, 15);
       } else {
-        logger.info('     >> Missing perimeter - %s', updateId);
+        logger.debug('     >> Missing perimeter - %s', updateId);
       }
       const events = [{lon: cur.Lon, lat: cur.Lat}];
       const center = rr ? rr.center : [cur.Lon, cur.Lat];
