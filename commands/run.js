@@ -354,7 +354,12 @@ exports.handler = (argv) => {
         }
 
         const updateId = 'UPD-' + cur.ModifiedOnDateTime + '-PER-' + (cur.PerimDateTime || 'none') + '-ID-' + i + '-NAME-' + cur.Name.replace(/[^a-z0-9]/gi, '') + '-S-' + cur.Source.charAt(0);
-        const updateSummary = cur.Final_Fire_Name + ' (' + i + ') @ ' + cur.ModifiedOnDateTime + '; perim @ ' + (cur.PerimDateTime || 'none') + '; via ' + cur.Source + '; id: ' + updateId;
+        const updateSummary =
+          `🔥 ${cur.Final_Fire_Name} (${i}) ${cur.Hashtag}
+           🕒 ${cur.ModifiedOnDateTime}
+           ⏰ Perim ${cur.PerimDateTime || 'none'}
+           ℹ️ ${cur.Source}
+           🆔 ${updateId}`;
 
         let oneDiff = deepDiff(old, cur);
         oneDiff = _.keyBy(oneDiff, (o) => o.path.join('.'));
@@ -382,7 +387,7 @@ exports.handler = (argv) => {
 
         logger.debug('    - Material update.', {diff: oneDiff});
         const uniqueUpdateId = os.hostname() + '.' + updateId;
-        updates.push(updateSummary + '; UUID:' + uniqueUpdateId);
+        updates.push(updateSummary + '\n   UUID: ' + uniqueUpdateId);
         updateNames.push(cur.Final_Fire_Name);
         const diffPath = argv.outputdir + '/data/DIFF-' + updateId + '.yaml';
 
