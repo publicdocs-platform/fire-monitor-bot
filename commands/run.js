@@ -285,6 +285,7 @@ exports.handler = (argv) => {
 
     mergeNfsaAndGeomacIncidentsIntoDb(nfsaIncidents, geomacIncidents, currentDb);
     mergeCalfireIncidentsIntoDb(calfireIncidents, currentDb, argv.mergeDistanceMaxMiles);
+    mergeDupeFires(currentDb, argv.mergeDistanceMaxMiles);
 
     const curTime = new Date().getTime();
     const pruneTime = curTime - 1000 * 60 * 60 * 24 * argv.pruneDays;
@@ -313,50 +314,65 @@ exports.handler = (argv) => {
     const updates = [];
     const updateNames = [];
 
-    for (const key1 of currentDbKeysSorted) {
+    const oldDbKeys = _.keys(previousDb);
+
+    fireLoop: for (const key1 of currentDbKeysSorted) {
       try { // NOPMD
         logger.debug(' #[ Start Processing key %s', key1);
-        const i = key1;
+        let i = key1;
 
         // cur is a *reference* to currentDb[i]
-        let {cur, perimDateTime, old, inciWeb, perim} = preDiffFireProcess(i, currentDb, previousDb, perims);
-
+        let {cur, perimDateTime, inciWeb, perim} = preDiffFireProcess(i, currentDb, previousDb, perims);
         if (isFirstRun) {
           continue;
-        }
-
-        if (i in previousDb && previousDb[i].ModifiedOnDateTime >= cur.ModifiedOnDateTime) {
-          logger.debug('  -) Previous record not updated old %o new %o', previousDb[i].ModifiedOnDateTime, cur.ModifiedOnDateTime, {
-            x: currentDb[i],
-            last: previousDb[i],
-            cur: cur,
-          });
-          const curPerimData = _.cloneDeep(cur.PerimeterData);
-          // Keep the newer data around.
-          currentDb[i] = _.cloneDeep(previousDb[i]);
-          // Except perimeters, which still need to be checked.
-          currentDb[i].PerimDateTime = perimDateTime;
-          currentDb[i].PerimeterData = curPerimData;
-          // cur is a *reference* to x[i]
-          cur = currentDb[i];
-
-          // Only skip the update if perimeter is ALSO not up to date.
-          if (!perimDateTime || (previousDb[i].PerimDateTime && previousDb[i].PerimDateTime >= perimDateTime)) {
-            logger.debug('  -) Previous perim ALSO not updated old %o new %o', previousDb[i].PerimDateTime, perimDateTime, {
-              x: currentDb[i],
-              last: previousDb[i],
-              cur: cur,
-            });
-            currentDb[i].PerimDateTime = previousDb[i].PerimDateTime;
-            currentDb[i].PerimeterData = _.cloneDeep(previousDb[i].PerimeterData);
-            continue;
-          }
         }
 
         if (!cur.ModifiedOnDateTimeEpoch || cur.ModifiedOnDateTimeEpoch < pruneTime) {
           logger.debug(' #! Pruning %s %s -> last mod %s', i, cur.Name, cur.ModifiedOnDateTime, {cur: cur, x: currentDb[i]});
           delete currentDb[i];
           continue;
+        }
+
+        const oldMatchingKeys = _.intersection(oldDbKeys, cur._CorrelationIds);
+        let old = {};
+        for (const oldKey of oldMatchingKeys) {
+          if (!old || old.ModifiedOnDateTime < previousDb[oldKey].ModifiedOnDateTime) {
+            old = _.cloneDeep(previousDb[oldKey]);
+          }
+          if (previousDb[oldKey].ModifiedOnDateTime >= cur.ModifiedOnDateTime) {
+            logger.debug('  -) Previous record id %s (cur id %s) not updated old %o new %o', oldKey, i, previousDb[oldKey].ModifiedOnDateTime, cur.ModifiedOnDateTime, {
+              x: currentDb[i],
+              last: previousDb[oldKey],
+              cur: cur,
+            });
+            const curPerimData = _.cloneDeep(cur.PerimeterData);
+            const curCorrelates = _.union(cur._CorrelationIds, previousDb[oldKey]._CorrelationIds);
+            if (i !== oldKey) {
+              delete currentDb[i];
+              i = oldKey;
+            }
+            // Keep the newer data around.
+            currentDb[i] = _.cloneDeep(previousDb[i]);
+            // Except perimeters, which still need to be checked.
+            currentDb[i].PerimDateTime = perimDateTime;
+            currentDb[i].PerimeterData = curPerimData;
+            currentDb[i].UniqueFireIdentifier = i;
+            currentDb[i]._CorrelationIds = curCorrelates;
+            // cur is a *reference* to x[i]
+            cur = currentDb[i];
+
+            // Only skip the update if perimeter is ALSO not up to date.
+            if (!perimDateTime || (previousDb[i].PerimDateTime && previousDb[i].PerimDateTime >= perimDateTime)) {
+              logger.debug('  -) Previous perim ALSO not updated old %o new %o', previousDb[i].PerimDateTime, perimDateTime, {
+                x: currentDb[i],
+                last: previousDb[i],
+                cur: cur,
+              });
+              currentDb[i].PerimDateTime = previousDb[i].PerimDateTime;
+              currentDb[i].PerimeterData = _.cloneDeep(previousDb[i].PerimeterData);
+              continue fireLoop;
+            }
+          }
         }
 
         const updateId = 'UPD-' + cur.ModifiedOnDateTime + '-PER-' + (cur.PerimDateTime || 'none') + '-ID-' + i + '-NAME-' + cur.Name.replace(/[^a-z0-9]/gi, '') + '-S-' + cur.Source.charAt(0);
@@ -489,10 +505,10 @@ exports.handler = (argv) => {
       const lon = center ? center[0] : cur.Lon;
       // MultiPolygon -> Coordinates
       const points = _.flattenDepth(perim, 2);
-      const useful = 100 + Math.sqrt(0.0015625 /* mi2 per acre*/ * cur.DailyAcres);
+      const meaningfulDistanceMi = 100 + Math.sqrt(0.0015625 /* mi2 per acre*/ * cur.DailyAcres);
       const cities2 = lat ? _.sortBy(geocoding.nearestCities(lat, lon, 1000, 500)
           .map((x) => {
-            if (x.distance < useful) {
+            if (x.distance < meaningfulDistanceMi) {
               x.useful = true;
               const pointDists = points.map((pp) => geocoding.distance(pp[0], pp[1], x.lon, x.lat));
               const minPointIndex = _.minBy(_.range(0, points.length), (idx) => pointDists[idx]);
@@ -675,20 +691,24 @@ exports.handler = (argv) => {
 
   function preDiffFireProcess(key, x, last, perims) {
     const cur = x[key];
-    const old = last[key] || {};
     let perimAcres = null;
     let perim = [];
     let perimDateTime = null;
     let inciWeb = null;
     let perimProvenance = null;
-    if (cur.UniqueFireIdentifier in perims) {
-      const p = perims[cur.UniqueFireIdentifier];
-      perim = p.geometry.coords || [];
-      perimDateTime = p.attributes.perimeterdatetime;
-      inciWeb = p.attributes.inciwebid;
-      perimAcres = p.attributes.gisacres;
-      perimProvenance = p._Provenance;
+
+    // Get latest perimeter of all matching fires.
+    for (const corrId of cur._CorrelationIds) {
+      if (corrId in perims && (!perimDateTime || perimDateTime < p.attributes.perimeterdatetime)) {
+        const p = perims[cur.UniqueFireIdentifier];
+        perim = p.geometry.coords || [];
+        perimDateTime = p.attributes.perimeterdatetime;
+        inciWeb = p.attributes.inciwebid;
+        perimAcres = p.attributes.gisacres;
+        perimProvenance = p._Provenance;
+      }
     }
+
     const children = _.values(perims)
         .filter((p) => {
           const b = (p.attributes.complexname || '').toLowerCase() === (cur.Fire_Name || '').toLowerCase();
@@ -716,7 +736,7 @@ exports.handler = (argv) => {
     cur.unitId = cur.pooresponsibleunit || cur.UniqueFireIdentifier.split('-')[1];
     cur.unitMention = units.unitTag(cur.unitId);
     cur.Final_Fire_Name = util.fireName(cur.Fire_Name);
-    return {cur, perimDateTime, old, inciWeb, perim};
+    return {cur, perimDateTime, inciWeb, perim};
   }
 
   const mainLoop = function(first, last) {
@@ -772,12 +792,48 @@ function mergeNfsaAndGeomacIncidentsIntoDb(nfsaIncidents, geomacIncidents, curre
   });
 }
 
+function mergeDupeFires(currentDb, mergeDistanceMax) {
+  for (const id of _.keys(currentDb)) {
+    const item = currentDb[id];
+    if (!item) {
+      // Already deleted!
+      continue;
+    }
+    const searchName = util.fireName(item.Name);
+    const matchingDbItems = _.filter(currentDb, (o) => {
+      return !_.isEmpty(_.intersection(o._CorrelationIds, item._CorrelationIds)) ||
+          (util.fireName(o.Name) === searchName &&
+           geocoding.distance(o.Lon, o.Lat, item.Lon, item.Lat) <= mergeDistanceMax);
+    });
+
+    if (matchingDbItems.length > 1) {
+      // Preserve only the key/value with the most recent data,
+      // but preserve all correlation ids.
+      const bestItems = _.sortBy(matchingDbItems, (c) => (c.ModifiedOnDateTime + c.Source)).reverse();
+      const bestItemId = bestItems[0].UniqueFireIdentifier;
+      const corrIds = _.reduce(bestItems, (c, d) => _.union(c, d._CorrelationIds), []);
+      currentDb[bestItemId]._CorrelationIds = corrIds;
+      logger.debug(' ! NON-Unique fire %s , with best id %s', id, bestItemId);
+      _.map(bestItems, (k) => {
+        if (k.UniqueFireIdentifier !== bestItemId) {
+          logger.debug('  >! non-unique fire %s , with best id %s - removing %s', id, bestItemId, k.UniqueFireIdentifier);
+          delete currentDb[k.UniqueFireIdentifier];
+        }
+      });
+    } else {
+      // Don't need to do anything!
+      logger.debug('Unique fire %s', id);
+    }
+  }
+}
+
 function mergeCalfireIncidentsIntoDb(calfireIncidents, currentDb, mergeDistanceMax) {
   for (const calfireId of _.keys(calfireIncidents)) {
     const calfireItem = calfireIncidents[calfireId];
     const searchName = util.fireName(calfireItem.Name);
     const matchingDbItems = _.filter(currentDb, (o) => {
-      return o.UniqueFireIdentifier.substr(5, 2) === 'CA' &&
+      return o.Source !== 'CALFIRE' &&
+          o.UniqueFireIdentifier.substr(5, 2) === 'CA' &&
           util.fireName(o.Name) === searchName &&
           geocoding.distance(o.Lon, o.Lat, calfireItem.Lon, calfireItem.Lat) <= mergeDistanceMax;
     });
