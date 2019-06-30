@@ -27,6 +27,7 @@ const del = require('del');
 const os = require('os');
 const deepDiff = require('deep-diff');
 const numeral = require('numeral');
+const assert = require('assert').strict;
 const promisify = require('util').promisify;
 const exec = promisify(require('child_process').exec);
 
@@ -330,41 +331,41 @@ exports.handler = (argv) => {
         const oldMatchingKeys = _.intersection(oldDbKeys, cur._CorrelationIds);
         let old = {};
         for (const oldKey of oldMatchingKeys) {
-          if (!old || old.ModifiedOnDateTime < previousDb[oldKey].ModifiedOnDateTime) {
+          if (!old || !old.ModifiedOnDateTime || old.ModifiedOnDateTime < previousDb[oldKey].ModifiedOnDateTime) {
             old = _.cloneDeep(previousDb[oldKey]);
-          }
-          if (previousDb[oldKey].ModifiedOnDateTime >= cur.ModifiedOnDateTime) {
-            logger.debug('  -) Previous record id %s (cur id %s) not updated old %o new %o', oldKey, i, previousDb[oldKey].ModifiedOnDateTime, cur.ModifiedOnDateTime, {
-              x: currentDb[i],
-              last: previousDb[oldKey],
-              cur: cur,
-            });
-            const curPerimData = _.cloneDeep(cur.PerimeterData);
-            const curCorrelates = _.union(cur._CorrelationIds, previousDb[oldKey]._CorrelationIds);
-            if (i !== oldKey) {
-              delete currentDb[i];
-              i = oldKey;
-            }
-            // Keep the newer data around.
-            currentDb[i] = _.cloneDeep(previousDb[i]);
-            // Except perimeters, which still need to be checked.
-            currentDb[i].PerimDateTime = perimDateTime;
-            currentDb[i].PerimeterData = curPerimData;
-            currentDb[i].UniqueFireIdentifier = i;
-            currentDb[i]._CorrelationIds = curCorrelates;
-            // cur is a *reference* to x[i]
-            cur = currentDb[i];
-
-            // Only skip the update if perimeter is ALSO not up to date.
-            if (!perimDateTime || (previousDb[i].PerimDateTime && previousDb[i].PerimDateTime >= perimDateTime)) {
-              logger.debug('  -) Previous perim ALSO not updated old %o new %o', previousDb[i].PerimDateTime, perimDateTime, {
+            if (old.ModifiedOnDateTime >= cur.ModifiedOnDateTime) {
+              logger.debug('  -) Previous record id %s (cur id %s) not updated old %o new %o', oldKey, i, old.ModifiedOnDateTime, cur.ModifiedOnDateTime, {
                 x: currentDb[i],
-                last: previousDb[i],
+                last: old,
                 cur: cur,
               });
-              currentDb[i].PerimDateTime = previousDb[i].PerimDateTime;
-              currentDb[i].PerimeterData = _.cloneDeep(previousDb[i].PerimeterData);
-              continue fireLoop;
+              // Keep the newer data around.
+              const curPerimData = _.cloneDeep(cur.PerimeterData);
+              const curCorrelates = _.union(cur._CorrelationIds, old._CorrelationIds);
+              if (i !== oldKey) {
+                delete currentDb[i];
+                i = oldKey;
+              }
+              currentDb[i] = _.cloneDeep(old);
+              // Except perimeters, which still need to be checked.
+              currentDb[i].PerimDateTime = perimDateTime;
+              currentDb[i].PerimeterData = curPerimData;
+              assert.equal(currentDb[i].UniqueFireIdentifier, i);
+              currentDb[i]._CorrelationIds = curCorrelates;
+              // cur is a *reference* to x[i]
+              cur = currentDb[i];
+
+              // Only skip the update if perimeter is ALSO not up to date.
+              if (!perimDateTime || (old.PerimDateTime && old.PerimDateTime >= perimDateTime)) {
+                logger.debug('  -) Previous perim ALSO not updated old %o new %o', old.PerimDateTime, perimDateTime, {
+                  x: currentDb[i],
+                  last: old,
+                  cur: cur,
+                });
+                currentDb[i].PerimDateTime = old.PerimDateTime;
+                currentDb[i].PerimeterData = _.cloneDeep(old.PerimeterData);
+                continue fireLoop;
+              }
             }
           }
         }
@@ -379,8 +380,10 @@ exports.handler = (argv) => {
 
         if (!cur.ModifiedOnDateTimeEpoch || cur.ModifiedOnDateTimeEpoch < pruneTime) {
           logger.debug(' #! Pruning %s %s -> last mod %s', i, cur.Name, cur.ModifiedOnDateTime, {cur: cur, x: currentDb[i]});
+          if (!_.isEmpty(_.intersection(oldDbKeys, cur._CorrelationIds))) {
+            updates.push('🗑️' + updateSummary);
+          }
           delete currentDb[i];
-          updates.push('🗑️' + updateSummary);
           continue;
         }
 
@@ -864,7 +867,8 @@ function mergeCalfireIncidentsIntoDb(calfireIncidents, currentDb, mergeDistanceM
     if (matchingDbItems.length === 0) {
       currentDb[calfireId] = util.mergedCalfireFire(calfireItem, null);
     } else if (matchingDbItems.length === 1) {
-      currentDb[matchingDbItems[0].UniqueFireIdentifier] = util.mergedCalfireFire(calfireItem, matchingDbItems[0]);
+      currentDb[calfireId] = util.mergedCalfireFire(calfireItem, matchingDbItems[0]);
+      delete currentDb[matchingDbItems[0].UniqueFireIdentifier];
     } else {
       logger.error('Multiple NG incidents match CALFIRE fire = %s', searchName,
           {
