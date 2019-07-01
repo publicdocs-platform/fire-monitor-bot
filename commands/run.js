@@ -618,7 +618,6 @@ exports.handler = (argv) => {
 
 
       const displayFilters = {
-        InAlaska: cur.state === 'AK' || cur.State === 'AK' || (_.first(cities) || {}).adminCode === 'AK',
         InHawaii: cur.state === 'HI' || cur.State === 'HI' || (_.first(cities) || {}).adminCode === 'HI',
         KnownLocationLowPop: lat && lon && nearPopulation <= 1000,
         UnknownLocationSmallSize: !lat && !lon && (cur.DailyAcres || 0) < 1.1 && (cur.TotalIncidentPersonnel || 0) < 15,
