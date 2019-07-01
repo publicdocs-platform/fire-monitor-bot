@@ -31,6 +31,7 @@ const assert = require('assert').strict;
 const promisify = require('util').promisify;
 const exec = promisify(require('child_process').exec);
 const {globalStats, MeasureUnit} = require('@opencensus/core');
+const crypto = require('crypto');
 
 const envconfig = require('../envconfig');
 const logging = require('../lib/logging');
@@ -200,6 +201,10 @@ exports.builder = {
     boolean: true,
     default: true,
     desc: 'Whether to ingest CAL FIRE incidents',
+  },
+  qrcodePrefix: {
+    string: true,
+    desc: 'Prefix to hash qrcodes',
   },
 };
 
@@ -404,12 +409,20 @@ exports.handler = (argv) => {
         }
 
         const updateId = 'UPD-' + cur.ModifiedOnDateTime + '-PER-' + (cur.PerimDateTime || 'none') + '-ID-' + i + '-NAME-' + cur.Name.replace(/[^a-z0-9]/gi, '') + '-S-' + cur.Source.charAt(0);
+        const uniqueUpdateId = os.hostname() + '.' + updateId;
+        // QRCode to find commits easily.
+        const hash = crypto.createHash('sha256');
+        hash.update(uniqueUpdateId);
+        const code = hash.digest('hex');
+        const qrcode = (argv.qrcodePrefix || '') + code;
         const updateSummary =
           `🔥 ${cur.Final_Fire_Name} (${i}) ${cur.Hashtag}
            🕒 ${cur.ModifiedOnDateTime}
            ⏰ Perim ${cur.PerimDateTime || 'none'}
            ℹ️ ${cur.Source}
-           🆔 ${updateId}`;
+           🆔 ${updateId}
+           🔑 ${code}`;
+        cur._Update = {UpdateId: updateId, Code: code};
 
         if (!cur.ModifiedOnDateTimeEpoch || cur.ModifiedOnDateTimeEpoch < pruneTime) {
           logger.debug(' #! Pruning %s %s -> last mod %s', i, cur.Name, cur.ModifiedOnDateTime, {cur: cur, x: currentDb[i]});
@@ -448,7 +461,7 @@ exports.handler = (argv) => {
         const isNew = !(i in previousDb);
 
         logger.debug('    - Material update.', {diff: oneDiff});
-        const uniqueUpdateId = os.hostname() + '.' + updateId;
+
         const diffPath = argv.outputdir + '/data/DIFF-' + updateId + '.yaml';
 
         if (fs.existsSync(diffPath)) {
@@ -470,9 +483,9 @@ exports.handler = (argv) => {
         let didProcess = false;
         let didError = false;
         logger.info(' [# Entering internalProcessFire ' + updateId, {updateId: updateId});
-        logger.info('   ' + _.last(updates), {updateId: updateId});
+        logger.info('   ' + updateSummary, {updateId: updateId});
         try {
-          didProcess = await internalProcessFire(logger, updateId, inciWeb, cur, perim, old, oneDiff, isNew, i, perimDateTime, uniqueUpdateId);
+          didProcess = await internalProcessFire(logger, updateId, inciWeb, cur, perim, old, oneDiff, isNew, i, perimDateTime, uniqueUpdateId, qrcode);
         } catch (err) {
           didError = true;
           logger.error('    $$$$ ERROR processing %s', updateId, {updateId: updateId});
@@ -535,7 +548,7 @@ exports.handler = (argv) => {
 
     return currentDb;
 
-    async function internalProcessFire(parentLogger, updateId, inciWeb, cur, perim, old, oneDiff, isNew, key, perimDateTime, uniqueUpdateId) {
+    async function internalProcessFire(parentLogger, updateId, inciWeb, cur, perim, old, oneDiff, isNew, key, perimDateTime, uniqueUpdateId, qrcode) {
       const logger = parentLogger.child({
         labels: {updateId: updateId},
         updateId: updateId,
@@ -645,9 +658,6 @@ exports.handler = (argv) => {
 
       const terrainImg = terrainPath || null;
 
-      // QRCode to trace source.
-      const qrcode = uniqueUpdateId;
-
       const templateData = {
         lat: lat,
         lon: lon,
@@ -662,6 +672,7 @@ exports.handler = (argv) => {
           events: events,
           qrcode: qrcode,
         },
+        uniqueUpdateId: uniqueUpdateId,
         terrainImg: terrainImg,
       };
       const html = genHtml(templateData);
@@ -682,6 +693,7 @@ exports.handler = (argv) => {
             lat: lat,
             lon: lon,
             zoom: zoom,
+            uniqueUpdateId: uniqueUpdateId,
             cities: displayCities,
             mapData: {
               events: events,
