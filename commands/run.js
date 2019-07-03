@@ -157,6 +157,11 @@ exports.builder = {
     default: 60 * 5 + 11,
     desc: 'Seconds between twitter posts',
   },
+  embargoSec: {
+    number: true,
+    default: 60 * 10,
+    desc: 'Seconds to wait to post a new tweet (if updated data is found in the interim, the older tweet may be deleted)',
+  },
   mergeDistanceMaxMiles: {
     number: true,
     default: 5.0,
@@ -736,8 +741,11 @@ exports.handler = (argv) => {
 
         const imgsSaved = usePerimAcres ? [imgPerim, imgSummary] : [imgSummary, imgPerim];
 
+        const embargo = new Date().valueOf() + argv.embargoSec * 1000;
+
         const saved = {
           text: tweet,
+          embargoUntil: embargo,
           shortText: cur.UniqueFireIdentifier + ' - Unofficial fire report. See officials for safety info. May be incorrect; disclaimers in images.',
           image1AltText: imgsSaved[0].altText,
           image1: imgsSaved[0].img,
