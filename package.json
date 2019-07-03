@@ -75,7 +75,7 @@
   "optionalDependencies": {
     "@google-cloud/firestore": "^2.2.3",
     "@google-cloud/logging-winston": "^1.1.1",
-    "@google-cloud/tasks": "^1.1.2"
+    "@google-cloud/tasks": "^1.2.0"
   },
   "resolutions": {
     "all-the-cities": "https://github.com/publicdocs-platform/us-cities-db"
