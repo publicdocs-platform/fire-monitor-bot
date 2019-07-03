@@ -778,6 +778,10 @@ function showMap(centerX, centerY, zoom, style, opt, source) {
       return afmKmlLayer('../kml/modis.kml');
     } else if (config === 'AFM-VIIRS-I') {
       return afmKmlLayer('../kml/viirs-i.kml');
+    } else if (config === 'AFM-MODIS-AK') {
+      return afmKmlLayer('../kml/modis-alaska.kml');
+    } else if (config === 'AFM-VIIRS-I-AK') {
+      return afmKmlLayer('../kml/viirs-i-alaska.kml');
     } else if (config === 'Events') {
       return eventsVectorLayer(events);
     }
