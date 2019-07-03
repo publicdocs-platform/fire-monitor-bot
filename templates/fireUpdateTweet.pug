@@ -2,9 +2,9 @@
 - var currencyFormat = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 });
 - const friendlyDate = (d) => new Date(d).toLocaleString('en-US', {timeZone:'UTC', hour12:true, year: 'numeric', day: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', timeZoneName: 'short'});
 if (data.current.NFSAType || '').includes('Emerging')
-  | !{data.current.Hashtag} 🔥 unofficial new fire report.#{'\n'}
+  | !{data.current.Hashtag} 🔥 unofficial, automated report.#{'\n'}
 else
-  | !{data.current.Hashtag} 🔥 unofficial update.#{'\n'}
+  | !{data.current.Hashtag} 🔥 unofficial, automated update.#{'\n'}
 if data.extraTags
   | !{data.extraTags + '; '}
 if data.cities
