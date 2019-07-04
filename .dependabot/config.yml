@@ -10,9 +10,9 @@ update_configs:
     default_labels:
       - "dependencies"
     automerged_updates:
-    - match:
-        dependency_type: "development"
-        update_type: "all"
-    - match:
-        dependency_type: "production"
-        update_type: "semver:minor"
+      - match:
+          dependency_type: "development"
+          update_type: "all"
+      - match:
+          dependency_type: "production"
+          update_type: "semver:minor"
