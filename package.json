@@ -63,7 +63,7 @@
     "yargs": "^13.2.4"
   },
   "devDependencies": {
-    "@babel/cli": "^7.4.0",
+    "@babel/cli": "^7.5.0",
     "@babel/core": "^7.4.0",
     "@babel/preset-env": "^7.4.0",
     "babel-eslint": "^10.0.2",
