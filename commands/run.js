@@ -211,6 +211,11 @@ exports.builder = {
     string: true,
     desc: 'Prefix to hash qrcodes',
   },
+  showSourceLinks: {
+    boolean: true,
+    default: true,
+    desc: 'Whether to show source URLs in tweets',
+  },
 };
 
 exports.handler = (argv) => {
@@ -678,6 +683,7 @@ exports.handler = (argv) => {
         },
         uniqueUpdateId: uniqueUpdateId,
         terrainImg: terrainImg,
+        link: argv.showSourceLinks ? cur.Link : null,
       };
       const html = genHtml(templateData);
       const tweet = genTweet(templateData);
