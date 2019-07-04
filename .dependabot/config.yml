@@ -5,5 +5,14 @@ update_configs:
     update_schedule: "live"
     default_reviewers:
       - "advayDev1"
+    default_assignees:
+      - "advayDev1"
     default_labels:
       - "dependencies"
+    automerged_updates:
+    - match:
+        dependency_type: "development"
+        update_type: "all"
+    - match:
+        dependency_type: "production"
+        update_type: "semver:minor"
