@@ -248,8 +248,8 @@ function showMap(centerX, centerY, zoom, style, opt, source) {
         return new ol.style.Text({
           font: '17px Roboto',
           text: title,
-          fill: new ol.style.Fill({color: '#ffffff'}),
-          stroke: new ol.style.Stroke({color: '#000000', width: 3}),
+          fill: new ol.style.Fill({color: '#000000'}),
+          stroke: new ol.style.Stroke({color: '#ffffff', width: 2}),
           baseline: 'bottom',
           offsetY: -17,
         });
@@ -263,8 +263,8 @@ function showMap(centerX, centerY, zoom, style, opt, source) {
         return new ol.style.Text({
           font: '12px Roboto',
           text: title,
-          fill: new ol.style.Fill({color: '#ffffff'}),
-          stroke: new ol.style.Stroke({color: '#000000', width: 2}),
+          fill: new ol.style.Fill({color: '#000000'}),
+          stroke: new ol.style.Stroke({color: '#ffffff', width: 2}),
           baseline: 'top',
           offsetY: 17,
         });
