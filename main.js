@@ -45,14 +45,14 @@ yargs.command(require('./commands/map'))
     .option('db', {
       string: true,
       default: './persist.yaml',
-      desc: 'R/W file to persist fire info.',
+      desc: 'R/W file to persist disaster info.',
     })
     .option('port', {
       number: true,
       default: 8080,
       desc: 'Web server port',
     })
-    .scriptName('firemon')
+    .scriptName('fire-monitor-bot')
     .recommendCommands()
     .strict()
     .version('version', 'Displays package version', pkgVersion)

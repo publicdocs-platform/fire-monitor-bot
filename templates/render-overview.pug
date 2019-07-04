@@ -35,7 +35,7 @@ html.update
                     br
                     | Info is APPROXIMATE, often INCORRECT and OUT-OF-DATE, NOT REAL-TIME, and NOT REVIEWED BY A HUMAN BEING.
                     br
-                    | For information only. USE AT YOUR OWN RISK — FIRES MAY BE CLOSER AND LARGER THAN THEY APPEAR HERE
+                    | For information only. USE AT YOUR OWN RISK — DANGER MAY BE CLOSER AND LARGER THAN SHOWN HERE
             table.wrapper
                 tr
                     if hasImg
@@ -47,7 +47,7 @@ html.update
                                 tr.important
                                     td(colspan=2)
                                         div.warn
-                                            | THIS IS AN EMERGING FIRE REPORT
+                                            | THIS IS AN EMERGING REPORT
                                             br
                                             | DETAILS MAY BE ESPECIALLY UNCERTAIN
                             tr.important
@@ -139,7 +139,7 @@ html.update
                                             br
                                             span.detail Perimeter Updated #{friendlyDate(data.current.PerimDateTime)}
                                         br
-                                        span.detail Fire Id #{data.current.UniqueFireIdentifier}
+                                        span.detail Event Id #{data.current.UniqueFireIdentifier}
 
             div.cite
                 b

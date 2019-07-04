@@ -83,7 +83,7 @@ const config = {
 };
 
 
-const template = pug.compileFile(path.join(__dirname, '../templates/detailsRender.pug'));
+const template = pug.compileFile(path.join(__dirname, '../templates/render-details.pug'));
 const html = function(entry) {
   return template({config: config, data: entry, curdir: process.cwd()});
 };

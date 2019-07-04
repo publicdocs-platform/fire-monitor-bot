@@ -44,7 +44,7 @@ The fire information displayed by this app is
 * NOT SUITABLE FOR SAFETY/EMERGENCY/EVACUATION PURPOSES, 
 * and MAY BE INCORRECT OR OUT-OF-DATE.
 
-USE AT YOUR OWN RISK.  FIRES MAY BE CLOSER THAN THEY APPEAR.
+USE AT YOUR OWN RISK.  DANGER MAY BE CLOSER THAN SHOWN HERE.
 
 Note that while we may distribute the images and posts generated and
 published by our original bot using the disclaimers indicated in the

@@ -280,18 +280,18 @@ exports.handler = (argv) => {
   };
 
 
-  const htmlTemplate = pug.compileFile(path.join(__dirname, '../templates/fireUpdateRender.pug'));
+  const htmlTemplate = pug.compileFile(path.join(__dirname, '../templates/render-overview.pug'));
   const genHtml = function(entry) {
     return htmlTemplate({config: config, data: entry, curdir: process.cwd()});
   };
 
-  const perimeterTemplate = pug.compileFile(path.join(__dirname, '../templates/detailsRender.pug'));
+  const perimeterTemplate = pug.compileFile(path.join(__dirname, '../templates/render-details.pug'));
   const perimeterHtml = function(entry) {
     return perimeterTemplate({config: config, data: entry, curdir: process.cwd()});
   };
 
 
-  const tweetTemplate = pug.compileFile(path.join(__dirname, '../templates/fireUpdateTweet.pug'));
+  const tweetTemplate = pug.compileFile(path.join(__dirname, '../templates/tweet-update.pug'));
 
   const genTweet = function(entry) {
     return tweetTemplate({config: config, data: entry, curdir: process.cwd()});

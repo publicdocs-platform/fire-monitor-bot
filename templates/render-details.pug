@@ -34,11 +34,11 @@ html.perim
                     br
                     | Info is APPROXIMATE, often INCORRECT and OUT-OF-DATE, NOT REAL-TIME, and NOT REVIEWED BY A HUMAN BEING.
                     br
-                    | Unofficial. For information only. USE AT YOUR OWN RISK — FIRES MAY BE CLOSER AND LARGER THAN THEY APPEAR HERE
+                    | Unofficial. For information only. USE AT YOUR OWN RISK — DANGER MAY BE CLOSER AND LARGER THAN SHOWN HERE
             div.warn
                 if (data.current ? (data.current.NFSAType || '') : '').includes('Emerging')
                     div.innerWarn
-                        | This is an emerging fire report - details may be especially uncertain.
+                        | This is an emerging report - details may be especially uncertain.
                 div.cite
                     b 
                         | To the maximum extent permitted by law: (1) all content is provided to you on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, WHETHER EXPRESS, IMPLIED, STATUTORY, OR OTHER (INCLUDING, WITHOUT LIMITATION, ANY WARRANTIES OR CONDNTIONS OF TITLE, MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR NONINFRINGEMENT); and (2) IN NO EVENT WILL ANY AUTHOR OR DATA PROVIDER BE LIABLE TO YOU ON ANY LEGAL THEORY (INCLUDING, WITHOUT LIMITATION, NEGLIGENCE) OR OTHERWISE FOR ANY DIRECT, SPECIAL, INDIRECT, INCIDENTAL, CONSEQUENTIAL, PUNITIVE, EXEMPLARY, OR OTHER LOSSES, COSTS, EXPENSES, OR DAMAGES arising out of your use of this content, even if the author or data provider has been advised of the possibility of such losses, costs, expenses, or damages.
@@ -64,11 +64,11 @@ html.perim
                         if data.perimDateTime
                             if usePerimAcres
                                 span &nbsp;#{numFormat.format(acres)} perim. acres
-                                span.perimDate @#{friendlyDate(data.perimDateTime)} (entire fire not shown; satellite data not current)
+                                span.perimDate @#{friendlyDate(data.perimDateTime)} (entire event not shown; satellite data not current)
                             else
-                                span.perimDate Perimeter @#{friendlyDate(data.perimDateTime)} (entire fire not shown; satellite data not current)
+                                span.perimDate Perimeter @#{friendlyDate(data.perimDateTime)} (entire event not shown; satellite data not current)
                         else
-                            span.perimDate General Vicinity (entire fire not shown; satellite data not current)
+                            span.perimDate General Vicinity (entire event not shown; satellite data not current)
                         each st in (data.subtitle || [])
                             .detailSubtitle
                                 | #{st}
