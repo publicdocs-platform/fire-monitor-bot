@@ -3,19 +3,32 @@
   "version": "1.0.0",
   "description": "Monitors public wildfire data (unofficial - not for safety/emergency purposes)",
   "main": "index.js",
-  "repository": "https://github.com/publicdocs-platform/fire-monitor-bot",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/publicdocs-platform/fire-monitor-bot.git"
+  },
+  "engines": {
+    "node": "^10.15.3",
+    "yarn": "^1.12.3"
+  },
+  "os": ["darwin", "linux"],
   "author": "Advay Mengle <source@madvay.com>",
   "license": "SEE LICENSE IN LICENSE",
   "private": true,
   "scripts": {
     "install": "cd ./node_modules/staticmaps && yarn && yarn build",
     "cleanpubs": "mkdir -p output; rm -rf output",
-    "clean": "yarn cleanpubs; rm -rf persist.yaml",
+    "cleantests": "rm -rf *.lcov .nyc_output coverage",
+    "clean": "yarn cleanpubs; yarn cleantests; rm -rf persist.yaml",
     "start": "node main.js",
     "debug": "node --inspect main.js",
     "cleanstart": "yarn clean; node main.js",
+    "test-coverage": "yarn clean && yarn test && yarn report-coverage",
+    "e2e-test-coverage": "yarn clean && yarn e2e-test && yarn report-e2e-coverage",
     "test": "nyc mocha './{,!(node_modules)/**/}test/*.js'",
-    "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov && cat coverage.lcov | coveralls",
+    "e2e-test": "yarn clean && nyc node main.js run --once",
+    "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && nyc report --reporter=json && codecov -F unit -f coverage/coverage-final.json && cat coverage.lcov | coveralls",
+    "report-e2e-coverage": "nyc report --reporter=text-lcov > coverage.lcov && nyc report --reporter=json && codecov -F e2e -f coverage/coverage-final.json && cat coverage.lcov | coveralls",
     "lint": "eslint . --fix"
   },
   "dependencies": {
