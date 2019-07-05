@@ -1,6 +1,6 @@
 {
   "name": "fire-monitor-bot",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Monitors public wildfire data (unofficial - not for safety/emergency purposes)",
   "main": "index.js",
   "repository": {
@@ -11,7 +11,10 @@
     "node": "^10.15.3",
     "yarn": "^1.12.3"
   },
-  "os": ["darwin", "linux"],
+  "os": [
+    "darwin",
+    "linux"
+  ],
   "author": "Advay Mengle <source@madvay.com>",
   "license": "SEE LICENSE IN LICENSE",
   "private": true,
