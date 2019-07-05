@@ -9,4 +9,4 @@ install:
   - yarn global add codecov
   - yarn global add coveralls
   - yarn
-script: yarn test && yarn report-coverage
+script: yarn test-coverage && yarn e2e-test-coverage
