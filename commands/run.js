@@ -532,7 +532,9 @@ exports.handler = (argv) => {
           }
           logger.info(' ]# Exiting internalProcessFire ' + updateId, {updateId: updateId});
         }
-        numProcessed++;
+        if (didProcess) {
+          numProcessed++;
+        }
       } finally {
         globalStats.record([{measure: monNumFiresProcessed, value: 1}]);
         logger.debug(' ]# End Processing key %s', key1);
