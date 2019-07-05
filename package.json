@@ -26,7 +26,7 @@
     "test-coverage": "yarn clean && yarn test && yarn report-coverage",
     "e2e-test-coverage": "yarn clean && yarn e2e-test && yarn report-e2e-coverage",
     "test": "nyc mocha './{,!(node_modules)/**/}test/*.js'",
-    "e2e-test": "yarn clean && nyc node main.js run --once",
+    "e2e-test": "yarn clean && nyc node main.js run --once --force-update --fail-on-error --max-updates-per-loop=3",
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && nyc report --reporter=json && codecov -F unit -f coverage/coverage-final.json && cat coverage.lcov | coveralls",
     "report-e2e-coverage": "nyc report --reporter=text-lcov > coverage.lcov && nyc report --reporter=json && codecov -F e2e -f coverage/coverage-final.json && cat coverage.lcov | coveralls",
     "lint": "eslint . --fix"

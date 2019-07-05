@@ -122,6 +122,19 @@ exports.builder = {
     string: true,
     desc: 'Forces an update of a given fire ids (comma separated)',
   },
+  forceUpdate: {
+    boolean: true,
+    desc: 'Forces an update even if there is no existing DB',
+  },
+  failOnError: {
+    boolean: true,
+    desc: 'Forces process to exit on any major error',
+  },
+  maxUpdatesPerLoop: {
+    number: true,
+    default: 0,
+    desc: 'Max number of real updates per main loop.',
+  },
   realFireNames: {
     boolean: true,
     desc: 'Use real fire names not hashtags',
@@ -364,7 +377,11 @@ exports.handler = (argv) => {
 
     const oldDbKeys = _.keys(previousDb);
 
+    let numProcessed = 0;
     fireLoop: for (const key1 of currentDbKeysSorted) {
+      if (argv.maxUpdatesPerLoop && numProcessed > argv.maxUpdatesPerLoop) {
+        continue;
+      }
       logger.debug(' #[ Start Processing key %s', key1);
       const start = process.hrtime();
       try { // NOPMD
@@ -500,6 +517,9 @@ exports.handler = (argv) => {
           didError = true;
           logger.error('    $$$$ ERROR processing %s', updateId, {updateId: updateId});
           logger.error(err);
+          if (argv.failOnError) {
+            process.exit(13);
+          }
         } finally {
           intensiveProcessingSemaphore.leave();
 
@@ -512,6 +532,7 @@ exports.handler = (argv) => {
           }
           logger.info(' ]# Exiting internalProcessFire ' + updateId, {updateId: updateId});
         }
+        numProcessed++;
       } finally {
         globalStats.record([{measure: monNumFiresProcessed, value: 1}]);
         logger.debug(' ]# End Processing key %s', key1);
@@ -548,6 +569,9 @@ exports.handler = (argv) => {
       } catch (err) {
         logger.error('### Error in post persist command: ');
         logger.error(err);
+        if (argv.failOnError) {
+          process.exit(13);
+        }
       }
     }
 
@@ -576,6 +600,9 @@ exports.handler = (argv) => {
         }).catch((err) => {
           logger.info('   ~~ ERROR Archiving to web.archive.org: ' + u);
           logger.info(err);
+          if (argv.failOnError) {
+            process.exit(13);
+          }
         });
       }
       let rr = null;
@@ -848,6 +875,9 @@ exports.handler = (argv) => {
           globalStats.record([{measure: monNumLoopsErrored, value: 1}]);
           logger.error('>> Main loop error');
           logger.error(err);
+          if (argv.failOnError) {
+            process.exit(13);
+          }
         }
         const duration = process.hrtime(start);
         const latency = duration[0] + (duration[1]/1000000.0)/1000.0;
@@ -879,7 +909,7 @@ exports.handler = (argv) => {
   and MAY BE INCORRECT OR OUT-OF-DATE. USE AT YOUR OWN RISK. ***`);
 
   setImmediate(function() {
-    mainLoop(persist ? false : true, persist ? persist : {});
+    mainLoop(argv.forceUpdate ? false : (persist ? false : true), persist ? persist : {});
   });
 };
 
