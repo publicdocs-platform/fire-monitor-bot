@@ -32,8 +32,8 @@
     "e2e-test-coverage-visualdiff": "yarn clean && yarn e2e-test && yarn report-e2e-coverage && yarn report-visualdiff",
     "e2e-test-visualdiff": "yarn clean && yarn e2e-test && yarn report-visualdiff",
     "report-visualdiff": "percy snapshot output/ --snapshot-files='snaps/*.html'",
-    "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && nyc report --reporter=json && codecov -F unit -f coverage/coverage-final.json && cat coverage.lcov | coveralls",
-    "report-e2e-coverage": "nyc report --reporter=text-lcov > coverage.lcov && nyc report --reporter=json && codecov -F e2e -f coverage/coverage-final.json && cat coverage.lcov | coveralls",
+    "report-coverage": "nyc report --reporter=json && codecov -F unit -f coverage/coverage-final.json",
+    "report-e2e-coverage": "nyc report --reporter=json && codecov -F e2e -f coverage/coverage-final.json",
     "lint": "eslint . --fix"
   },
   "dependencies": {

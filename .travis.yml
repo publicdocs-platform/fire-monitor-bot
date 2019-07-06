@@ -7,7 +7,6 @@ before_install:
 cache: yarn
 install:
   - yarn global add codecov
-  - yarn global add coveralls
   - yarn global add percy
   - yarn
 before_script:
