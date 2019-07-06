@@ -17,7 +17,6 @@ limitations under the License.
 'use strict';
 
 const path = require('path');
-const proj4 = require('proj4');
 const rp = require('request-promise');
 const _ = require('lodash');
 const yaml = require('js-yaml');
@@ -45,6 +44,7 @@ const render = require('../lib/render');
 const geocoding = require('../lib/geocoding');
 const geomac = require('../lib/geomac');
 const calfire = require('../lib/calfire');
+const nfsa = require('../lib/nfsa');
 const server = require('../lib/server');
 const files = require('../lib/files');
 const units = require('../lib/units');
@@ -248,51 +248,8 @@ exports.handler = (argv) => {
 
   server.run(argv.port, argv.outputdir);
 
-
-  const processNfsaFire = function(e, proj) {
-    const entry = e.attributes;
-    const ret = {};
-    const to = proj4(proj, 'EPSG:4326', [e.geometry.x, e.geometry.y]);
-    ret.Lon = to[0];
-    ret.Lat = to[1];
-    for (const key in entry) {
-      ret[key] = entry[key];
-      if (key.endsWith('DateTime')) {
-        ret[key + 'Epoch'] = ret[key];
-        ret[key] = dateString(ret[key]);
-      }
-      if (_.isString(ret[key])) {
-        ret[key] = ret[key].trim();
-      }
-    }
-    ret.Source = 'NFSA';
-    ret._CorrelationIds = [ret.UniqueFireIdentifier];
-    ret.ModifiedOnDateTime_Raw = ret.ModifiedOnDateTime;
-    ret.ModifiedOnDateTimeEpoch_Raw = ret.ModifiedOnDateTimeEpoch;
-    if (ret.ICS209ReportDateTime) {
-      ret.ModifiedOnDateTime = ret.ICS209ReportDateTime;
-      ret.ModifiedOnDateTimeEpoch = ret.ICS209ReportDateTimeEpoch;
-    }
-
-    ret.Hashtag = util.fireHashTag(ret.Name);
-    return ret;
-  };
-
-
-  const dataOptions = {
-    uri: 'https://maps.nwcg.gov/sa/publicData.json',
-    qs: {
-    },
-    headers: {
-      'User-Agent': 'Request-Promise; ' + argv.userAgent,
-    },
-    json: true,
-  };
-
-
   const config = {
     twitterName: envconfig.twitterAuth.name,
-    sourceUrl: dataOptions.uri,
     disclaimerUrl: envconfig.ui.disclaimer_url,
     systemName: envconfig.ui.system_url,
   };
@@ -347,7 +304,7 @@ exports.handler = (argv) => {
     const currentDb = _.cloneDeep(previousDb);
 
     const async = {
-      nfsaIncidents: getNfsaFires(dataOptions, argv, processNfsaFire),
+      nfsaIncidents: nfsa.getFires(argv.userAgent, argv.emergingNew, argv.emergingOld),
       geomacIncidents: geomac.getFires(argv.userAgent),
       calfireIncidents: argv.ingestCalfire ? calfire.getFires(argv.userAgent) : {},
     };
@@ -1015,30 +972,3 @@ function mergeCalfireIncidentsIntoDb(calfireIncidents, currentDb, mergeDistanceM
     }
   }
 }
-
-async function getNfsaFires(dataOptions, argv, processNfsaFire) {
-  const prov = util.createProvenance(dataOptions);
-  const layers = await rp(dataOptions);
-  const dataSetName = 'Active Incidents';
-  const dataSet = _.find(layers, (p) => p.name === dataSetName);
-  const requiredLayerNames = ['Large WF'];
-  if (argv.emergingNew) {
-    requiredLayerNames.unshift('Emerging WF < 24 hours');
-  }
-  if (argv.emergingOld) {
-    requiredLayerNames.unshift('Emerging WF > 24 hours');
-  }
-  const filteredLayers = dataSet.layerConfigs.filter((f) => requiredLayerNames.includes(f.featureCollection.layerDefinition.name));
-  const layerFeatures = filteredLayers.map((x) => {
-    return x.featureCollection.featureSet.features.map((y) => {
-      const r = processNfsaFire(y, 'EPSG:' + x.featureCollection.featureSet.spatialReference.latestWkid);
-      r.NFSAType = x.featureCollection.layerDefinition.name;
-      return r;
-    });
-  });
-  const data0 = _.flatten(layerFeatures);
-  const data = data0.map((e) => Object.assign(e, {_Provenance: _.cloneDeep(prov)}));
-  const nfsaData = _.keyBy(data, (o) => o.UniqueFireIdentifier);
-  return nfsaData;
-}
-
