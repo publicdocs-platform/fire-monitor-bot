@@ -309,7 +309,7 @@ exports.handler = (argv) => {
       calfireIncidents: argv.ingestCalfire ? calfire.getFires(argv.userAgent) : {},
     };
 
-    const nfsaIncidents = await async.calfireIncidents;
+    const nfsaIncidents = await async.nfsaIncidents;
     const geomacIncidents = await async.geomacIncidents;
     const calfireIncidents = await async.calfireIncidents;
 
