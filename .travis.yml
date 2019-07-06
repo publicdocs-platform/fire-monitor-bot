@@ -9,6 +9,10 @@ install:
   - yarn global add codecov
   - yarn global add percy
   - yarn
+addons:
+  apt:
+    packages:
+      - fonts-roboto
 before_script:
   - export FAKE_HOSTNAME=travis-box
   - export PERCY_ENABLE=0
