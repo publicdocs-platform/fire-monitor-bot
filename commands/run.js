@@ -157,6 +157,11 @@ exports.builder = {
     default: '2017-12-31',
     desc: 'Only display a update because of a perimeter change after this timestamp',
   },
+  skipUpdatesOlderThanHours: {
+    number: true,
+    default: 6,
+    desc: 'Updates older than this hours are skipped for display',
+  },
   twitterAuthPath: {
     string: true,
     desc: 'Path to twitter profiles',
@@ -319,6 +324,7 @@ exports.handler = (argv) => {
 
     const curTime = new Date().getTime();
     const pruneTime = curTime - 1000 * 60 * 60 * 24 * argv.pruneDays;
+    const skipOldTime = curTime - 1000 * 60 * 60 * argv.skipUpdatesOlderThanHours;
 
     const globalUpdateId = 'Update-at-' + dateString(curTime);
     logger.info('Updating ' + globalUpdateId);
@@ -437,20 +443,27 @@ exports.handler = (argv) => {
           if (!argv.monitorPerims || !('PerimDateTime' in oneDiff)) {
             // Unless acreage, perim, or containment change, we don't report it.x
             logger.info('     -) No perim date diff or not monitored %s %o', updateId, perimDateTime, {diff: oneDiff, updateId: updateId});
-            updates.push('⏭️' + updateSummary);
+            updates.push('⏭️a' + updateSummary);
             continue;
           }
           // Only show perimeters changed after the filter.
           if (!perimDateTime || perimDateTime <= argv.perimAfter) {
             logger.info('    -) No perim date or old %s %o diff %o', updateId, perimDateTime, {diff: oneDiff, updateId: updateId});
-            updates.push('⏭️' + updateSummary);
+            updates.push('⏭️b' + updateSummary);
             continue;
           }
         }
+
         if (!('PercentContained' in oneDiff || 'PerimeterData.Acres' in oneDiff) && old.DailyAcres && cur.DailyAcres && Math.abs(cur.DailyAcres - old.DailyAcres) < 1.1) {
           // May be spurious - due to rounding in GEOMAC vs NFSA.
           logger.info('    -) Insufficient acreage change old %s %o cur %o', updateId, old.DailyAcres, cur.DailyAcres, {diff: oneDiff, updateId: updateId});
-          updates.push('⏭️' + updateSummary);
+          updates.push('⏭️c' + updateSummary);
+          continue;
+        }
+
+        if (cur.ModifiedOnDateTimeEpoch < skipOldTime && (!perimDateTime || perimDateTime < skipOldTime)) {
+          logger.info('    -) Update too old %s MOD %o PERIM %o', updateId, cur.ModifiedOnDateTime, perimDateTime);
+          updates.push('⏭️⏰' + updateSummary);
           continue;
         }
 
