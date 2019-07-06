@@ -229,6 +229,11 @@ exports.builder = {
     default: true,
     desc: 'Whether to show source URLs in tweets',
   },
+  htmlSnapshots: {
+    boolean: true,
+    default: false,
+    desc: 'Whether to generate a webpage snapshot of all the posts in one loop',
+  },
 };
 
 exports.handler = (argv) => {
@@ -298,6 +303,11 @@ exports.handler = (argv) => {
     return htmlTemplate({config: config, data: entry, curdir: process.cwd()});
   };
 
+  const snapHtmlTemplate = pug.compileFile(path.join(__dirname, '../templates/util/snap.pug'));
+  const genSnapHtml = function(entry) {
+    return snapHtmlTemplate({config: config, data: entry, curdir: process.cwd()});
+  };
+
   const perimeterTemplate = pug.compileFile(path.join(__dirname, '../templates/render-details.pug'));
   const perimeterHtml = function(entry) {
     return perimeterTemplate({config: config, data: entry, curdir: process.cwd()});
@@ -330,6 +340,8 @@ exports.handler = (argv) => {
       return;
     };
   })();
+
+  let snapId = 0;
 
   async function internalLoop(isFirstRun, previousDb) {
     const currentDb = _.cloneDeep(previousDb);
@@ -378,8 +390,9 @@ exports.handler = (argv) => {
     const oldDbKeys = _.keys(previousDb);
 
     let numProcessed = 0;
+    const processedEntries = [];
     fireLoop: for (const key1 of currentDbKeysSorted) {
-      if (argv.maxUpdatesPerLoop && numProcessed > argv.maxUpdatesPerLoop) {
+      if (argv.maxUpdatesPerLoop && numProcessed >= argv.maxUpdatesPerLoop) {
         continue;
       }
       logger.debug(' #[ Start Processing key %s', key1);
@@ -512,7 +525,11 @@ exports.handler = (argv) => {
         logger.info(' [# Entering internalProcessFire ' + updateId, {updateId: updateId});
         logger.info('   ' + updateSummary, {updateId: updateId});
         try {
-          didProcess = await internalProcessFire(logger, updateId, inciWeb, cur, perim, old, oneDiff, isNew, i, perimDateTime, uniqueUpdateId, qrcode);
+          const processedEntry = await internalProcessFire(logger, updateId, inciWeb, cur, perim, old, oneDiff, isNew, i, perimDateTime, uniqueUpdateId, qrcode);
+          if (processedEntry) {
+            didProcess = true;
+            processedEntries.push(processedEntry);
+          }
         } catch (err) {
           didError = true;
           logger.error('    $$$$ ERROR processing %s', updateId, {updateId: updateId});
@@ -532,7 +549,9 @@ exports.handler = (argv) => {
           }
           logger.info(' ]# Exiting internalProcessFire ' + updateId, {updateId: updateId});
         }
-        numProcessed++;
+        if (didProcess) {
+          numProcessed++;
+        }
       } finally {
         globalStats.record([{measure: monNumFiresProcessed, value: 1}]);
         logger.debug(' ]# End Processing key %s', key1);
@@ -573,6 +592,15 @@ exports.handler = (argv) => {
           process.exit(13);
         }
       }
+    }
+
+    if (argv.htmlSnapshots) {
+      const snapWebpage = argv.outputdir + '/snaps/SNAP-' + snapId + '.html';
+      const snapHtml = genSnapHtml({
+        entries: processedEntries,
+      });
+      snapId++;
+      fs.writeFileSync(snapWebpage, snapHtml);
     }
 
     if (argv.once) {
@@ -720,7 +748,12 @@ exports.handler = (argv) => {
       await renderUpdateImage();
       await perimAndSaveProcess();
 
-      return true;
+      return {
+        uniqueUpdateId: uniqueUpdateId,
+        tweet: tweet,
+        img1: '../img/IMG-TWEET-' + updateId + '.png',
+        img2: '../img/IMG-PERIM-' + updateId + '.jpeg',
+      };
 
       async function perimAndSaveProcess() {
         const detailImg = (lat && lon) || (perim.length > 0 && !(perim.length === 1 && perim[0].length === 1 && perim[0][0].length === 2));
@@ -861,6 +894,7 @@ exports.handler = (argv) => {
     (async function() {
       let x = last;
       if (!argv.twitterOnly) {
+        logger.debug('Main loop instance started');
         globalStats.record([{measure: monNumLoopsStarted, value: 1}]);
         const start = process.hrtime();
         try {

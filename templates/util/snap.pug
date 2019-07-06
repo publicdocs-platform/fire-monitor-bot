@@ -1,0 +1,15 @@
+doctype html
+html
+    head
+        meta(charset="UTF-8")
+    body
+      each e in data.entries
+        .entry
+          .update-id
+            span(style="font-size:200%") #{e.uniqueUpdateId}
+          .tweet
+            span(style="font-size:300%") #{e.tweet}
+          .img1
+            img(src=e.img1,width=1900)
+          .img2
+            img(src=e.img2,width=1900)
