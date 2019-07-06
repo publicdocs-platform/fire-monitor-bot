@@ -182,7 +182,7 @@ exports.builder = {
   },
   pruneDays: {
     number: true,
-    default: 1,
+    default: 2,
     desc: 'Days before pruning stale entries',
   },
   twitterThreadQueryPrefix: {
@@ -635,7 +635,7 @@ exports.handler = (argv) => {
       }
       let rr = null;
       if (perim.length > 1 && argv.locations) {
-        rr = await maprender.getMapBounds(perim, 1450 / 2, 1200 / 2, 15);
+        rr = await maprender.getMapBounds(perim, 1450 / 2, 1200 / 2, 15, cur.DailyAcres || 0);
       } else {
         logger.debug('     >> Missing perimeter - %s', updateId);
       }
