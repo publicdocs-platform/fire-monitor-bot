@@ -392,7 +392,10 @@ exports.handler = (argv) => {
               // Except perimeters, which still need to be checked.
               currentDb[i].PerimDateTime = perimDateTime;
               currentDb[i].PerimeterData = curPerimData;
-              assert.equal(currentDb[i].UniqueFireIdentifier, i);
+              if (currentDb[i].UniqueFireIdentifier !== i) {
+                logger.warn('UNMATCHED IDS UFI %o key %o', currentDb[i].UniqueFireIdentifier, i);
+                assert.equal(currentDb[i].UniqueFireIdentifier, i);
+              }
               currentDb[i]._CorrelationIds = curCorrelates;
               // cur is a *reference* to x[i]
               cur = currentDb[i];
@@ -974,8 +977,15 @@ function mergeCalfireIncidentsIntoDb(calfireIncidents, currentDb, mergeDistanceM
     if (matchingDbItems.length === 0) {
       currentDb[calfireId] = util.mergedCalfireFire(calfireItem, null);
     } else if (matchingDbItems.length === 1) {
-      currentDb[calfireId] = util.mergedCalfireFire(calfireItem, matchingDbItems[0]);
-      delete currentDb[matchingDbItems[0].UniqueFireIdentifier];
+      const merged = util.mergedCalfireFire(calfireItem, matchingDbItems[0]);
+      if (merged.UniqueFireIdentifier === calfireId) {
+        currentDb[calfireId] = merged;
+        delete currentDb[matchingDbItems[0].UniqueFireIdentifier];
+      } else {
+        assert.equal(merged.UniqueFireIdentifier, matchingDbItems[0].UniqueFireIdentifier);
+        currentDb[matchingDbItems[0].UniqueFireIdentifier] = merged;
+        delete currentDb[calfireId];
+      }
     } else {
       logger.error('Multiple NG incidents match CALFIRE fire = %s', searchName,
           {
