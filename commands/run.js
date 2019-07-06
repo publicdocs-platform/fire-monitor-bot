@@ -325,6 +325,7 @@ exports.handler = (argv) => {
     const curTime = new Date().getTime();
     const pruneTime = curTime - 1000 * 60 * 60 * 24 * argv.pruneDays;
     const skipOldTime = curTime - 1000 * 60 * 60 * argv.skipUpdatesOlderThanHours;
+    const skipOldTimeISO = new Date(skipOldTime).toISOString();
 
     const globalUpdateId = 'Update-at-' + dateString(curTime);
     logger.info('Updating ' + globalUpdateId);
@@ -461,7 +462,7 @@ exports.handler = (argv) => {
           continue;
         }
 
-        if (cur.ModifiedOnDateTimeEpoch < skipOldTime && (!perimDateTime || perimDateTime < skipOldTime)) {
+        if (cur.ModifiedOnDateTime < skipOldTimeISO && (!perimDateTime || perimDateTime < skipOldTimeISO)) {
           logger.info('    -) Update too old %s MOD %o PERIM %o', updateId, cur.ModifiedOnDateTime, perimDateTime);
           updates.push('⏭️⏰' + updateSummary);
           continue;
