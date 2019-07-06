@@ -27,7 +27,7 @@
     "debug": "node --inspect main.js",
     "cleanstart": "yarn clean; node main.js",
     "test": "nyc mocha './{,!(node_modules)/**/}test/*.js'",
-    "e2e-test": "yarn clean && nyc node --inspect main.js run --once --force-update --fail-on-error --max-updates-per-loop=3 --html-snapshots",
+    "e2e-test": "yarn clean && nyc node --inspect main.js run --once --force-update --fail-on-error --max-updates-per-loop=3 --html-snapshots --skip-updates-older-than-hours=48",
     "test-coverage": "yarn clean && yarn test && yarn report-coverage",
     "e2e-test-coverage-visualdiff": "yarn clean && yarn e2e-test && yarn report-e2e-coverage && yarn report-visualdiff",
     "e2e-test-visualdiff": "yarn clean && yarn e2e-test && yarn report-visualdiff",
