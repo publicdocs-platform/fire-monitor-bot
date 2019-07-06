@@ -99,6 +99,19 @@ function showMap(centerX, centerY, zoom, style, opt, source) {
             'NOAA NCEI, U.S. Coastal Relief Model'],
           params: {layers: '', FORMAT: 'PNG32'},
         },
+        TopoTiled: {
+          url: 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}',
+          tiled: true,
+          attribution: [
+            'USGS TNM: NBD, 3DEP, GNIS, NHD, NLCD, NSD, NTD',
+            'USGS Global Ecosystems',
+            'U.S. Census Bureau – TIGER/Line',
+            'USFS Road Data',
+            'Natural Earth Data',
+            'U.S. State Dept Humanitarian Information Unit',
+            'NOAA NCEI, U.S. Coastal Relief Model'],
+          params: {layers: '', FORMAT: 'PNG32'},
+        },
         Polygons: {
           url: 'https://carto.nationalmap.gov/arcgis/rest/services/selectable_polygons/MapServer',
           attribution: 'USGS',
@@ -366,7 +379,6 @@ function showMap(centerX, centerY, zoom, style, opt, source) {
 
   const whiteTri = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAtdJREFUaAXtWCuMWlEUhFLSTTEYDDXgkJiG1GGq0ARHLZq6JpVUo1FNqEUjqnCkDtOGtKKGBoLBtKQhcDtzck+W3X37eHzeh+ZNcvZwz2dmONk1m0jEiC8QXyC+QHyB+AL+XeAdqGcI5qtDBY53CGMz31eDJJyOETSvwTfrV4EmXKrx/cx65JGBw18IMV4oFPa/AP8e2I80PsCdmM7n82Y+nxtmrSGzH1kU4WyNEMP9ft8QzFqzfc5FEgO4ErOVSsXsdjv5Asx8aw+Zc5FDFY7EZDKZNOPxWMzrD75Z1xlkzkcGKTiZIMRgs9lU33cy6zpj57kXCbTgQsxlMhkzm83uGNcH6+zrLDL3QkcWDpYIMdbpdNSvY2ZfZ+0e90NFF+piqlgsmvV67Whci+xzTneQuR8aSlDeIMTQYDBQn66Zc7pj98kTCoZQFTPVatXV9P0m53UXmTyBowZFMZFKpcxkMrnv0fXNee4pBzL5AkMaSlOEGGi1Wq5mH2tyTzksH3kDwVuoiHg2mzXL5fIxj6517nFfuZDJ6ztyUFghRLjb7bqaPNTkvnJZXvL7ih7YRbRUKpnNZnPIo2uf++RRTmTy+4YymLcIERwOh67mvDbJo5yWnzq+YARWEavVal79eZojn3IjU+fiqINRRNLptJlOp56MeR0iH3lVA5l6F8MNmH4iRKDdbnv1ddQceVXD6lH3IngPFiHP5XJmtVodZczrMHnJr1rI1D0bL8DwGyHEvV7Pq5+T5sivWlaX+mfhE7aFtFwum+12e5Ixr0vkp45qIlP/ZLzCpv53zYxGI68+zpqjDnQ1qE8fRyOJjS8IIarX62eZOnaZeqptfdDPAzx9ULktvMHHl/pcLBaJRqOhT98z9fZAH/Tzca928OM3TOxfIezPX50cP3Eq2tp3l14YrR9Ooo6/V3bwOfJrxDOnxYBrf6H3GfEnYN1YLr5AfIH4Av/7Bf4Bjm9OkYzIpvwAAAAASUVORK5CYII=';
   const whiteDot = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAylJREFUaAXtmb2O2kAQxw0RBVxxIKWBLlddkAgPELoUKfIM6XiDdLzLSVT0IOVqKPIESChVdNElkAqSBhqEMz+EDbJ314sx+Czxl0Y2s7PzsbvenR0c54rrCJw0ArmTeqs714R9L3QndCtUFFoJ/RP6IfRdaCr0YvBKPPko9CD0JORaEHLI04/+qeBGrH4R+i1k47RO5tdOD/ouhs9i6Y+Qzqk4fPSh96x4LdofheI4aNsH/dhJHO9EI9Nt68gpcs9iB3uRsN2F3oumr0LsKkbk83mn0Wg49XrdqVarTqlUcpbLpTObzZzJZOKMx2Nns9kYdewa2bU+CX2zETbJMBJ/hYwj2mq13G636y4WC9eE+Xy+lUM+SufOrtVMiKwSrEXjsmk2m+5oNDL5rG0bDocu/cWGiVhOsb8J7Qeby+XcTqfjrtdrrYM2DfRHD/oMgeDH0WBLUyotFApur9ez8c9aBn3o1dkU/lFbLIeKcp9npJJ23osSvYaZwB/rw44TVjkaTPc5gX6dbeHjVyTITZTpAR/cqWs+Knj0Gz5sNpTI3IkESzkKcXebKKeD7exOOh+Ej39GPEhrSAH79iVhOCfwz0fef9u/fNi/7t/a7fb+xwXeDPaU/nkucRkJjb6kB5EnbNKzw4mNXZU/wsPPLYIz8NZrOHyS25TL5UPW2d8rlco2p9IYuvf4wQDeeA2HTxKzNGCwy3V1i2AAymyzVvNnzOt3kafBru9nMAAu4CEUi0p2SC5phsGu71AwAKoHIaxWSnZILmkG9wgNfIeCAXCJCGE6TacKwiVIA9/PYADUbULgJpUGDHaVfuJj5s8B1srP4Ghzh+33+0H2WX8PBgPd3Rn/jGs6U7mQahRTz0bJesUxHUVmo5m/DzArmb6REUDm78QEQRVAuQ6zUJUgAJDpuhABZL4yRxAvujZ61uo0+TwpMdksCWFa1WlmATATxkKvtCs/+hj85509eSQLvgnthy1tSQSA/tjVaNtw2WKVtdMTgkAfei8GDrvM/kt5OErkTiRYZLFPQjbLCDnk6Uf/2LDdhY4xwKWIus2dUCb+qT8muKtscAT+A8FCHrHOcDhMAAAAAElFTkSuQmCC';
-
 
   const satelliteVectorStyles = {
     'Last 24-48 hrs': {
@@ -691,7 +703,7 @@ function showMap(centerX, centerY, zoom, style, opt, source) {
     function style(feat) {
       return new ol.style.Style({
         // text: namedTextStyle(feat),
-        image: new ol.style.Icon({src: whiteDot, color: '#ff0000', scale: 2.0/6.0}),
+        image: new ol.style.Icon({src: '/imgs/fire.png', color: '#ffffff', scale: 1.0/9.0}),
       });
     }
     return new ol.layer.Vector({
@@ -707,7 +719,7 @@ function showMap(centerX, centerY, zoom, style, opt, source) {
   const ZoomedRoads = zoom < 11.5 ? Library.USGS.NatlMap.RoadsLowScale : (zoom < 12.5 ? Library.USGS.NatlMap.RoadsMediumScale : Library.USGS.NatlMap.Roads);
 
   const perimLayers = [
-    Library.USGS.NatlMap.Topo,
+    Library.USGS.NatlMap.TopoTiled,
     // Library.Census.Tiger.USLandmass,
     Library.USGS.NatlMap.Blank,
     Library.USGS.NatlMap.ShadedRelief,

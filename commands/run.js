@@ -146,7 +146,7 @@ exports.builder = {
   },
   emergingNew: {
     boolean: true,
-    default: true,
+    default: false,
     desc: 'Include emerging wildfires <24hrs',
   },
   emergingOld: {
