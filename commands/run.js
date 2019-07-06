@@ -449,7 +449,7 @@ exports.handler = (argv) => {
         }
 
         const updateId = 'UPD-' + cur.ModifiedOnDateTime + '-PER-' + (cur.PerimDateTime || 'none') + '-ID-' + i + '-NAME-' + cur.Name.replace(/[^a-z0-9]/gi, '') + '-S-' + cur.Source.charAt(0);
-        const uniqueUpdateId = os.hostname() + '.' + updateId;
+        const uniqueUpdateId = (process.env.FAKE_HOSTNAME || os.hostname()) + '.' + updateId;
         // QRCode to find commits easily.
         const hash = crypto.createHash('sha256');
         hash.update(uniqueUpdateId);
