@@ -87,6 +87,18 @@ function showMap(centerX, centerY, zoom, style, opt, source) {
           attribution: 'USGS TNM: Orthoimagery and US Topo',
           params: {layers: '', FORMAT: 'PNG32'},
         },
+        Topo: {
+          url: 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer',
+          attribution: [
+            'USGS TNM: NBD, 3DEP, GNIS, NHD, NLCD, NSD, NTD',
+            'USGS Global Ecosystems',
+            'U.S. Census Bureau – TIGER/Line',
+            'USFS Road Data',
+            'Natural Earth Data',
+            'U.S. State Dept Humanitarian Information Unit',
+            'NOAA NCEI, U.S. Coastal Relief Model'],
+          params: {layers: '', FORMAT: 'PNG32'},
+        },
         Polygons: {
           url: 'https://carto.nationalmap.gov/arcgis/rest/services/selectable_polygons/MapServer',
           attribution: 'USGS',
@@ -430,10 +442,10 @@ function showMap(centerX, centerY, zoom, style, opt, source) {
     return new ol.style.Text({
       textAlign: align,
       textBaseline: baseline,
-      font: '11px Roboto',
+      font: '12px Roboto',
       text: title,
       fill: new ol.style.Fill({color: '#000000'}),
-      stroke: new ol.style.Stroke({color: '#ffffff', width: 2}),
+      stroke: new ol.style.Stroke({color: '#ffffff', width: 3}),
       offsetX: offsetX,
       offsetY: offsetY,
     });
@@ -695,6 +707,7 @@ function showMap(centerX, centerY, zoom, style, opt, source) {
   const ZoomedRoads = zoom < 11.5 ? Library.USGS.NatlMap.RoadsLowScale : (zoom < 12.5 ? Library.USGS.NatlMap.RoadsMediumScale : Library.USGS.NatlMap.Roads);
 
   const perimLayers = [
+    Library.USGS.NatlMap.Topo,
     // Library.Census.Tiger.USLandmass,
     Library.USGS.NatlMap.Blank,
     Library.USGS.NatlMap.ShadedRelief,
@@ -728,7 +741,7 @@ function showMap(centerX, centerY, zoom, style, opt, source) {
     zoom > 10.9 ? Library.USGS.NatlMap.Names : 'Cities',
   ];
   const overviewLayers = [
-    Library.Census.Tiger.USLandmass,
+    Library.USGS.NatlMap.Topo,
     Library.USGS.NatlMap.Blank,
     // alphaLayer(Library.USGS.NatlMap.ImageryTiled, 0.1),
     alphaLayer(Library.USGS.ProtectedAreas.SimpleDesignations, 0.25),
