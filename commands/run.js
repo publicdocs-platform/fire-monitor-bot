@@ -16,37 +16,38 @@ limitations under the License.
 */
 'use strict';
 
-const path = require('path');
-const rp = require('request-promise');
 const _ = require('lodash');
-const yaml = require('js-yaml');
-const pug = require('pug');
-const fs = require('fs');
-const del = require('del');
-const os = require('os');
-const deepDiff = require('deep-diff');
-const numeral = require('numeral');
 const assert = require('assert').strict;
-const promisify = require('util').promisify;
-const exec = promisify(require('child_process').exec);
-const {globalStats, MeasureUnit} = require('@opencensus/core');
 const crypto = require('crypto');
+const deepDiff = require('deep-diff');
+const del = require('del');
+const fs = require('fs');
+const numeral = require('numeral');
+const os = require('os');
+const path = require('path');
+const promisify = require('util').promisify;
+const pug = require('pug');
+const rp = require('request-promise');
+const yaml = require('js-yaml');
+const {globalStats, MeasureUnit} = require('@opencensus/core');
+
+const exec = promisify(require('child_process').exec);
 
 const envconfig = require('../envconfig');
 const logging = require('../lib/logging');
 const monitoring = require('../lib/monitoring');
 const logger = logging.child({labels: {system: 'run'}});
-const util = require('../lib/util');
 const afm = require('../lib/afm');
+const util = require('../lib/util');
 const dateString = util.dateString;
-const maprender = require('../lib/maprender');
-const render = require('../lib/render');
+const calfire = require('../lib/calfire');
+const files = require('../lib/files');
 const geocoding = require('../lib/geocoding');
 const geomac = require('../lib/geomac');
-const calfire = require('../lib/calfire');
+const maprender = require('../lib/maprender');
 const nfsa = require('../lib/nfsa');
+const render = require('../lib/render');
 const server = require('../lib/server');
-const files = require('../lib/files');
 const units = require('../lib/units');
 
 // Metrics

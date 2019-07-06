@@ -17,17 +17,17 @@ limitations under the License.
 'use strict';
 
 
+const afm = require('../lib/afm');
+const del = require('del');
+const files = require('../lib/files');
+const kmz = require('../lib/kmz');
 const render = require('../lib/render');
 const server = require('../lib/server');
-const files = require('../lib/files');
-const afm = require('../lib/afm');
-const kmz = require('../lib/kmz');
-const del = require('del');
 
 const envconfig = require('../envconfig');
-const pug = require('pug');
-const path = require('path');
 const fs = require('fs');
+const path = require('path');
+const pug = require('pug');
 
 exports.command = 'map';
 

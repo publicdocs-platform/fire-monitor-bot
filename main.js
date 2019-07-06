@@ -21,8 +21,8 @@ require('./envconfig');
 require('./lib/logging');
 require('./lib/monitoring');
 
-const yargs = require('yargs');
 const pkgVersion = require('./package.json').version;
+const yargs = require('yargs');
 
 yargs.command(require('./commands/map'))
     .command(require('./commands/run'))
