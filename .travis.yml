@@ -10,6 +10,12 @@ install:
   - yarn global add coveralls
   - yarn global add percy
   - yarn
+before_script:
+  - export FAKE_HOSTNAME=travis-box
+  - export PERCY_ENABLE=0
+  - if [ "$TRAVIS_PULL_REQUEST" != 'false' ]; then export PERCY_ENABLE=1; fi
+  - if [ "$TRAVIS_EVENT_TYPE" = 'push' ] && [ "$TRAVIS_BRANCH" = 'master' ]; then export PERCY_ENABLE=1; fi
+  - echo PERCY ENABLED $PERCY_ENABLE
 script: yarn test-coverage && yarn e2e-test-coverage-visualdiff
 
 env:
