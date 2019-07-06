@@ -8,6 +8,7 @@ pull_request_rules:
     conditions:
       - status-success=Travis CI - Pull Request
       - status-success=Travis CI - Branch
+      - status-success=percy/fire-monitor-bot
       - status-success=DeepScan
       - status-success=Codacy/PR Quality Review
       - "#approved-reviews-by>=1"
@@ -23,6 +24,7 @@ pull_request_rules:
     conditions:
       - status-success=Travis CI - Pull Request
       - status-success=Travis CI - Branch
+      - status-success=percy/fire-monitor-bot
       - status-success=DeepScan
       - status-success=Codacy/PR Quality Review
       - "#review-requested=0"
