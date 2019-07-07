@@ -172,6 +172,11 @@ function showMap(centerX, centerY, zoom, style, opt, source) {
           attribution: 'USGS TNM: NBD',
           params: {layers: 'show:4,5,6,7,16', FORMAT: 'PNG32'},
         },
+        GovUnitsNoCounties: {
+          url: 'https://carto.nationalmap.gov/arcgis/rest/services/govunits/MapServer/',
+          attribution: 'USGS TNM: NBD',
+          params: {layers: 'exclude:17,15,35', FORMAT: 'PNG32'},
+        },
         Names: {
           url: 'https://carto.nationalmap.gov/arcgis/rest/services/geonames/MapServer/',
           attribution: 'USGS TNM: GNIS',
@@ -201,6 +206,26 @@ function showMap(centerX, centerY, zoom, style, opt, source) {
           layers: 'show:0,1,2',
         },
         opacity: 0.5,
+      },
+    },
+    NWS: {
+      Reference: {
+        Counties: {
+          url: 'https://idpgis.ncep.noaa.gov/arcgis/rest/services/NWS/nws_reference_map/MapServer',
+          attribution: ['NWS', 'USGS DLG'],
+          params: {
+            FORMAT: 'PNG32',
+            layers: 'show:2',
+          },
+        },
+        States: {
+          url: 'https://idpgis.ncep.noaa.gov/arcgis/rest/services/NWS/nws_reference_map/MapServer',
+          attribution: ['NWS', 'USGS DLG'],
+          params: {
+            FORMAT: 'PNG32',
+            layers: 'show:3',
+          },
+        },
       },
     },
     Census: {
@@ -550,7 +575,7 @@ function showMap(centerX, centerY, zoom, style, opt, source) {
       return [
         new ol.style.Style({
           zIndex: topZindex,
-          fill: zoom > 12.5 ? null : new ol.style.Fill({
+          fill: zoom > 9.5 ? null : new ol.style.Fill({
             color: fclr,
           }),
           stroke: new ol.style.Stroke({color: sclr, width: zoom>=12.5 ? 3 : 1, lineDash: [3, 3]}),
@@ -763,35 +788,24 @@ function showMap(centerX, centerY, zoom, style, opt, source) {
   const ZoomedRoads = zoom < 11.5 ? Library.USGS.NatlMap.RoadsLowScale : (zoom < 12.5 ? Library.USGS.NatlMap.RoadsMediumScale : Library.USGS.NatlMap.Roads);
 
   const perimLayers = [
-    Library.USGS.NatlMap.TopoTiled,
-    // Library.Census.Tiger.USLandmass,
     Library.USGS.NatlMap.Blank,
     Library.USGS.NatlMap.ShadedRelief,
-    // alphaLayer(Library.USGS.NatlMap.Imagery, Math.max(Math.min( (zoom-10)/(15-10) * 0.5 + 0.4, 0.9), 0.4)),
-    // alphaLayer(Library.USGS.ProtectedAreas.SimpleDesignations, 0.8),
     alphaLayer(Library.USGS.NatlMap.GovUnitAreas, 0.23),
     'UnincAreas',
     'CityAreas',
     zoom >= 10 ? Library.USGS.NatlMap.HydroNHD : Library.USGS.NatlMap.Hydro,
     Library.USGS.NatlMap.NAIPImagery,
-    // alphaLayer(Library.USGS.NatlMap.ContoursDetail, 0.05),
-    // alphaLayer(Library.USGS.NatlMap.Contours, 0.3),
-    // Library.USGS.NatlMap.Polygons,
     Library.Census.Tiger.States,
-    // alphaLayer(Library.Census.Tiger.HydroBodies, 0.5),
-    // alphaLayer(Library.Census.Tiger.HydroPaths, 0.2),
     ZoomedRoads,
     Library.Census.Tiger.Roads,
-    // alphaLayer(Library.USGS.NatlMap.TransportNotInCensusMediumScale, 0.3),
     'Perim',
-    // 'MODIS',
     'AFM-MODIS',
     'AFM-MODIS-AK',
-    // 'VIIRS',
     'AFM-VIIRS-I',
     'AFM-VIIRS-I-AK',
     Library.USGS.NatlMap.GovUnits,
     Library.USGS.NatlMap.GovUnitsSelectedLabels,
+    // Library.NWS.Reference.Counties,
     'Events',
     'Perim-Name',
     // 'Summits',
@@ -800,13 +814,11 @@ function showMap(centerX, centerY, zoom, style, opt, source) {
   const overviewLayers = [
     Library.USGS.NatlMap.Topo,
     Library.USGS.NatlMap.Blank,
-    // alphaLayer(Library.USGS.NatlMap.ImageryTiled, 0.1),
     alphaLayer(Library.USGS.ProtectedAreas.SimpleDesignations, 0.25),
-    Library.Census.Tiger.States,
+    Library.NWS.Reference.States,
     Library.Census.Tiger.Hydro,
     ZoomedRoads,
     Library.Census.Tiger.Roads,
-    Library.USGS.NatlMap.GovUnitsSelectedLabels,
     'PerimFill',
     'Fires',
     'Complexes',
@@ -822,6 +834,9 @@ function showMap(centerX, centerY, zoom, style, opt, source) {
   function configToLayer(config) {
     let source = null;
     let LType = null;
+    if (typeof(config) === 'function') {
+      return config();
+    }
     if (config === 'VIIRS') {
       return satelliteVectorLayer(5);
     } else if (config === 'MODIS') {
