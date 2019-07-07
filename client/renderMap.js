@@ -339,7 +339,7 @@ function showMap(centerX, centerY, zoom, style, opt, source) {
   function cityAreasLayer() {
     const baseUrl = 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/tigerWMS_Current/MapServer' + '/28';
     function style(feat) {
-      const fclr = 'rgba(255,220,255,1.0)';
+      const fclr = 'rgba(255,220,255,0.4)';
       const sclr = 'rgba(155,120,155,1)';
       return new ol.style.Style({
         fill: new ol.style.Fill({
@@ -360,7 +360,7 @@ function showMap(centerX, centerY, zoom, style, opt, source) {
   function unincAreasLayer() {
     const baseUrl = 'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/tigerWMS_Current/MapServer' + '/30';
     function style(feat) {
-      const fclr = 'rgba(255,230,255,1.0)';
+      const fclr = 'rgba(255,230,255,0.4)';
       const sclr = 'rgba(155,130,155,1)';
       return new ol.style.Style({
         fill: new ol.style.Fill({
@@ -517,8 +517,8 @@ function showMap(centerX, centerY, zoom, style, opt, source) {
       topZindex: -50,
     },
     'Last 12-24 hrs': {
-      sclr: 'rgba(255,165,0,0.6)',
-      fclr: 'rgba(255,165,0,0.1)',
+      sclr: 'rgba(255,255,0,0.6)',
+      fclr: 'rgba(255,255,0,0.1)',
       topZindex: -25,
     },
     'Last 6-12 hrs': {
@@ -533,7 +533,7 @@ function showMap(centerX, centerY, zoom, style, opt, source) {
     },
   };
 
-  function infraredStyle(time) {
+  function infraredStyleRect(time) {
     const s = infraredStyles[time];
     if (!s) {
       return null;
@@ -541,23 +541,56 @@ function showMap(centerX, centerY, zoom, style, opt, source) {
     const sclr = s.sclr;
     const fclr = s.fclr;
     const topZindex = s.topZindex;
-    return [
-      new ol.style.Style({
-        zIndex: topZindex,
-        fill: zoom > 12.5 ? null : new ol.style.Fill({
-          color: fclr,
+    return function(feat) {
+      return [
+        new ol.style.Style({
+          zIndex: topZindex,
+          fill: zoom > 12.5 ? null : new ol.style.Fill({
+            color: fclr,
+          }),
+          stroke: new ol.style.Stroke({color: sclr, width: zoom>=12.5 ? 3 : 1, lineDash: [3, 3]}),
         }),
-        stroke: new ol.style.Stroke({color: sclr, width: zoom>=12.5 ? 3 : 1, lineDash: [3, 3]}),
-      }),
-    ];
+      ];
+    };
   }
 
-  const afmStyles = {
-    '12_to_24hr_fire': infraredStyle('Last 12-24 hrs'),
-    '06_to_12hr_fire': infraredStyle('Last 6-12 hrs'),
-    '00_to_06hr_fire': infraredStyle('Active Burning'),
-    'prev_6_days_fire': infraredStyle('Last 24-48 hrs'),
+  function infraredStyleIcon(time) {
+    const s = infraredStyles[time];
+    if (!s) {
+      return null;
+    }
+    const sclr = s.sclr;
+    const fclr = s.fclr;
+    const topZindex = s.topZindex;
+    return function(feat) {
+      const c = ol.extent.getCenter(feat.getGeometry().getExtent());
+      return [
+        new ol.style.Style({
+          // latitude bounds here: https://epsg.io/3857
+          // we want northern items 'behind' southern ones
+          zIndex: topZindex + (20048966.10-c[1])/(20048966.10*2.0) - 2.1,
+          fill: zoom > 12.5 ? null : new ol.style.Fill({
+            color: fclr,
+          }),
+          stroke: new ol.style.Stroke({color: sclr, width: zoom>=12.5 ? 3 : 1, lineDash: [3, 3]}),
+        }),
+        new ol.style.Style({
+          geometry: new ol.geom.Point(c),
+          zIndex: topZindex + (20048966.10-c[1])/(20048966.10*2.0) - 1.1,
+          image: new ol.style.Icon({src: '/imgs/redfire.png', scale: 1.0/25.0, anchor: [0.5, 0.9]}),
+        }),
+      ];
+    };
+  }
+
+  const afmStylesIcons = {
+    '00_to_06hr_fire': infraredStyleIcon('Active Burning'),
+    '06_to_12hr_fire': infraredStyleIcon('Last 6-12 hrs'),
+    '12_to_24hr_fire': infraredStyleRect('Last 12-24 hrs'),
+    // 'prev_6_days_fire': infraredStyleRect('Last 24-48 hrs'),
   };
+
+  const afmStyles = afmStylesIcons;
 
   function kmlStyle(sclr, fclr) {
     return new ol.style.Style({
@@ -577,17 +610,17 @@ function showMap(centerX, centerY, zoom, style, opt, source) {
     }),
   };
 
-  function afmKmlLayer(url) {
+  function afmKmlLayer(url, type) {
     const modisCredit = 'MODIS (RSAC/USFS/NASA)';
     const viirsCredit = 'VIIRS I (NASA/NOAA S-NPP)';
-    const legend = 'Rectangles indicate satellite inferences of &ge;1 fire in area (red: &le;12hrs, orange: &le;24hrs, as of the satellite readings which may be hours and days old)';
+    const legend = 'Rectangles and small fire icons indicate satellite inferences of &ge;1 fire in area (red: &le;12hrs, yellow: &le;24hrs, as of the satellite readings which may be hours and days old)';
     const afmCredit = 'U.S. Forest Service Active Fire Mapping';
 
     function stylesFunc(feat) {
       const name = feat.get('styleUrl');
       const parts = name.split('/');
       const styleName = parts[parts.length - 1];
-      return afmStyles[styleName] || null;
+      return (afmStyles[styleName] || (() => null))(feat);
     }
     return new ol.layer.Vector({
       style: stylesFunc,
@@ -701,10 +734,16 @@ function showMap(centerX, centerY, zoom, style, opt, source) {
       'features': events.map(eventFeature),
     };
     function style(feat) {
-      return new ol.style.Style({
-        // text: namedTextStyle(feat),
-        image: new ol.style.Icon({src: '/imgs/fire.png', color: '#ffffff', scale: 1.0/9.0}),
-      });
+      return [
+        new ol.style.Style({
+          // text: namedTextStyle(feat),
+          image: new ol.style.Icon({src: '/imgs/fire.png', color: '#ffffff', scale: 1.0/9.0, anchor: [0.5, 0.9]}),
+        }),
+        new ol.style.Style({
+          // text: namedTextStyle(feat),
+          image: new ol.style.Icon({src: whiteDot, color: '#ff0000', scale: 1.0/3.0}),
+        }),
+      ];
     }
     return new ol.layer.Vector({
       source: new ol.source.Vector({
@@ -802,13 +841,13 @@ function showMap(centerX, centerY, zoom, style, opt, source) {
     } else if (config === 'Summits') {
       return summitsVectorLayer();
     } else if (config === 'AFM-MODIS') {
-      return afmKmlLayer('../kml/modis.kml');
+      return afmKmlLayer('../kml/modis.kml', 'modis');
     } else if (config === 'AFM-VIIRS-I') {
-      return afmKmlLayer('../kml/viirs-i.kml');
+      return afmKmlLayer('../kml/viirs-i.kml', 'viirs');
     } else if (config === 'AFM-MODIS-AK') {
-      return afmKmlLayer('../kml/modis-alaska.kml');
+      return afmKmlLayer('../kml/modis-alaska.kml', 'modis');
     } else if (config === 'AFM-VIIRS-I-AK') {
-      return afmKmlLayer('../kml/viirs-i-alaska.kml');
+      return afmKmlLayer('../kml/viirs-i-alaska.kml', 'viirs');
     } else if (config === 'Events') {
       return eventsVectorLayer(events);
     }
