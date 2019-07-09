@@ -93,7 +93,7 @@
     "nyc": "^14.1.1"
   },
   "optionalDependencies": {
-    "@google-cloud/firestore": "^2.2.3",
+    "@google-cloud/firestore": "^2.2.4",
     "@google-cloud/logging-winston": "^1.1.1",
     "@google-cloud/tasks": "^1.2.0"
   },
