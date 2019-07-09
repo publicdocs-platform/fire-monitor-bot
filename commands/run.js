@@ -590,7 +590,7 @@ exports.handler = (argv) => {
         labels: {updateId: updateId},
         updateId: updateId,
       });
-      const infoImg = argv.outputdir + '/img/IMG-TWEET-' + updateId + '.png';
+      const infoImg = argv.outputdir + '/img/IMG-TWEET-' + updateId + '.jpeg';
       const mainWebpage = argv.outputdir + '/img/WEB-INFO-' + updateId + '.html';
       const perimImg = argv.outputdir + '/img/IMG-PERIM-' + updateId + '.jpeg';
       const perimWebpage = argv.outputdir + '/img/WEB-PERIM-' + updateId + '.html';
@@ -726,7 +726,7 @@ exports.handler = (argv) => {
       return {
         uniqueUpdateId: uniqueUpdateId,
         tweet: tweet,
-        img1: '../img/IMG-TWEET-' + updateId + '.png',
+        img1: '../img/IMG-TWEET-' + updateId + '.jpeg',
         img2: '../img/IMG-PERIM-' + updateId + '.jpeg',
       };
 
