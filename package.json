@@ -37,7 +37,7 @@
     "lint": "eslint . --fix"
   },
   "dependencies": {
-    "@opencensus/core": "^0.0.14",
+    "@opencensus/core": "^0.0.15",
     "@opencensus/exporter-stackdriver": "^0.0.14",
     "@opencensus/exporter-zpages": "^0.0.14",
     "@opencensus/nodejs": "^0.0.14",
