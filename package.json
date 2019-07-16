@@ -79,7 +79,7 @@
     "us-cities-db": "https://github.com/publicdocs-platform/us-cities-db",
     "winston": "^3.2.1",
     "xmldom": "^0.1.27",
-    "yargs": "^13.2.4"
+    "yargs": "^13.3.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.5.0",
