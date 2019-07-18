@@ -1,6 +1,6 @@
 {
   "name": "fire-monitor-bot",
-  "version": "2.5.0",
+  "version": "0.0.0-development",
   "description": "Monitors public wildfire data (unofficial - not for safety/emergency purposes)",
   "main": "index.js",
   "repository": {
@@ -34,7 +34,8 @@
     "report-visualdiff": "percy snapshot output/ --snapshot-files='snaps/*.html'",
     "report-coverage": "nyc report --reporter=json && codecov -F unit -f coverage/coverage-final.json",
     "report-e2e-coverage": "nyc report --reporter=json && codecov -F e2e -f coverage/coverage-final.json",
-    "lint": "eslint . --fix"
+    "lint": "eslint . --fix",
+    "semantic-release": "semantic-release"
   },
   "dependencies": {
     "@opencensus/core": "^0.0.15",
@@ -90,12 +91,20 @@
     "eslint-config-google": "^0.13.0",
     "eslint-plugin-sort-requires": "^2.1.0",
     "mocha": "^6.1.4",
-    "nyc": "^14.1.1"
+    "nyc": "^14.1.1",
+    "semantic-release": "^15.13.18"
   },
   "optionalDependencies": {
     "@google-cloud/firestore": "^2.2.4",
     "@google-cloud/logging-winston": "^1.1.1",
     "@google-cloud/tasks": "^1.2.0"
+  },
+  "release": {
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/github"
+    ]
   },
   "resolutions": {
     "all-the-cities": "https://github.com/publicdocs-platform/us-cities-db"
