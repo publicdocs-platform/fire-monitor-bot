@@ -138,6 +138,9 @@ html.update
                                         if data.current.PerimDateTime
                                             br
                                             span.detail Perimeter Updated #{friendlyDate(data.current.PerimDateTime)}
+                                        if data.current.Notes
+                                            br
+                                            span.detail #{data.current.Notes}
                                         br
                                         span.detail Event Id #{data.current.UniqueFireIdentifier}
 
