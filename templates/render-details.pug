@@ -1,6 +1,7 @@
 - const friendlyDate = (d) => new Date(d).toLocaleString('en-US', {timeZone:'UTC', hour12:true, year: 'numeric', day: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', timeZoneName: 'short'});
 - const mapData = Object.assign({}, {cities: data.cities ? data.cities.all : []}, data.mapData || {});
 - const numFormat = new Intl.NumberFormat('en-US', {maximumFractionDigits: 2});
+- const pctFormat = new Intl.NumberFormat('en-US', {maximumFractionDigits: 0});
 doctype html
 html.perim
     head
@@ -67,6 +68,11 @@ html.perim
                                 span.perimDate @#{friendlyDate(data.perimDateTime)} (entire event not shown; satellite data not current)
                             else
                                 span.perimDate Perimeter @#{friendlyDate(data.perimDateTime)} (entire event not shown; satellite data not current)
+                            if data.current.PerimeterData.Acres && data.current.DailyAcres
+                                - const delta = 100.0 * data.current.DailyAcres / data.current.PerimeterData.Acres - 100.0;
+                                if delta >= 1
+                                    br
+                                    span.perimDate Fire may be at least #{pctFormat.format(Math.ceil(delta))}% larger than perimeter shown
                         else
                             span.perimDate General Vicinity (entire event not shown; satellite data not current)
                         each st in (data.subtitle || [])
