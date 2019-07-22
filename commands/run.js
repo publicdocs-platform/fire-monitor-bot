@@ -662,6 +662,7 @@ exports.handler = (argv) => {
         KnownLocationLowPop: lat && lon && nearPopulation <= 100,
         UnknownLocationSmallSize: !lat && !lon && (cur.DailyAcres || 0) < 1.1 && (cur.TotalIncidentPersonnel || 0) < 15,
         FalseAlarmType: cur.IncidentTypeCategory === 'FA' || cur.incidenttypecategory === 'FA',
+        NFSAComplex: cur.Source === 'NFSA' && (cur.IncidentTypeCategory === 'CX' || cur.incidenttypecategory === 'CX'),
         FalseAlarmName: cur.Fire_Name.toLowerCase().startsWith(' fa fire') || cur.Fire_Name.toLowerCase().startsWith(' fa') || cur.Fire_Name.toLowerCase().startsWith('fa ') || (cur.Fire_Name.toLowerCase().includes('false') && cur.Fire_Name.toLowerCase().includes('alarm')),
         StepUpName: (cur.Fire_Name.toLowerCase().includes('step-up') || cur.Fire_Name.toLowerCase().includes('step up') || cur.Fire_Name.toLowerCase().includes('stepup')),
         NonStatFRName: cur.Fire_Name.toLowerCase().startsWith('nonstat '),
