@@ -1,3 +1,10 @@
+## [2.7.1](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v2.7.0...v2.7.1) (2019-07-22)
+
+
+### Bug Fixes
+
+* **map:** use tile server for PADUS layer ([52d9b32](https://github.com/publicdocs-platform/fire-monitor-bot/commit/52d9b32)), closes [#112](https://github.com/publicdocs-platform/fire-monitor-bot/issues/112)
+
 # [2.7.0](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v2.6.2...v2.7.0) (2019-07-20)
 
 
