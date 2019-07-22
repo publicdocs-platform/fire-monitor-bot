@@ -185,8 +185,9 @@ function showMap(centerX, centerY, zoom, style, opt, source) {
       },
       ProtectedAreas: {
         SimpleDesignations: {
-          url: 'https://gis1.usgs.gov/arcgis/rest/services/PADUS1_4/SimpleDesignationType/MapServer',
+          url: 'https://gis1.usgs.gov/arcgis/rest/services/PADUS1_4/SimpleDesignationType/MapServer/tile/{z}/{y}/{x}',
           attribution: 'USGS GAP, PADUS',
+          tiled: true,
           params: {layers: '', FORMAT: 'PNG32'},
           opacity: 0.3,
         },
