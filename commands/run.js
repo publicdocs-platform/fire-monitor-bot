@@ -659,7 +659,7 @@ exports.handler = (argv) => {
 
       const displayFilters = {
         InHawaii: cur.state === 'HI' || cur.State === 'HI' || (_.first(cities) || {}).adminCode === 'HI',
-        KnownLocationLowPop: lat && lon && nearPopulation <= 1000,
+        KnownLocationLowPop: lat && lon && nearPopulation <= 100,
         UnknownLocationSmallSize: !lat && !lon && (cur.DailyAcres || 0) < 1.1 && (cur.TotalIncidentPersonnel || 0) < 15,
         FalseAlarmType: cur.IncidentTypeCategory === 'FA' || cur.incidenttypecategory === 'FA',
         FalseAlarmName: cur.Fire_Name.toLowerCase().startsWith(' fa fire') || cur.Fire_Name.toLowerCase().startsWith(' fa') || cur.Fire_Name.toLowerCase().startsWith('fa ') || (cur.Fire_Name.toLowerCase().includes('false') && cur.Fire_Name.toLowerCase().includes('alarm')),
