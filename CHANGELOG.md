@@ -1,3 +1,11 @@
+## [2.7.2](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v2.7.1...v2.7.2) (2019-07-22)
+
+
+### Bug Fixes
+
+* **filters:** ignore NFSA complexes - which appear spurious ([7ea8e8e](https://github.com/publicdocs-platform/fire-monitor-bot/commit/7ea8e8e)), closes [#113](https://github.com/publicdocs-platform/fire-monitor-bot/issues/113)
+* **filters:** reduce minimum population filter to 100 ([5be723c](https://github.com/publicdocs-platform/fire-monitor-bot/commit/5be723c))
+
 ## [2.7.1](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v2.7.0...v2.7.1) (2019-07-22)
 
 
