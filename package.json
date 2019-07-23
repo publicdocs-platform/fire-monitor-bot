@@ -41,7 +41,7 @@
     "@opencensus/core": "^0.0.16",
     "@opencensus/exporter-stackdriver": "^0.0.15",
     "@opencensus/exporter-zpages": "^0.0.15",
-    "@opencensus/nodejs": "^0.0.15",
+    "@opencensus/nodejs": "^0.0.16",
     "@publicdocs/togeojson": "https://github.com/publicdocs-platform/togeojson",
     "@turf/bearing": "^6.0.1",
     "@turf/circle": "^6.0.1",
