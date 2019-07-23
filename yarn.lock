@@ -904,12 +904,12 @@
     google-auth-library "^4.0.0"
     googleapis "^40.0.0"
 
-"@opencensus/exporter-zpages@^0.0.15":
-  version "0.0.15"
-  resolved "https://registry.yarnpkg.com/@opencensus/exporter-zpages/-/exporter-zpages-0.0.15.tgz#b7eacf00a2edd7924cf6dbeb40d7c4a26f083af6"
-  integrity sha512-ACfIjxOV0jjAi+KYn8dlfAK8SzOjHuW2xwjEYGv7DUB8a0/IqwDDCgS5ETCS4DU6Kyx5hRWqdywva/S6nzwPSQ==
+"@opencensus/exporter-zpages@^0.0.16":
+  version "0.0.16"
+  resolved "https://registry.yarnpkg.com/@opencensus/exporter-zpages/-/exporter-zpages-0.0.16.tgz#91f46d3ea640ce5c987fd1a90650f75ab6fb07a4"
+  integrity sha512-dRYChkrQSOxtOggkZfnU2QLaPUxbwCPexUVyi+Ps2ZhuZ+OP1xV5vgb7cCkjYbU86CbJqdVvqzEExdMQUmw0Eg==
   dependencies:
-    "@opencensus/core" "^0.0.15"
+    "@opencensus/core" "^0.0.16"
     ejs "^2.5.8"
     express "^4.16.3"
 
