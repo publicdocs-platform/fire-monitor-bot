@@ -119,6 +119,11 @@ exports.builder = {
     default: true,
     desc: 'Whether to post images of fire locations',
   },
+  browserTimeoutSec: {
+    number: true,
+    default: 600,
+    desc: 'Timeout for rendering pages in browser (seconds)',
+  },
   redo: {
     string: true,
     desc: 'Forces an update of a given fire ids (comma separated)',
@@ -806,11 +811,11 @@ exports.handler = (argv) => {
       }
 
       async function renderPerim() {
-        return render.renderInBrowser(2232, 1450, perimWebpageUrl, perimImg);
+        return render.renderInBrowser(2232, 1450, perimWebpageUrl, perimImg, argv.browserTimeoutSec);
       }
 
       async function renderUpdateImage() {
-        return render.renderInBrowser(2048, 1330, mainWebpageUrl, infoImg);
+        return render.renderInBrowser(2048, 1330, mainWebpageUrl, infoImg, argv.browserTimeoutSec);
       }
     }
   }
