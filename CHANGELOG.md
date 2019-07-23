@@ -1,3 +1,16 @@
+# [3.0.0](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v2.7.2...v3.0.0) (2019-07-23)
+
+
+### Features
+
+* **cli:** add --browser-timeout-sec argument, default 10min ([e6b3e19](https://github.com/publicdocs-platform/fire-monitor-bot/commit/e6b3e19))
+* **map:** remove the `map` command ([2135e7c](https://github.com/publicdocs-platform/fire-monitor-bot/commit/2135e7c))
+
+
+### BREAKING CHANGES
+
+* **map:** the `map` CLI command has been removed- it wasn't maintained anyway.
+
 ## [2.7.2](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v2.7.1...v2.7.2) (2019-07-22)
 
 
