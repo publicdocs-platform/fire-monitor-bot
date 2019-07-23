@@ -24,8 +24,7 @@ require('./lib/monitoring');
 const pkgVersion = require('./package.json').version;
 const yargs = require('yargs');
 
-yargs.command(require('./commands/map'))
-    .command(require('./commands/run'))
+yargs.command(require('./commands/run'))
     .demandCommand()
     .help('help', 'Displays usage help for commands')
     .option('debug', {

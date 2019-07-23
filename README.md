@@ -23,7 +23,6 @@ and MAY BE INCORRECT OR OUT-OF-DATE. USE AT YOUR OWN RISK.
 * Creates a multi-layer base map from USGS, US Census Bureau and other federal govt data sets
 * Determines location of fire relative to named populated places from the Census Bureau
 * Monitors differences in fire information over time, and tweets out the changes (summary, perimeter, and satellite fire readings)
-* Includes a one-off mapping tool that displays consistent images given a lat/lon/zoom.
 
 
 ## License
