@@ -894,13 +894,13 @@
     shimmer "^1.2.0"
     uuid "^3.2.1"
 
-"@opencensus/exporter-stackdriver@^0.0.15":
-  version "0.0.15"
-  resolved "https://registry.yarnpkg.com/@opencensus/exporter-stackdriver/-/exporter-stackdriver-0.0.15.tgz#ba39d28b961f7a9c0ae84aee88431a7e35631df4"
-  integrity sha512-vIaNjf9Cs4lvNcCez7ceGVxEOeYdV0iArW0RwAOI+J1XqOKmXvOBtlUrpXOyiH6Reez4+QD7kQJt+IHrF/IcPw==
+"@opencensus/exporter-stackdriver@^0.0.16":
+  version "0.0.16"
+  resolved "https://registry.yarnpkg.com/@opencensus/exporter-stackdriver/-/exporter-stackdriver-0.0.16.tgz#e81142b0c016ccd648dc39e43934df1df00a6c41"
+  integrity sha512-aUWHTlvvOKKa0hwCFc32xyAj6AE1IAabpSPri5+A8/8nNNDqGIG7PxI/hOnOarmmn43C6IL2P8TbAtleDn3v2Q==
   dependencies:
-    "@opencensus/core" "^0.0.15"
-    "@opencensus/resource-util" "^0.0.15"
+    "@opencensus/core" "^0.0.16"
+    "@opencensus/resource-util" "^0.0.16"
     google-auth-library "^4.0.0"
     googleapis "^40.0.0"
 
@@ -1027,12 +1027,12 @@
     hex2dec "^1.0.1"
     uuid "^3.2.1"
 
-"@opencensus/resource-util@^0.0.15":
-  version "0.0.15"
-  resolved "https://registry.yarnpkg.com/@opencensus/resource-util/-/resource-util-0.0.15.tgz#6f1407c494ab9b790a0070ab61f0685d8e3e9712"
-  integrity sha512-js+VIb3ldav2SJvJkKy4zQ+xFmN8n2kA/YlnuByR/J4CpAHoNGoK9Pu4zPxnQ9AkuxE7BgSZQx6qe+4qqVNmwA==
+"@opencensus/resource-util@^0.0.16":
+  version "0.0.16"
+  resolved "https://registry.yarnpkg.com/@opencensus/resource-util/-/resource-util-0.0.16.tgz#7c54a24778cf6f9eca82a8e383d08a5d1f177d09"
+  integrity sha512-XwWlRPaV1bNnqwLS0ab++6CZuE9BKLLuegfRweKS2aoD8KUymY019sn5GiqelR8NeowUNM7lqJ66C0PHl/Ccaw==
   dependencies:
-    "@opencensus/core" "^0.0.15"
+    "@opencensus/core" "^0.0.16"
     gcp-metadata "^2.0.0"
 
 "@protobufjs/aspromise@^1.1.1", "@protobufjs/aspromise@^1.1.2":
