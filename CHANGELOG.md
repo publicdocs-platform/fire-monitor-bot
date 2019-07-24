@@ -1,3 +1,10 @@
+## [3.0.2](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.0.1...v3.0.2) (2019-07-24)
+
+
+### Bug Fixes
+
+* **deps:** remove spurious deps - @opencensus/exporter-zpages , @opencensus/nodejs , @google-cloud/tasks ([54e0b36](https://github.com/publicdocs-platform/fire-monitor-bot/commit/54e0b36))
+
 ## [3.0.1](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.0.0...v3.0.1) (2019-07-24)
 
 
