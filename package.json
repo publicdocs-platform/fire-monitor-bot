@@ -40,8 +40,6 @@
   "dependencies": {
     "@opencensus/core": "^0.0.16",
     "@opencensus/exporter-stackdriver": "^0.0.16",
-    "@opencensus/exporter-zpages": "^0.0.16",
-    "@opencensus/nodejs": "^0.0.16",
     "@publicdocs/togeojson": "https://github.com/publicdocs-platform/togeojson",
     "@turf/bearing": "^6.0.1",
     "@turf/circle": "^6.0.1",
@@ -100,8 +98,7 @@
   },
   "optionalDependencies": {
     "@google-cloud/firestore": "^2.2.4",
-    "@google-cloud/logging-winston": "^1.1.1",
-    "@google-cloud/tasks": "^1.2.0"
+    "@google-cloud/logging-winston": "^1.1.1"
   },
   "release": {
     "plugins": [
