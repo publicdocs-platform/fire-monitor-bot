@@ -1,3 +1,16 @@
+# [3.1.0](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.0.2...v3.1.0) (2019-07-24)
+
+
+### Bug Fixes
+
+* **build:** fix version numbers in package.json ([0e3b7e3](https://github.com/publicdocs-platform/fire-monitor-bot/commit/0e3b7e3))
+* **cli:** correct package.json main ([719bb0c](https://github.com/publicdocs-platform/fire-monitor-bot/commit/719bb0c))
+
+
+### Features
+
+* **cli:** install main as a binary ([e2fad48](https://github.com/publicdocs-platform/fire-monitor-bot/commit/e2fad48))
+
 ## [3.0.2](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.0.1...v3.0.2) (2019-07-24)
 
 
