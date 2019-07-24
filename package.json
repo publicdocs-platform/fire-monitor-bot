@@ -1,6 +1,6 @@
 {
   "name": "fire-monitor-bot",
-  "version": "0.0.0-development",
+  "version": "3.0.2",
   "description": "Monitors public wildfire data (unofficial - not for safety/emergency purposes)",
   "main": "index.js",
   "repository": {
