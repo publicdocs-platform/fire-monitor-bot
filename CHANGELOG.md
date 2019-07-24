@@ -1,3 +1,10 @@
+## [3.1.2](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.1.1...v3.1.2) (2019-07-24)
+
+
+### Bug Fixes
+
+* **map:** update openlayers and jquery in rendering ([0e065dd](https://github.com/publicdocs-platform/fire-monitor-bot/commit/0e065dd))
+
 ## [3.1.1](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.1.0...v3.1.1) (2019-07-24)
 
 
