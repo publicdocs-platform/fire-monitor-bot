@@ -1,3 +1,10 @@
+## [3.0.1](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.0.0...v3.0.1) (2019-07-24)
+
+
+### Bug Fixes
+
+* **deps:** remove spurious moment-timezone dep ([d040812](https://github.com/publicdocs-platform/fire-monitor-bot/commit/d040812))
+
 # [3.0.0](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v2.7.2...v3.0.0) (2019-07-23)
 
 
