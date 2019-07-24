@@ -3,6 +3,7 @@
   "version": "3.0.2",
   "description": "Monitors public wildfire data (unofficial - not for safety/emergency purposes)",
   "main": "main.js",
+  "bin": "./main.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/publicdocs-platform/fire-monitor-bot.git"
