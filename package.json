@@ -59,7 +59,6 @@
     "lodash": "^4.17.15",
     "luxon": "^1.17.2",
     "mkdirp": "^0.5.1",
-    "moment-timezone": "^0.5.26",
     "nearby-cities": "^1.1.0",
     "numeral": "^2.0.6",
     "ol-helpers": "https://github.com/publicdocs-platform/ol-helpers",
