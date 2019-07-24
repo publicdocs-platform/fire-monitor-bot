@@ -1,3 +1,10 @@
+## [3.1.1](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.1.0...v3.1.1) (2019-07-24)
+
+
+### Bug Fixes
+
+* **build:** make sure package.json version is being updated by semantic-release ([bc44c25](https://github.com/publicdocs-platform/fire-monitor-bot/commit/bc44c25))
+
 # [3.1.0](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.0.2...v3.1.0) (2019-07-24)
 
 
