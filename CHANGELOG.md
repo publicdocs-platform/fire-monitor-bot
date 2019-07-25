@@ -1,3 +1,10 @@
+## [3.3.2](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.3.1...v3.3.2) (2019-07-25)
+
+
+### Bug Fixes
+
+* **map:** tweak attribution styles ([2661f08](https://github.com/publicdocs-platform/fire-monitor-bot/commit/2661f08))
+
 ## [3.3.1](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.3.0...v3.3.1) (2019-07-25)
 
 
