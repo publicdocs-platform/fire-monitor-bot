@@ -1,3 +1,10 @@
+## [3.1.4](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.1.3...v3.1.4) (2019-07-25)
+
+
+### Bug Fixes
+
+* **map:** extra newline in perimeter detail; fixes [#121](https://github.com/publicdocs-platform/fire-monitor-bot/issues/121) ([61dcb9a](https://github.com/publicdocs-platform/fire-monitor-bot/commit/61dcb9a))
+
 ## [3.1.3](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.1.2...v3.1.3) (2019-07-25)
 
 
