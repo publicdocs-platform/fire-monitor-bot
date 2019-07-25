@@ -1,3 +1,11 @@
+# [3.2.0](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.1.5...v3.2.0) (2019-07-25)
+
+
+### Features
+
+* **cli:** --max-loops flags ([e4ded8e](https://github.com/publicdocs-platform/fire-monitor-bot/commit/e4ded8e))
+* **logging:** add the package version to the log ([77ca31d](https://github.com/publicdocs-platform/fire-monitor-bot/commit/77ca31d))
+
 ## [3.1.5](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.1.4...v3.1.5) (2019-07-25)
 
 
