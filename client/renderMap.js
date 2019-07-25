@@ -100,7 +100,7 @@ function showMap(centerX, centerY, zoom, style, opt, source) {
             'U.S. Census Bureau – TIGER/Line',
             'USFS Road Data',
             'Natural Earth Data',
-            'U.S. State Dept Humanitarian Information Unit',
+            'U.S. State Dept HIU',
             'NOAA NCEI, U.S. Coastal Relief Model'],
           params: {layers: '', FORMAT: 'PNG32'},
         },
@@ -113,7 +113,7 @@ function showMap(centerX, centerY, zoom, style, opt, source) {
             'U.S. Census Bureau – TIGER/Line',
             'USFS Road Data',
             'Natural Earth Data',
-            'U.S. State Dept Humanitarian Information Unit',
+            'U.S. State Dept HIU',
             'NOAA NCEI, U.S. Coastal Relief Model'],
           params: {layers: '', FORMAT: 'PNG32'},
         },
@@ -619,8 +619,8 @@ function showMap(centerX, centerY, zoom, style, opt, source) {
   function afmKmlLayer(url, type) {
     const modisCredit = 'MODIS (RSAC/USFS/NASA)';
     const viirsCredit = 'VIIRS I (NASA/NOAA S-NPP)';
-    const legend = 'Rectangles and small fire icons indicate satellite inferences of &ge;1 fire in area (red: &le;12hrs, yellow: &le;24hrs, as of the satellite readings which may be hours and days old)';
-    const afmCredit = 'U.S. Forest Service Active Fire Mapping';
+    const legend = 'Rectangles and small fire icons indicate satellite inferences of &ge;1 fire in area (red:&nbsp;&le;12hrs, yellow:&nbsp;&le;24hrs, as of the satellite readings which may be hours and days old)';
+    const afmCredit = 'USFS Active Fire Mapping';
 
     function stylesFunc(feat) {
       const name = feat.get('styleUrl');

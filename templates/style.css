@@ -95,18 +95,21 @@ html.update {
     line-height: initial;
     font: 8px 'Roboto';
     text-align: left;
+    color: white;
+    text-shadow: 1px 1px 2px black, 0 0 1em black, 0 0 0.2em black;
 }
 
 .ol-attribution.ol-uncollapsible {
     height: unset;
     right: unset;
     left: 5px;
+    right: 40px;
     bottom: 10px;
     border-radius: 0;
 }
 
 .ol-attribution:not(.ol-collapsed) {
-    background: rgba(255,255,255,0.7);
+    background: none;
 }
 
 
