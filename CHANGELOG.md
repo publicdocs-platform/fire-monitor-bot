@@ -1,3 +1,10 @@
+# [3.3.0](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.2.0...v3.3.0) (2019-07-25)
+
+
+### Features
+
+* add app version number to renderings ([770e7d8](https://github.com/publicdocs-platform/fire-monitor-bot/commit/770e7d8))
+
 # [3.2.0](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.1.5...v3.2.0) (2019-07-25)
 
 
