@@ -68,7 +68,7 @@ html.update {
     left: 8px;
     display: inline-block;
     z-index: 1000000;
-    text-shadow: 1px 1px 2px white, 0 0 1em white, 0 0 0.2em white;
+    text-shadow: 1px 1px 2px black, 0 0 1em black, 0 0 0.2em black;
 }
 
 .mapTitle h1 {
@@ -124,7 +124,7 @@ h1 {
 .perim .mapTitle h1 {
     background-color: none;
     padding: 3px;
-    color:black;
+    color:white;
 }
 
 body {
