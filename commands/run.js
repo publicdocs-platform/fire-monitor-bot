@@ -552,6 +552,7 @@ exports.handler = (argv) => {
                'No claim to original government works.  Source data may be modified and combined with other data.\n'+
                'To the maximum extent permitted by law: (1) all content is provided to you on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, WHETHER EXPRESS, IMPLIED, STATUTORY, OR OTHER (INCLUDING, WITHOUT LIMITATION, ANY WARRANTIES OR CONDNTIONS OF TITLE, MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR NONINFRINGEMENT); and (2) IN NO EVENT WILL ANY AUTHOR OR DATA PROVIDER BE LIABLE TO YOU ON ANY LEGAL THEORY (INCLUDING, WITHOUT LIMITATION, NEGLIGENCE) OR OTHERWISE FOR ANY DIRECT, SPECIAL, INDIRECT, INCIDENTAL, CONSEQUENTIAL, PUNITIVE, EXEMPLARY, OR OTHER LOSSES, COSTS, EXPENSES, OR DAMAGES arising out of your use of this content, even if the author or data provider has been advised of the possibility of such losses, costs, expenses, or damages.',
       Host: os.hostname(),
+      Version: config.version,
     };
 
     fs.writeFileSync(argv.db, yaml.safeDump({__META: dbMetaInfo, Database: currentDb}, {skipInvalid: true}));
