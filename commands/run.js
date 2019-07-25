@@ -268,6 +268,7 @@ exports.handler = (argv) => {
     twitterName: envconfig.twitterAuth.name,
     disclaimerUrl: envconfig.ui.disclaimer_url,
     systemName: envconfig.ui.system_url,
+    version: require('../package.json').version,
   };
 
 
