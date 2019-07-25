@@ -1,3 +1,10 @@
+## [3.1.5](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.1.4...v3.1.5) (2019-07-25)
+
+
+### Bug Fixes
+
+* **map:** use white text on black shadow for titles ([5d4a151](https://github.com/publicdocs-platform/fire-monitor-bot/commit/5d4a151))
+
 ## [3.1.4](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.1.3...v3.1.4) (2019-07-25)
 
 
