@@ -1,3 +1,10 @@
+## [3.1.3](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.1.2...v3.1.3) (2019-07-25)
+
+
+### Bug Fixes
+
+* **map:** improve rendering of details map titles ([cf3a3b0](https://github.com/publicdocs-platform/fire-monitor-bot/commit/cf3a3b0))
+
 ## [3.1.2](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.1.1...v3.1.2) (2019-07-24)
 
 
