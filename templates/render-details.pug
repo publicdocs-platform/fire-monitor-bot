@@ -65,16 +65,16 @@ html.perim
                         if data.perimDateTime
                             if usePerimAcres
                                 span &nbsp;#{numFormat.format(acres)} perim. acres
-                                span.perimDate @#{friendlyDate(data.perimDateTime)} (entire event not shown; satellite data not current)
+                                .perimDate @#{friendlyDate(data.perimDateTime)} (entire event not shown; satellite data not current)
                             else
-                                span.perimDate Perimeter @#{friendlyDate(data.perimDateTime)} (entire event not shown; satellite data not current)
+                                .perimDate Perimeter @#{friendlyDate(data.perimDateTime)} (entire event not shown; satellite data not current)
                             if data.current.PerimeterData.Acres && data.current.DailyAcres
                                 - const delta = 100.0 * data.current.DailyAcres / data.current.PerimeterData.Acres - 100.0;
                                 if delta >= 1
                                     br
                                     span.perimDate Fire may be at least #{pctFormat.format(Math.ceil(delta))}% larger than perimeter shown
                         else
-                            span.perimDate General Vicinity (entire event not shown; satellite data not current)
+                            .perimDate General Vicinity (entire event not shown; satellite data not current)
                         each st in (data.subtitle || [])
                             .detailSubtitle
                                 | #{st}
