@@ -1,3 +1,10 @@
+## [3.3.5](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.3.4...v3.3.5) (2019-07-25)
+
+
+### Bug Fixes
+
+* **twitter:** do not exit for maxLoops unless semaphore is held; fixes [#122](https://github.com/publicdocs-platform/fire-monitor-bot/issues/122) ([7d28806](https://github.com/publicdocs-platform/fire-monitor-bot/commit/7d28806))
+
 ## [3.3.4](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.3.3...v3.3.4) (2019-07-25)
 
 
