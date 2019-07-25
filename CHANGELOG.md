@@ -1,3 +1,10 @@
+## [3.3.1](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.3.0...v3.3.1) (2019-07-25)
+
+
+### Bug Fixes
+
+* **db:** add the package version to the persisted db ([c765d9c](https://github.com/publicdocs-platform/fire-monitor-bot/commit/c765d9c))
+
 # [3.3.0](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.2.0...v3.3.0) (2019-07-25)
 
 
