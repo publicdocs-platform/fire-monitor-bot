@@ -1,3 +1,10 @@
+## [3.3.4](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.3.3...v3.3.4) (2019-07-25)
+
+
+### Bug Fixes
+
+* **cli:** make production flags defaults ([99d9b4f](https://github.com/publicdocs-platform/fire-monitor-bot/commit/99d9b4f))
+
 ## [3.3.3](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.3.2...v3.3.3) (2019-07-25)
 
 
