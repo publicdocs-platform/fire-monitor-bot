@@ -16,6 +16,7 @@ limitations under the License.
 */
 'use strict';
 
+
 const _ = require('lodash');
 const assert = require('assert').strict;
 const crypto = require('crypto');
@@ -94,7 +95,7 @@ exports.builder = {
   },
   maxLoops: {
     number: true,
-    default: 0,
+    default: 5,
     desc: 'Max number of loops to run before exiting.',
   },
   twitter: {
@@ -107,6 +108,7 @@ exports.builder = {
   },
   logTweets: {
     boolean: false,
+    default: true,
     desc: 'Whether to log tweets to Firestore',
   },
   monitorPerims: {
@@ -183,7 +185,7 @@ exports.builder = {
   },
   twitterPeriodSec: {
     number: true,
-    default: 60 * 5 + 11,
+    default: 125,
     desc: 'Seconds between twitter posts',
   },
   embargoSec: {
