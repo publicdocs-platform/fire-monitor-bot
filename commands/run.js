@@ -912,7 +912,8 @@ exports.handler = (argv) => {
       }
       if (argv.maxLoops && loopsFinished >= argv.maxLoops) {
         logger.info('Main loop total count complete -- waiting to exit');
-        setTimeout(function() {
+        setTimeout(async function() {
+          await promisify(intensiveProcessingSemaphore.take).bind(intensiveProcessingSemaphore)();
           process.exit();
         }, (process.env.METRIC_EXPORT_PERIOD_SEC || 60) * 1000);
       } else {
