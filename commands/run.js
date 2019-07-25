@@ -92,6 +92,11 @@ exports.builder = {
     boolean: true,
     desc: 'Run only once and then exit',
   },
+  maxLoops: {
+    number: true,
+    default: 0,
+    desc: 'Max number of loops to run before exiting.',
+  },
   twitter: {
     boolean: true,
     desc: 'Whether to post to Twitter',
@@ -871,6 +876,7 @@ exports.handler = (argv) => {
     return {cur, perimDateTime, inciWeb, perim};
   }
 
+  let loopsFinished = 0;
   const mainLoop = function(first, last) {
     (async function() {
       let x = last;
@@ -898,10 +904,18 @@ exports.handler = (argv) => {
         const latency = duration[0] + (duration[1]/1000000.0)/1000.0;
         globalStats.record([{measure: monNumLoopsFinished, value: 1}, {measure: monLoopLatencySec, value: latency}]);
         logger.debug('Main loop instance complete');
+        loopsFinished++;
       }
-      setTimeout(function() {
-        mainLoop(false, x);
-      }, 1000 * periodSeq * 1);
+      if (argv.maxLoops && loopsFinished >= argv.maxLoops) {
+        logger.info('Main loop total count complete -- waiting to exit');
+        setTimeout(function() {
+          process.exit();
+        }, (process.env.METRIC_EXPORT_PERIOD_SEC || 60) * 1000);
+      } else {
+        setTimeout(function() {
+          mainLoop(false, x);
+        }, 1000 * periodSeq * 1);
+      }
     })();
   };
 
