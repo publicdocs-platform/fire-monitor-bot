@@ -70,7 +70,7 @@
     "requizzle": "^0.2.1",
     "rimraf": "^2.6.2",
     "serve-index": "^1.9.1",
-    "sharp": "^0.22.1",
+    "sharp": "^0.23.0",
     "sprintf-js": "^1.1.1",
     "staticmaps": "https://github.com/publicdocs-platform/staticmaps#zoom-steps",
     "title-case": "^2.1.1",
