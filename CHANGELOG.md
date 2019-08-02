@@ -1,3 +1,10 @@
+## [3.3.7](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.3.6...v3.3.7) (2019-08-02)
+
+
+### Bug Fixes
+
+* **deps:** upgrade staticmaps ([#125](https://github.com/publicdocs-platform/fire-monitor-bot/issues/125)) ([bdab1bc](https://github.com/publicdocs-platform/fire-monitor-bot/commit/bdab1bc))
+
 ## [3.3.6](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.3.5...v3.3.6) (2019-07-31)
 
 
