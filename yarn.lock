@@ -974,10 +974,22 @@
     fs-extra "^8.0.0"
     lodash "^4.17.4"
 
-"@semantic-release/commit-analyzer@^6.1.0", "@semantic-release/commit-analyzer@^6.2.0":
+"@semantic-release/commit-analyzer@^6.1.0":
   version "6.2.0"
   resolved "https://registry.yarnpkg.com/@semantic-release/commit-analyzer/-/commit-analyzer-6.2.0.tgz#5cd25ce67ba9ba5b46e47457505e63629e186695"
   integrity sha512-oUtPydYcbtJsEY6WCPi4wynTgRecK5zCkKaGmHi+9Xl7d6jGf7LomnJCg++6dNF1tyavrbGMSdXTCPH6Dx9LbA==
+  dependencies:
+    conventional-changelog-angular "^5.0.0"
+    conventional-commits-filter "^2.0.0"
+    conventional-commits-parser "^3.0.0"
+    debug "^4.0.0"
+    import-from "^3.0.0"
+    lodash "^4.17.4"
+
+"@semantic-release/commit-analyzer@^6.3.0":
+  version "6.3.0"
+  resolved "https://registry.yarnpkg.com/@semantic-release/commit-analyzer/-/commit-analyzer-6.3.0.tgz#e0fb2f6af7be2321ad9401d8ae25be0cc1005d83"
+  integrity sha512-sh51MVlV8VyrvGIemcvzueDADX/8qGbAgce1F0CtQv8hNKYyhdaJeHzfiM1rNXwCynDmcQj+Yq9rrWt71tBd/Q==
   dependencies:
     conventional-changelog-angular "^5.0.0"
     conventional-commits-filter "^2.0.0"
@@ -2432,7 +2444,7 @@ crypto-random-string@^1.0.0:
   resolved "https://registry.yarnpkg.com/crypto-random-string/-/crypto-random-string-1.0.0.tgz#a230f64f568310e1498009940790ec99545bca7e"
   integrity sha1-ojD2T1aDEOFJgAmUB5DsmVRbyn4=
 
-csv-generate@^3.2.0:
+csv-generate@^3.2.3:
   version "3.2.3"
   resolved "https://registry.yarnpkg.com/csv-generate/-/csv-generate-3.2.3.tgz#24004f21de61c2ea1c4474d3e65a18261f638a80"
   integrity sha512-IcR3K0Nx+nJAkcU2eAglVR7DuHnxcuhUM2w2cR+aHOW7bZp2S5LyN2HF3zTkp6BV/DjR6ykoKznUm+AjnWcOKg==
@@ -2442,27 +2454,25 @@ csv-parse@^3.0.0:
   resolved "https://registry.yarnpkg.com/csv-parse/-/csv-parse-3.2.0.tgz#9043b5921e7ecd5e3110947df1ef00d290dbeca7"
   integrity sha512-1IBQ7PYHc5h6AXS4nyGsmicttbpUbNvlsgKxhvouh+kRaVug8xBWSiIeWdbPUQgjKG88hEGYjdU29fX73mo+6Q==
 
-csv-parse@^4.3.0:
-  version "4.4.3"
-  resolved "https://registry.yarnpkg.com/csv-parse/-/csv-parse-4.4.3.tgz#a3fc56b6f54de88db76fbd34a55c091861522712"
-  integrity sha512-TiLGAy14FPJ7/yB+Gn6RgSxoZLpf6pJTRkGqmCt9t/SGVwubrXjbUWtEw39RlKB6hDHzbdjLyBZaysQ0Ji6p/w==
+csv-parse@^4.4.5:
+  version "4.4.5"
+  resolved "https://registry.yarnpkg.com/csv-parse/-/csv-parse-4.4.5.tgz#383255357a766c220be049e4f1f2c3016eb9ac66"
+  integrity sha512-koPV9m9AjNJCK3ig4ErgRJalZsLxWI7NP0Fd3+CO9hgDZt3FSljTeESnfWTbyRc8qk/3/LgX1s5naDqLxiuK9w==
 
-csv-stringify@^5.1.2:
-  version "5.3.0"
-  resolved "https://registry.yarnpkg.com/csv-stringify/-/csv-stringify-5.3.0.tgz#ff2dfafa6fcccd455ff5039be9c202475aa3bbe0"
-  integrity sha512-VMYPbE8zWz475smwqb9VbX9cj0y4J0PBl59UdcqzLkzXHZZ8dh4Rmbb0ZywsWEtUml4A96Hn7Q5MW9ppVghYzg==
-  dependencies:
-    lodash.get "~4.4.2"
+csv-stringify@^5.3.3:
+  version "5.3.3"
+  resolved "https://registry.yarnpkg.com/csv-stringify/-/csv-stringify-5.3.3.tgz#c4725686a33db9f61e70d87af712285baefebe21"
+  integrity sha512-q8Qj+/lN74LRmG7Mg0LauE5WcnJOD5MEGe1gI57IYJCB61KWuEbAFHm1uIPDkI26aqElyBB57SlE2GGwq2EY5A==
 
-csv@^5.1.1:
-  version "5.1.1"
-  resolved "https://registry.yarnpkg.com/csv/-/csv-5.1.1.tgz#bd715f15a4ed9141309a24ec6dab1c903ab79f92"
-  integrity sha512-gezB9D+enrh2tLj+vsAD8JyYRMIJdSMpec/Pgbb+7YRj6Q6/D12HLSwjhx+CrirRT4dESjZYXWX1JfqlV4RlTA==
+csv@^5.1.2:
+  version "5.1.2"
+  resolved "https://registry.yarnpkg.com/csv/-/csv-5.1.2.tgz#6e3c5262dd91a18768552a5e40d531a68cc00f3e"
+  integrity sha512-2NA/Fp9FuRAJY6bu5mZsSyBFeqbDZjGg8z1WYETpBpuO30gyWOkxf9KjzBNEZiCsXuNxdQrU3rKrpejyucznMg==
   dependencies:
-    csv-generate "^3.2.0"
-    csv-parse "^4.3.0"
-    csv-stringify "^5.1.2"
-    stream-transform "^1.0.8"
+    csv-generate "^3.2.3"
+    csv-parse "^4.4.5"
+    csv-stringify "^5.3.3"
+    stream-transform "^2.0.1"
 
 currently-unhandled@^0.4.1:
   version "0.4.1"
@@ -5060,7 +5070,7 @@ lodash.flattendeep@^4.4.0:
   resolved "https://registry.yarnpkg.com/lodash.flattendeep/-/lodash.flattendeep-4.4.0.tgz#fb030917f86a3134e5bc9bec0d69e0013ddfedb2"
   integrity sha1-+wMJF/hqMTTlvJvsDWngAT3f7bI=
 
-lodash.get@^4.4.2, lodash.get@~4.4.2:
+lodash.get@^4.4.2:
   version "4.4.2"
   resolved "https://registry.yarnpkg.com/lodash.get/-/lodash.get-4.4.2.tgz#2d177f652fa31e939b4438d5341499dfa3825e99"
   integrity sha1-LRd/ZS+jHpObRDjVNBSZ36OCXpk=
@@ -5496,6 +5506,11 @@ mixin-deep@^1.2.0:
   dependencies:
     for-in "^1.0.2"
     is-extendable "^1.0.1"
+
+mixme@^0.3.1:
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/mixme/-/mixme-0.3.2.tgz#cbda53e3009da0b5035361954232019d776720da"
+  integrity sha512-tilCZOvIhRETXJuTmxxpz8mgplF7gmFhcH05JuR/YL+JLO98gLRQ1Mk4XpYQxxbPMKupSOv+Bidw7EKv8wds1w==
 
 mkdirp@0.5.1, mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.0, mkdirp@~0.5.1:
   version "0.5.1"
@@ -7354,6 +7369,13 @@ rimraf@2, rimraf@2.6.3, rimraf@^2.5.2, rimraf@^2.5.4, rimraf@^2.6.1, rimraf@^2.6
   dependencies:
     glob "^7.1.3"
 
+rimraf@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/rimraf/-/rimraf-3.0.0.tgz#614176d4b3010b75e5c390eb0ee96f6dc0cebb9b"
+  integrity sha512-NDGVxTsjqfunkds7CqsOiEnxln4Bo7Nddl3XhS4pXg5OzwkLqJ971ZVAAnB+DDLnF76N+VnDEiBHaVV8I06SUg==
+  dependencies:
+    glob "^7.1.3"
+
 run-async@^2.2.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/run-async/-/run-async-2.3.0.tgz#0371ab4ae0bdd720d4166d7dfda64ff7a445a6c0"
@@ -7952,10 +7974,12 @@ stream-shift@^1.0.0:
   resolved "https://registry.yarnpkg.com/stream-shift/-/stream-shift-1.0.0.tgz#d5c752825e5367e786f78e18e445ea223a155952"
   integrity sha1-1cdSgl5TZ+eG944Y5EXqIjoVWVI=
 
-stream-transform@^1.0.8:
-  version "1.0.8"
-  resolved "https://registry.yarnpkg.com/stream-transform/-/stream-transform-1.0.8.tgz#54f721122d310eca855a16c97939881ab5bbb76c"
-  integrity sha512-1q+dL790Ps0NV33rISMq9OLtfDA9KMJZdo1PHZXE85orrWsM4FAh8CVyAOTHO0rhyeM138KNPngBPrx33bFsxw==
+stream-transform@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/stream-transform/-/stream-transform-2.0.1.tgz#112ef2b4d8b9b517f9a6994b0bf7b946fa4d51bc"
+  integrity sha512-GiTcO/rRvZP2R8WPwxmxCFP+Of1yIATuFAmYkvSLDfcD93X2WHiPwdgIqeFT2CvL1gyAsjQvu1nB6RDNQ5b2jw==
+  dependencies:
+    mixme "^0.3.1"
 
 strict-uri-encode@^2.0.0:
   version "2.0.0"
