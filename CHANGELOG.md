@@ -1,3 +1,10 @@
+## [3.4.2](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.4.1...v3.4.2) (2019-08-16)
+
+
+### Bug Fixes
+
+* get perimeter of corrId, not original UFI ([2896471](https://github.com/publicdocs-platform/fire-monitor-bot/commit/2896471))
+
 ## [3.4.1](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.4.0...v3.4.1) (2019-08-16)
 
 
