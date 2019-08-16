@@ -841,13 +841,8 @@ exports.handler = (argv) => {
     // Get latest perimeter of all matching fires.
     for (const corrId of cur._CorrelationIds) {
       if (corrId in perims && (!perimDateTime || perimDateTime < p.attributes.perimeterdatetime)) {
-        const p = perims[cur.UniqueFireIdentifier];
-        if (p.geometry) {
-          perim = p.geometry.coords || [];
-        } else {
-          logger.debug('Missing perim geometry %s', cur.UniqueFireIdentifier);
-          perim = [];
-        }
+        const p = perims[corrId];
+        perim = p.geometry.coords || [];
         perimDateTime = p.attributes.perimeterdatetime;
         inciWeb = p.attributes.inciwebid;
         perimAcres = p.attributes.gisacres;
