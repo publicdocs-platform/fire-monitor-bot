@@ -842,7 +842,12 @@ exports.handler = (argv) => {
     for (const corrId of cur._CorrelationIds) {
       if (corrId in perims && (!perimDateTime || perimDateTime < p.attributes.perimeterdatetime)) {
         const p = perims[cur.UniqueFireIdentifier];
-        perim = p.geometry.coords || [];
+        if (p.geometry) {
+          perim = p.geometry.coords || [];
+        } else {
+          logger.debug('Missing perim geometry %s', cur.UniqueFireIdentifier);
+          perim = [];
+        }
         perimDateTime = p.attributes.perimeterdatetime;
         inciWeb = p.attributes.inciwebid;
         perimAcres = p.attributes.gisacres;
