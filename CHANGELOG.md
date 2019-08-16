@@ -1,3 +1,10 @@
+## [3.4.1](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.4.0...v3.4.1) (2019-08-16)
+
+
+### Bug Fixes
+
+* log missing perim geometry ([fad2c7a](https://github.com/publicdocs-platform/fire-monitor-bot/commit/fad2c7a))
+
 # [3.4.0](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.3.10...v3.4.0) (2019-08-16)
 
 
