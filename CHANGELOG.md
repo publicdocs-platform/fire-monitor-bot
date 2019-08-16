@@ -1,3 +1,11 @@
+## [3.4.3](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.4.2...v3.4.3) (2019-08-16)
+
+
+### Bug Fixes
+
+* better terminolgy for perimeter ([ece168b](https://github.com/publicdocs-platform/fire-monitor-bot/commit/ece168b))
+* better terminolgy for perimeter ([794cb33](https://github.com/publicdocs-platform/fire-monitor-bot/commit/794cb33))
+
 ## [3.4.2](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.4.1...v3.4.2) (2019-08-16)
 
 
