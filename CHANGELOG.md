@@ -1,3 +1,15 @@
+# [3.4.0](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.3.10...v3.4.0) (2019-08-16)
+
+
+### Bug Fixes
+
+* latest deps ([0238a8d](https://github.com/publicdocs-platform/fire-monitor-bot/commit/0238a8d))
+
+
+### Features
+
+* ignore and delete tweets that are too old ([d827a0e](https://github.com/publicdocs-platform/fire-monitor-bot/commit/d827a0e))
+
 ## [3.3.10](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.3.9...v3.3.10) (2019-08-09)
 
 
