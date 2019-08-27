@@ -1,3 +1,10 @@
+## [3.4.4](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.4.3...v3.4.4) (2019-08-27)
+
+
+### Bug Fixes
+
+* **deps:** [security] bump eslint-utils from 1.4.0 to 1.4.2 ([a0401a4](https://github.com/publicdocs-platform/fire-monitor-bot/commit/a0401a4))
+
 ## [3.4.3](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.4.2...v3.4.3) (2019-08-16)
 
 
