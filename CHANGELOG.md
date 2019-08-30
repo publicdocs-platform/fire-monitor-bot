@@ -1,3 +1,11 @@
+## [3.4.5](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.4.4...v3.4.5) (2019-08-30)
+
+
+### Bug Fixes
+
+* **deps:** bump dotenv from 8.0.0 to 8.1.0 ([9e62ed6](https://github.com/publicdocs-platform/fire-monitor-bot/commit/9e62ed6))
+* **deps:** bump yargs from 13.3.0 to 14.0.0 ([7f92470](https://github.com/publicdocs-platform/fire-monitor-bot/commit/7f92470))
+
 ## [3.4.4](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.4.3...v3.4.4) (2019-08-27)
 
 
