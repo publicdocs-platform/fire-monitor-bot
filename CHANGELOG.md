@@ -1,3 +1,10 @@
+## [3.4.6](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.4.5...v3.4.6) (2019-08-30)
+
+
+### Bug Fixes
+
+* catch more not a cal fire incident suffixes ([f5f121f](https://github.com/publicdocs-platform/fire-monitor-bot/commit/f5f121f))
+
 ## [3.4.5](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.4.4...v3.4.5) (2019-08-30)
 
 
