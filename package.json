@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "@opencensus/core": "^0.0.16",
-    "@opencensus/exporter-stackdriver": "^0.0.16",
+    "@opencensus/exporter-stackdriver": "^0.0.17",
     "@publicdocs/togeojson": "https://github.com/publicdocs-platform/togeojson",
     "@turf/bearing": "^6.0.1",
     "@turf/circle": "^6.0.1",
