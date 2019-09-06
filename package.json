@@ -81,7 +81,7 @@
     "yargs": "^14.0.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.5.0",
+    "@babel/cli": "^7.6.0",
     "@babel/core": "^7.5.0",
     "@babel/preset-env": "^7.5.4",
     "@semantic-release/changelog": "^3.0.4",
