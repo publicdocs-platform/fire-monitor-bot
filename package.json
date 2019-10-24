@@ -63,7 +63,7 @@
     "ol-helpers": "https://github.com/publicdocs-platform/ol-helpers",
     "proj4": "^2.5.0",
     "pug": "^2.0.4",
-    "puppeteer": "^1.19.0",
+    "puppeteer": "^2.0.0",
     "qrcode": "^1.4.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.2",
