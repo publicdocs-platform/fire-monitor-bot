@@ -1,3 +1,15 @@
+# [3.5.0](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.4.7...v3.5.0) (2019-10-26)
+
+
+### Bug Fixes
+
+* make geomac optional since it is down ([d57cfc6](https://github.com/publicdocs-platform/fire-monitor-bot/commit/d57cfc6))
+
+
+### Features
+
+* Flags to allow datasources to optionally fail ([b9f2300](https://github.com/publicdocs-platform/fire-monitor-bot/commit/b9f2300))
+
 ## [3.4.7](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.4.6...v3.4.7) (2019-10-25)
 
 
