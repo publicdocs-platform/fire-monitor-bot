@@ -98,7 +98,7 @@
     "semantic-release": "^15.13.21"
   },
   "optionalDependencies": {
-    "@google-cloud/firestore": "^2.2.6",
+    "@google-cloud/firestore": "^2.5.0",
     "@google-cloud/logging-winston": "^1.1.1"
   },
   "release": {
