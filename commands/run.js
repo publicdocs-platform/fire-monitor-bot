@@ -259,12 +259,12 @@ exports.builder = {
   },
   requireGeomacFires: {
     boolean: true,
-    default: true,
+    default: false,
     desc: 'Whether to require Geomac Fire data',
   },
   requireGeomacPerims: {
     boolean: true,
-    default: true,
+    default: false,
     desc: 'Whether to require Geomac Perimeter data',
   },
   requireCalfire: {
