@@ -252,6 +252,26 @@ exports.builder = {
     default: false,
     desc: 'Whether to generate a webpage snapshot of all the posts in one loop',
   },
+  requireNfsa: {
+    boolean: true,
+    default: true,
+    desc: 'Whether to require NFSA data',
+  },
+  requireGeomacFires: {
+    boolean: true,
+    default: true,
+    desc: 'Whether to require Geomac Fire data',
+  },
+  requireGeomacPerims: {
+    boolean: true,
+    default: true,
+    desc: 'Whether to require Geomac Perimeter data',
+  },
+  requireCalfire: {
+    boolean: true,
+    default: true,
+    desc: 'Whether to require CALFIRE data',
+  },
 };
 
 exports.handler = (argv) => {
@@ -319,6 +339,20 @@ exports.handler = (argv) => {
 
   let snapId = 0;
 
+  async function failOrEmptyDict(pdict, required) {
+    let ret = {};
+    try {
+      ret = await pdict;
+    } catch (err) {
+      if (required) {
+        throw err;
+      }
+      logger.error('>> Optional error');
+      logger.error(err);
+    }
+    return ret;
+  }
+
   async function internalLoop(isFirstRun, previousDb) {
     const currentDb = _.cloneDeep(previousDb);
 
@@ -328,9 +362,9 @@ exports.handler = (argv) => {
       calfireIncidents: argv.ingestCalfire ? calfire.getFires(argv.userAgent) : {},
     };
 
-    const nfsaIncidents = await async.nfsaIncidents;
-    const geomacIncidents = await async.geomacIncidents;
-    const calfireIncidents = await async.calfireIncidents;
+    const nfsaIncidents = await failOrEmptyDict(async.nfsaIncidents, argv.requireNfsa);
+    const geomacIncidents = await failOrEmptyDict(async.geomacIncidents, argv.requireGeomacFires);
+    const calfireIncidents = await failOrEmptyDict(async.calfireIncidents, argv.requireCalfire);
 
     mergeNfsaAndGeomacIncidentsIntoDb(nfsaIncidents, geomacIncidents, currentDb);
     mergeCalfireIncidentsIntoDb(calfireIncidents, currentDb, argv.mergeDistanceMaxMiles);
@@ -347,8 +381,8 @@ exports.handler = (argv) => {
     const diffsGlobal = yaml.safeDump(diffGlobal, {skipInvalid: true});
     fs.writeFileSync(argv.outputdir + '/data/GLOBAL-DIFF-' + globalUpdateId + '.yaml', diffsGlobal);
 
-    const perims1 = await geomac.getPerimeters(argv.userAgent, false);
-    const perims2 = await geomac.getPerimeters(argv.userAgent, true);
+    const perims1 = await failOrEmptyDict(geomac.getPerimeters(argv.userAgent, false), argv.requireGeomacPerims);
+    const perims2 = await failOrEmptyDict(geomac.getPerimeters(argv.userAgent, true), argv.requireGeomacPerims);
     const perims = {};
     const perimKeys = _.union(_.keys(perims1), _.keys(perims2));
     perimKeys.map((key) => {
