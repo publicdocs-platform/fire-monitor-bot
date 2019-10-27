@@ -1,3 +1,10 @@
+## [3.5.2](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.5.1...v3.5.2) (2019-10-27)
+
+
+### Bug Fixes
+
+* update deps ([6e043d4](https://github.com/publicdocs-platform/fire-monitor-bot/commit/6e043d4))
+
 ## [3.5.1](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.5.0...v3.5.1) (2019-10-27)
 
 
