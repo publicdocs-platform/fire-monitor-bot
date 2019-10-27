@@ -272,6 +272,11 @@ exports.builder = {
     default: true,
     desc: 'Whether to require CALFIRE data',
   },
+  parseCalfireDetails: {
+    boolean: true,
+    default: true,
+    desc: 'Whether to parse CALFIRE details',
+  }
 };
 
 exports.handler = (argv) => {
@@ -723,6 +728,17 @@ exports.handler = (argv) => {
         if (displayFilters[filterKey]) {
           logger.info('     >) Skipping %s -> filter %s', updateId, filterKey);
           return false;
+        }
+      }
+
+      if (argv.parseCalfireDetails) {
+        if (cur.Link && cur.Link.startsWith('https://www.fire.ca.gov/')) {
+          const fd = await calfire.getFireDetail(cur, argv.userAgent);
+          if (fd) {
+            cur.Damage = fd;
+          } else {
+            delete cur['Damage'];
+          }
         }
       }
 
