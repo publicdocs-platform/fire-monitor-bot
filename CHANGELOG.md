@@ -1,3 +1,10 @@
+# [3.6.0](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.5.2...v3.6.0) (2019-10-27)
+
+
+### Features
+
+* get damage details from calfire ([b0d8deb](https://github.com/publicdocs-platform/fire-monitor-bot/commit/b0d8deb))
+
 ## [3.5.2](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.5.1...v3.5.2) (2019-10-27)
 
 
