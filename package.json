@@ -99,7 +99,7 @@
   },
   "optionalDependencies": {
     "@google-cloud/firestore": "^2.5.0",
-    "@google-cloud/logging-winston": "^1.1.1"
+    "@google-cloud/logging-winston": "^3.0.0"
   },
   "release": {
     "plugins": [
