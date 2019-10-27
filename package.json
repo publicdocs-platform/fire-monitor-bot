@@ -39,7 +39,7 @@
     "semantic-release": "semantic-release"
   },
   "dependencies": {
-    "@opencensus/core": "^0.0.16",
+    "@opencensus/core": "^0.0.18",
     "@opencensus/exporter-stackdriver": "^0.0.16",
     "@publicdocs/togeojson": "https://github.com/publicdocs-platform/togeojson",
     "@turf/bearing": "^6.0.1",
