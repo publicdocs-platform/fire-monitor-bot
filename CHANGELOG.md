@@ -1,3 +1,10 @@
+## [3.6.1](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.6.0...v3.6.1) (2019-10-27)
+
+
+### Bug Fixes
+
+* handle calfire links under osfm subdomain ([3957c4f](https://github.com/publicdocs-platform/fire-monitor-bot/commit/3957c4f))
+
 # [3.6.0](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.5.2...v3.6.0) (2019-10-27)
 
 
