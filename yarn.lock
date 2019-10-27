@@ -876,13 +876,24 @@
     shimmer "^1.2.0"
     uuid "^3.2.1"
 
-"@opencensus/exporter-stackdriver@^0.0.16":
-  version "0.0.16"
-  resolved "https://registry.yarnpkg.com/@opencensus/exporter-stackdriver/-/exporter-stackdriver-0.0.16.tgz#e81142b0c016ccd648dc39e43934df1df00a6c41"
-  integrity sha512-aUWHTlvvOKKa0hwCFc32xyAj6AE1IAabpSPri5+A8/8nNNDqGIG7PxI/hOnOarmmn43C6IL2P8TbAtleDn3v2Q==
+"@opencensus/core@^0.0.18":
+  version "0.0.18"
+  resolved "https://registry.yarnpkg.com/@opencensus/core/-/core-0.0.18.tgz#1496f8cd324e02df272bbd6789828d55761ad7a9"
+  integrity sha512-PgRQXLyb3bLi8Z6pQct9erYFRdnYAZNQXAEVPf6Xq6IMkZaH20wiOTNNPxEckjI31mq5utgstAbwOn4gJiPjBQ==
   dependencies:
-    "@opencensus/core" "^0.0.16"
-    "@opencensus/resource-util" "^0.0.16"
+    continuation-local-storage "^3.2.1"
+    log-driver "^1.2.7"
+    semver "^6.0.0"
+    shimmer "^1.2.0"
+    uuid "^3.2.1"
+
+"@opencensus/exporter-stackdriver@^0.0.18":
+  version "0.0.18"
+  resolved "https://registry.yarnpkg.com/@opencensus/exporter-stackdriver/-/exporter-stackdriver-0.0.18.tgz#b1a8a75cded26e533ae599632f70afb59e871a93"
+  integrity sha512-AOKxLezKFNxm7TwamFBnfp1U3GAtdAg2o3AztzC779FRxghxnaKkRNPJ5wv2FwRXXqRoVp3Q+c5xM3wgB8XfLw==
+  dependencies:
+    "@opencensus/core" "^0.0.18"
+    "@opencensus/resource-util" "^0.0.18"
     google-auth-library "^4.0.0"
     googleapis "^40.0.0"
 
@@ -895,12 +906,12 @@
     hex2dec "^1.0.1"
     uuid "^3.2.1"
 
-"@opencensus/resource-util@^0.0.16":
-  version "0.0.16"
-  resolved "https://registry.yarnpkg.com/@opencensus/resource-util/-/resource-util-0.0.16.tgz#7c54a24778cf6f9eca82a8e383d08a5d1f177d09"
-  integrity sha512-XwWlRPaV1bNnqwLS0ab++6CZuE9BKLLuegfRweKS2aoD8KUymY019sn5GiqelR8NeowUNM7lqJ66C0PHl/Ccaw==
+"@opencensus/resource-util@^0.0.18":
+  version "0.0.18"
+  resolved "https://registry.yarnpkg.com/@opencensus/resource-util/-/resource-util-0.0.18.tgz#e81afae816eeb6fb5be90290b9e531318c6b2404"
+  integrity sha512-vUbW1b8+j6Pp5NN+ISEv9BTg2NZQpPgxUtmG9zR8bb9yg2HP3ZsLkKe8YRvLxgPjg4JKyvVFq0a4Hnp3L/SOkw==
   dependencies:
-    "@opencensus/core" "^0.0.16"
+    "@opencensus/core" "^0.0.18"
     gcp-metadata "^2.0.0"
 
 "@protobufjs/aspromise@^1.1.1", "@protobufjs/aspromise@^1.1.2":
