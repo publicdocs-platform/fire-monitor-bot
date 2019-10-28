@@ -28,7 +28,6 @@ const os = require('os');
 const path = require('path');
 const promisify = require('util').promisify;
 const pug = require('pug');
-const rp = require('request-promise');
 const yaml = require('js-yaml');
 const {globalStats, MeasureUnit} = require('@opencensus/core');
 
@@ -151,10 +150,6 @@ exports.builder = {
   realFireNames: {
     boolean: true,
     desc: 'Use real fire names not hashtags',
-  },
-  archiveInciweb: {
-    boolean: true,
-    desc: 'Save InciWeb updates to web.archive.org',
   },
   emergingNew: {
     boolean: true,
@@ -649,18 +644,6 @@ exports.handler = (argv) => {
       const perimWebpage = argv.outputdir + '/img/WEB-PERIM-' + updateId + '.html';
       const mainWebpageUrl = 'http://localhost:8080/updates/img/WEB-INFO-' + updateId + '.html';
       const perimWebpageUrl = 'http://localhost:8080/updates/img/WEB-PERIM-' + updateId + '.html';
-      if (inciWeb && argv.archiveInciweb) {
-        const u = 'https://web.archive.org/save/https://inciweb.nwcg.gov/incident/' + inciWeb + '/';
-        rp({uri: u, resolveWithFullResponse: true}).then((r) => {
-          logger.info('   ~~ Archived to web.archive.org: %s', r.headers ? ('https://web.archive.org/' + r.headers['content-location']) : 'unknown');
-        }).catch((err) => {
-          logger.info('   ~~ ERROR Archiving to web.archive.org: ' + u);
-          logger.info(err);
-          if (argv.failOnError) {
-            process.exit(13);
-          }
-        });
-      }
       let rr = null;
       if (perim.length > 1 && argv.locations) {
         rr = await maprender.getMapBounds(perim, 1450 / 2, 1200 / 2, 15, cur.DailyAcres || 0);
