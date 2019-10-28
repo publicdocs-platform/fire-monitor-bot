@@ -1,3 +1,12 @@
+## [3.6.2](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.6.1...v3.6.2) (2019-10-28)
+
+
+### Bug Fixes
+
+* 2min timeouts for all http reqs, 20min for kmz ([2b7da8c](https://github.com/publicdocs-platform/fire-monitor-bot/commit/2b7da8c))
+* dont release twice ([f471115](https://github.com/publicdocs-platform/fire-monitor-bot/commit/f471115))
+* two stage deploy ([4afc321](https://github.com/publicdocs-platform/fire-monitor-bot/commit/4afc321))
+
 ## [3.6.1](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.6.0...v3.6.1) (2019-10-27)
 
 
