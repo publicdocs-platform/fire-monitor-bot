@@ -24,7 +24,6 @@ before_script:
   - if [ "$TRAVIS_EVENT_TYPE" = 'cron' ] && [ "$TRAVIS_BRANCH" = 'master' ]; then export PERCY_ENABLE=1; fi
   - echo PERCY ENABLED $PERCY_ENABLE
 script: yarn test-coverage && yarn e2e-test-coverage-visualdiff
-after_success: yarn semantic-release
 
 env:
   global:
@@ -44,3 +43,4 @@ jobs:
         skip_cleanup: true
         script:
           - yarn semantic-release
+
