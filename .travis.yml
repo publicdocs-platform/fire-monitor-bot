@@ -29,3 +29,18 @@ after_success: yarn semantic-release
 env:
   global:
     secure: r8x+cBGzuNwLCvcSZFPC5glM16iCddCXaKVm0NjFthI4U26VwSW3HlL9NX5jf+hxDfnAlki8GttxC11hBHi5VeMGs3Ur6nG0xmFlBtGjj/F6pYxswvs/G9LiOjCqIJYmzqiEkjN7l7dH5LhuinKREOgSXwY59UhsIZ3WxfDZzdx9nE7bryvCmt4A8EEo+EZshupyGFIULcUDBPXdQi6H6W5QOwrbJG7tbcngtdJhDwEbBGsB2Up45OIyKGWMtyGOSdEhl4/AMrAJaYyncxf4WgmbcZItfhJPK9h1YGKUpx/0/UQ0OfeT5Dc9SoKOmS0ROsn05xcwm/46/lCLhTU282jnoPQ2PZ+8pIMfi9o0Nz4NPebIckedH92ntbWkudvN0+jBYMv/lVu5K9mYamkCBm0Xay7AMW7UPuJE5nrMWQAR301Yh6dMnXaFmJ6CHhcy7GxKTNC65WFdwSIXGERLgo1nTMnQPavevaTCgqR3M4E8Eq20+6+eoY6dx9vd3lhJnw7+TRPE/RSbyVBbxGAo8gJkm9lRHT2ax0954OkvgmTJNgSq0fBWGnKbcLb3zWBkZxCzzob4YUspsEuYqOpZGWyEbeIUh1LWie1B0YbWN5M+WoCaipHO8LQVG2neAvzHDFOKlPQZQ8HQiJMo8pJHrEdPRJbrlXEcdpDbo3/RQ6A=
+
+stages:
+  - name: test
+  - name: release
+    if: branch = master AND type = push
+jobs:
+  include:
+    - stage: release
+      node_js: "10"
+      script: skip
+      deploy:
+        provider: script
+        skip_cleanup: true
+        script:
+          - yarn semantic-release
