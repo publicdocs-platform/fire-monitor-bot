@@ -1,3 +1,10 @@
+## [3.6.3](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.6.2...v3.6.3) (2019-10-29)
+
+
+### Bug Fixes
+
+* **deps:** bump sharp from 0.23.1 to 0.23.2 ([#206](https://github.com/publicdocs-platform/fire-monitor-bot/issues/206)) ([e69c05c](https://github.com/publicdocs-platform/fire-monitor-bot/commit/e69c05c))
+
 ## [3.6.2](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.6.1...v3.6.2) (2019-10-28)
 
 
