@@ -18,7 +18,7 @@ limitations under the License.
 // This function is used in the rendering templates.
 
 /* exported showMap */
-function showMap(centerX, centerY, zoom, style, opt, source) {
+function showMap(centerX, centerY, zoom, style, opt, source, argv) {
   const opts = opt || {};
   const detail = style === 'perim';
   const cities = opts.cities || {closest: [], biggest: []};
@@ -774,7 +774,7 @@ function showMap(centerX, centerY, zoom, style, opt, source) {
     'UnincAreas',
     'CityAreas',
     zoom >= 10 ? Library.USGS.NatlMap.HydroNHD : Library.USGS.NatlMap.Hydro,
-    Library.USGS.NatlMap.NAIPImagery,
+    argv.showImageryOnDetails ? Library.USGS.NatlMap.NAIPImagery : null,
     // alphaLayer(Library.USGS.NatlMap.ContoursDetail, 0.05),
     // alphaLayer(Library.USGS.NatlMap.Contours, 0.3),
     // Library.USGS.NatlMap.Polygons,
@@ -818,7 +818,7 @@ function showMap(centerX, centerY, zoom, style, opt, source) {
 
   let configs = detail ? perimLayers : overviewLayers;
 
-  configs = configs.filter((c) => !excluded.includes(c));
+  configs = configs.filter((c) => c && !excluded.includes(c));
 
   function configToLayer(config) {
     let source = null;

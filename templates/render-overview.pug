@@ -171,4 +171,4 @@ html.update
 
             canvas#qrcode
         script
-            | showMap(#{data.lon}, #{data.lat}, #{data.zoom}, 'update', !{JSON.stringify(mapData)});
+            | showMap(#{data.lon}, #{data.lat}, #{data.zoom}, 'update', !{JSON.stringify(mapData)}, undefined, !{JSON.stringify(config.argv)});

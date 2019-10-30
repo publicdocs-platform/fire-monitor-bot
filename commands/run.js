@@ -271,6 +271,11 @@ exports.builder = {
     boolean: true,
     default: true,
     desc: 'Whether to parse CALFIRE details',
+  },
+  showImageryOnDetails: {
+    boolean: true,
+    default: false,
+    desc: 'Whether to show satellte imagery on details map',
   }
 };
 
@@ -291,6 +296,7 @@ exports.handler = (argv) => {
     disclaimerUrl: envconfig.ui.disclaimer_url,
     systemName: envconfig.ui.system_url,
     version: require('../package.json').version,
+    argv: argv,
   };
 
 
