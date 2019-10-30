@@ -1,3 +1,10 @@
+# [3.7.0](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.6.3...v3.7.0) (2019-10-30)
+
+
+### Features
+
+* flag off imagery on details view ([c952e22](https://github.com/publicdocs-platform/fire-monitor-bot/commit/c952e22))
+
 ## [3.6.3](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.6.2...v3.6.3) (2019-10-29)
 
 
