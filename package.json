@@ -38,7 +38,7 @@
     "lint": "eslint . --fix",
     "semantic-release": "semantic-release",
     "snyk-protect": "snyk protect",
-    "prepublish": "npm run snyk-protect"
+    "prepublish": "yarn run snyk-protect"
   },
   "dependencies": {
     "@opencensus/core": "^0.0.18",
