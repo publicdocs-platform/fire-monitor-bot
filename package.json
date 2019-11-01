@@ -36,7 +36,9 @@
     "report-coverage": "nyc report --reporter=json && codecov -F unit -f coverage/coverage-final.json",
     "report-e2e-coverage": "nyc report --reporter=json && codecov -F e2e -f coverage/coverage-final.json",
     "lint": "eslint . --fix",
-    "semantic-release": "semantic-release"
+    "semantic-release": "semantic-release",
+    "snyk-protect": "snyk protect",
+    "prepublish": "yarn run snyk-protect"
   },
   "dependencies": {
     "@opencensus/core": "^0.0.18",
@@ -79,7 +81,8 @@
     "us-cities-db": "https://github.com/publicdocs-platform/us-cities-db",
     "winston": "^3.2.1",
     "xmldom": "^0.1.27",
-    "yargs": "^14.2.0"
+    "yargs": "^14.2.0",
+    "snyk": "^1.230.5"
   },
   "devDependencies": {
     "@babel/cli": "^7.6.4",
@@ -138,5 +141,6 @@
   },
   "resolutions": {
     "all-the-cities": "https://github.com/publicdocs-platform/us-cities-db"
-  }
+  },
+  "snyk": true
 }
