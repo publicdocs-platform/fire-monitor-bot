@@ -1,3 +1,74 @@
+# [3.7.0](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.6.3...v3.7.0) (2019-10-30)
+
+
+### Features
+
+* flag off imagery on details view ([c952e22](https://github.com/publicdocs-platform/fire-monitor-bot/commit/c952e22))
+
+## [3.6.3](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.6.2...v3.6.3) (2019-10-29)
+
+
+### Bug Fixes
+
+* **deps:** bump sharp from 0.23.1 to 0.23.2 ([#206](https://github.com/publicdocs-platform/fire-monitor-bot/issues/206)) ([e69c05c](https://github.com/publicdocs-platform/fire-monitor-bot/commit/e69c05c))
+
+## [3.6.2](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.6.1...v3.6.2) (2019-10-28)
+
+
+### Bug Fixes
+
+* 2min timeouts for all http reqs, 20min for kmz ([2b7da8c](https://github.com/publicdocs-platform/fire-monitor-bot/commit/2b7da8c))
+* dont release twice ([f471115](https://github.com/publicdocs-platform/fire-monitor-bot/commit/f471115))
+* two stage deploy ([4afc321](https://github.com/publicdocs-platform/fire-monitor-bot/commit/4afc321))
+
+## [3.6.1](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.6.0...v3.6.1) (2019-10-27)
+
+
+### Bug Fixes
+
+* handle calfire links under osfm subdomain ([3957c4f](https://github.com/publicdocs-platform/fire-monitor-bot/commit/3957c4f))
+
+# [3.6.0](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.5.2...v3.6.0) (2019-10-27)
+
+
+### Features
+
+* get damage details from calfire ([b0d8deb](https://github.com/publicdocs-platform/fire-monitor-bot/commit/b0d8deb))
+
+## [3.5.2](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.5.1...v3.5.2) (2019-10-27)
+
+
+### Bug Fixes
+
+* update deps ([6e043d4](https://github.com/publicdocs-platform/fire-monitor-bot/commit/6e043d4))
+
+## [3.5.1](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.5.0...v3.5.1) (2019-10-27)
+
+
+### Bug Fixes
+
+* **deps:** bump @google-cloud/firestore from 2.2.6 to 2.5.0 ([#196](https://github.com/publicdocs-platform/fire-monitor-bot/issues/196)) ([99f4230](https://github.com/publicdocs-platform/fire-monitor-bot/commit/99f4230))
+* **deps:** bump csv from 5.1.2 to 5.1.3 ([#163](https://github.com/publicdocs-platform/fire-monitor-bot/issues/163)) ([03852d3](https://github.com/publicdocs-platform/fire-monitor-bot/commit/03852d3))
+
+# [3.5.0](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.4.7...v3.5.0) (2019-10-26)
+
+
+### Bug Fixes
+
+* make geomac optional since it is down ([d57cfc6](https://github.com/publicdocs-platform/fire-monitor-bot/commit/d57cfc6))
+
+
+### Features
+
+* Flags to allow datasources to optionally fail ([b9f2300](https://github.com/publicdocs-platform/fire-monitor-bot/commit/b9f2300))
+
+## [3.4.7](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.4.6...v3.4.7) (2019-10-25)
+
+
+### Bug Fixes
+
+* **deps:** bump puppeteer from 1.19.0 to 2.0.0 ([7ab1149](https://github.com/publicdocs-platform/fire-monitor-bot/commit/7ab1149))
+
 ## [3.4.6](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.4.5...v3.4.6) (2019-08-30)
 
 

@@ -93,45 +93,36 @@ html.update
                                                             else
                                                                 span.deltaDown ▼
                                                             | from #{numFormat.format(data.last.DailyAcres)}
-                                        if data.current.TotalIncidentPersonnel
-                                            tr.important
-                                                th 
-                                                    span.current #{numFormat.format(data.current.TotalIncidentPersonnel)}
-                                                td
-                                                    | Personnel
-                                                    if !data.isNew && 'TotalIncidentPersonnel' in data.diff && data.last.TotalIncidentPersonnel
-                                                        span.previous
-                                                            if data.current.TotalIncidentPersonnel > data.last.TotalIncidentPersonnel
-                                                                span.deltaUp ▲
-                                                            else
-                                                                span.deltaDown ▼
-                                                            | from #{numFormat.format(data.last.TotalIncidentPersonnel)}
-                                        if data.current.EstimatedCostToDate
-                                            tr.important
-                                                th 
-                                                    span.current #{currencyFormat.format(data.current.EstimatedCostToDate)}
-                                                td
-                                                    | Est. Cost
-                                                    if !data.isNew && 'EstimatedCostToDate' in data.diff && data.last.EstimatedCostToDate
-                                                        span.previous
-                                                            if data.current.EstimatedCostToDate > data.last.EstimatedCostToDate
-                                                                span.deltaUp ▲
-                                                            else
-                                                                span.deltaDown ▼
-                                                            | from #{currencyFormat.format(data.last.EstimatedCostToDate)}
-
                             tr
                                 td.details(colspan=2)
                                     div.detailsRow
+                                        if data.current.Damage
+                                            - const dmg = data.current.Damage;
+                                            .damageData
+                                                if dmg.injuries || dmg.fatalities
+                                                    .damageHuman
+                                                        if dmg.fatalities
+                                                            span.detail #{numFormat.format(dmg.fatalities)} Dead
+                                                        if dmg.injuries
+                                                            span.detail #{numFormat.format(dmg.injuries)} Injured
+                                                if dmg.structuresDestroyed || dmg.structuresDamaged
+                                                    .damageBldg
+                                                        if dmg.structuresDestroyed
+                                                            span.detail #{numFormat.format(dmg.structuresDestroyed)} Bldgs Destroyed
+                                                        if dmg.structuresDamaged
+                                                            span.detail #{numFormat.format(dmg.structuresDamaged)} Damaged
                                         if data.cities && (data.cities.closest || data.cities.biggest)
                                             if data.cities.closest
-                                                span.detail #{data.cities.closest.directions}
-                                                br
+                                                span.detail
+                                                    | #{data.cities.closest.directions}
                                             if data.cities.biggest
                                                 span.detail #{data.cities.biggest.directions}
-                                                br
+                                            br
                                         if data.current.FireCause
-                                            span.detail #{data.current.FireCause} Cause
+                                            span.detail
+                                                | #{data.current.FireCause} Cause
+                                                if data.current.FireDiscoveryDateTime
+                                                    | -
                                         if data.current.FireDiscoveryDateTime
                                             span.detail Discovered #{friendlyDate(data.current.FireDiscoveryDateTime)}
                                         if !data.isNew && data.last.ModifiedOnDateTime && data.current.ModifiedOnDateTime != data.last.ModifiedOnDateTime
@@ -140,6 +131,9 @@ html.update
                                         if data.current.PerimDateTime
                                             br
                                             span.detail Perimeter Updated #{friendlyDate(data.current.PerimDateTime)}
+                                        if data.current.TotalIncidentPersonnel
+                                            br
+                                            span.detail #{numFormat.format(data.current.TotalIncidentPersonnel)} Personnel
                                         if data.current.Notes
                                             br
                                             span.detail #{data.current.Notes}
@@ -177,4 +171,4 @@ html.update
 
             canvas#qrcode
         script
-            | showMap(#{data.lon}, #{data.lat}, #{data.zoom}, 'update', !{JSON.stringify(mapData)});
+            | showMap(#{data.lon}, #{data.lat}, #{data.zoom}, 'update', !{JSON.stringify(mapData)}, undefined, !{JSON.stringify(config.argv)});

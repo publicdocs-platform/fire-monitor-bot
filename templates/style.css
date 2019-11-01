@@ -202,7 +202,7 @@ table {
     width: 100%;
 }
 
-.important {
+.important, .damageData {
     font-size: 125%;
 }
 
@@ -296,6 +296,19 @@ table {
     padding: 1px;
     margin: 0;
     font-weight: normal;
+}
+
+.damageData {
+    padding-bottom: 5px;
+}
+
+.damageHuman {
+    color: white;
+    background-color: red;
+}
+
+.damageBldg {
+    background-color: orange;
 }
 
 .innerWarn {

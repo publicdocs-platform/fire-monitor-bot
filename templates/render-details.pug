@@ -79,6 +79,6 @@ html.perim
                                 | #{st}
             canvas#qrcode        
         script
-            | showMap(#{data.lon}, #{data.lat}, #{data.zoom}, 'perim', !{JSON.stringify(mapData)}, '#{data.current.Source}');
+            | showMap(#{data.lon}, #{data.lat}, #{data.zoom}, 'perim', !{JSON.stringify(mapData)}, '#{data.current.Source}', !{JSON.stringify(config.argv)});
 
         

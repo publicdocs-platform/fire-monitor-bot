@@ -28,7 +28,6 @@ const os = require('os');
 const path = require('path');
 const promisify = require('util').promisify;
 const pug = require('pug');
-const rp = require('request-promise');
 const yaml = require('js-yaml');
 const {globalStats, MeasureUnit} = require('@opencensus/core');
 
@@ -152,10 +151,6 @@ exports.builder = {
     boolean: true,
     desc: 'Use real fire names not hashtags',
   },
-  archiveInciweb: {
-    boolean: true,
-    desc: 'Save InciWeb updates to web.archive.org',
-  },
   emergingNew: {
     boolean: true,
     default: false,
@@ -252,6 +247,36 @@ exports.builder = {
     default: false,
     desc: 'Whether to generate a webpage snapshot of all the posts in one loop',
   },
+  requireNfsa: {
+    boolean: true,
+    default: true,
+    desc: 'Whether to require NFSA data',
+  },
+  requireGeomacFires: {
+    boolean: true,
+    default: false,
+    desc: 'Whether to require Geomac Fire data',
+  },
+  requireGeomacPerims: {
+    boolean: true,
+    default: false,
+    desc: 'Whether to require Geomac Perimeter data',
+  },
+  requireCalfire: {
+    boolean: true,
+    default: true,
+    desc: 'Whether to require CALFIRE data',
+  },
+  parseCalfireDetails: {
+    boolean: true,
+    default: true,
+    desc: 'Whether to parse CALFIRE details',
+  },
+  showImageryOnDetails: {
+    boolean: true,
+    default: false,
+    desc: 'Whether to show satellte imagery on details map',
+  }
 };
 
 exports.handler = (argv) => {
@@ -271,6 +296,7 @@ exports.handler = (argv) => {
     disclaimerUrl: envconfig.ui.disclaimer_url,
     systemName: envconfig.ui.system_url,
     version: require('../package.json').version,
+    argv: argv,
   };
 
 
@@ -319,6 +345,20 @@ exports.handler = (argv) => {
 
   let snapId = 0;
 
+  async function failOrEmptyDict(pdict, required) {
+    let ret = {};
+    try {
+      ret = await pdict;
+    } catch (err) {
+      if (required) {
+        throw err;
+      }
+      logger.error('>> Optional error');
+      logger.error(err);
+    }
+    return ret;
+  }
+
   async function internalLoop(isFirstRun, previousDb) {
     const currentDb = _.cloneDeep(previousDb);
 
@@ -328,9 +368,9 @@ exports.handler = (argv) => {
       calfireIncidents: argv.ingestCalfire ? calfire.getFires(argv.userAgent) : {},
     };
 
-    const nfsaIncidents = await async.nfsaIncidents;
-    const geomacIncidents = await async.geomacIncidents;
-    const calfireIncidents = await async.calfireIncidents;
+    const nfsaIncidents = await failOrEmptyDict(async.nfsaIncidents, argv.requireNfsa);
+    const geomacIncidents = await failOrEmptyDict(async.geomacIncidents, argv.requireGeomacFires);
+    const calfireIncidents = await failOrEmptyDict(async.calfireIncidents, argv.requireCalfire);
 
     mergeNfsaAndGeomacIncidentsIntoDb(nfsaIncidents, geomacIncidents, currentDb);
     mergeCalfireIncidentsIntoDb(calfireIncidents, currentDb, argv.mergeDistanceMaxMiles);
@@ -347,8 +387,8 @@ exports.handler = (argv) => {
     const diffsGlobal = yaml.safeDump(diffGlobal, {skipInvalid: true});
     fs.writeFileSync(argv.outputdir + '/data/GLOBAL-DIFF-' + globalUpdateId + '.yaml', diffsGlobal);
 
-    const perims1 = await geomac.getPerimeters(argv.userAgent, false);
-    const perims2 = await geomac.getPerimeters(argv.userAgent, true);
+    const perims1 = await failOrEmptyDict(geomac.getPerimeters(argv.userAgent, false), argv.requireGeomacPerims);
+    const perims2 = await failOrEmptyDict(geomac.getPerimeters(argv.userAgent, true), argv.requireGeomacPerims);
     const perims = {};
     const perimKeys = _.union(_.keys(perims1), _.keys(perims2));
     perimKeys.map((key) => {
@@ -610,18 +650,6 @@ exports.handler = (argv) => {
       const perimWebpage = argv.outputdir + '/img/WEB-PERIM-' + updateId + '.html';
       const mainWebpageUrl = 'http://localhost:8080/updates/img/WEB-INFO-' + updateId + '.html';
       const perimWebpageUrl = 'http://localhost:8080/updates/img/WEB-PERIM-' + updateId + '.html';
-      if (inciWeb && argv.archiveInciweb) {
-        const u = 'https://web.archive.org/save/https://inciweb.nwcg.gov/incident/' + inciWeb + '/';
-        rp({uri: u, resolveWithFullResponse: true}).then((r) => {
-          logger.info('   ~~ Archived to web.archive.org: %s', r.headers ? ('https://web.archive.org/' + r.headers['content-location']) : 'unknown');
-        }).catch((err) => {
-          logger.info('   ~~ ERROR Archiving to web.archive.org: ' + u);
-          logger.info(err);
-          if (argv.failOnError) {
-            process.exit(13);
-          }
-        });
-      }
       let rr = null;
       if (perim.length > 1 && argv.locations) {
         rr = await maprender.getMapBounds(perim, 1450 / 2, 1200 / 2, 15, cur.DailyAcres || 0);
@@ -689,6 +717,17 @@ exports.handler = (argv) => {
         if (displayFilters[filterKey]) {
           logger.info('     >) Skipping %s -> filter %s', updateId, filterKey);
           return false;
+        }
+      }
+
+      if (argv.parseCalfireDetails) {
+        if (cur.Link && cur.Link.startsWith('https://www.fire.ca.gov/')) {
+          const fd = await calfire.getFireDetail(cur, argv.userAgent);
+          if (fd) {
+            cur.Damage = fd;
+          } else {
+            delete cur['Damage'];
+          }
         }
       }
 
