@@ -99,7 +99,7 @@
     "eslint-plugin-sort-requires": "^2.1.0",
     "mocha": "^6.2.2",
     "nyc": "^14.1.1",
-    "semantic-release": "^15.13.28"
+    "semantic-release": "^15.13.29"
   },
   "optionalDependencies": {
     "@google-cloud/firestore": "^2.5.0",
