@@ -1,3 +1,10 @@
+## [3.7.3](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.7.2...v3.7.3) (2019-11-04)
+
+
+### Bug Fixes
+
+* **deps:** bump @google-cloud/firestore from 2.5.0 to 2.6.0 ([#210](https://github.com/publicdocs-platform/fire-monitor-bot/issues/210)) ([cb101fe](https://github.com/publicdocs-platform/fire-monitor-bot/commit/cb101fe))
+
 ## [3.7.2](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.7.1...v3.7.2) (2019-11-04)
 
 
