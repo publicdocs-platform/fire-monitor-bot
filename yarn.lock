@@ -2654,10 +2654,10 @@ csv-parse@^3.0.0:
   resolved "https://registry.yarnpkg.com/csv-parse/-/csv-parse-3.2.0.tgz#9043b5921e7ecd5e3110947df1ef00d290dbeca7"
   integrity sha512-1IBQ7PYHc5h6AXS4nyGsmicttbpUbNvlsgKxhvouh+kRaVug8xBWSiIeWdbPUQgjKG88hEGYjdU29fX73mo+6Q==
 
-csv-parse@^4.4.6:
-  version "4.6.5"
-  resolved "https://registry.yarnpkg.com/csv-parse/-/csv-parse-4.6.5.tgz#e5175166dd883d6d89e29ad8174a63224cb02182"
-  integrity sha512-tUohmlM5X1Wtn7aRA4FsJMmnvGo+GUknK/Dp+//ms7pvpXADda5HIi5vFYOvAs/WSn5JUM1bt2AT3TxtDFV3Cw==
+csv-parse@^4.8.0:
+  version "4.8.0"
+  resolved "https://registry.yarnpkg.com/csv-parse/-/csv-parse-4.8.0.tgz#24c9c24198f10ddf22bffddd3db43f550e95d65d"
+  integrity sha512-UzQZdGmj3rzWWrgfQYhSeF2owmfP1MjYwlInMrfntd6NSCMZ3NwNZb32rJsL0eBk55HRPgK4hSY0pHS1Nd82Iw==
   dependencies:
     pad "^3.2.0"
 
@@ -2666,13 +2666,13 @@ csv-stringify@^5.3.3:
   resolved "https://registry.yarnpkg.com/csv-stringify/-/csv-stringify-5.3.3.tgz#c4725686a33db9f61e70d87af712285baefebe21"
   integrity sha512-q8Qj+/lN74LRmG7Mg0LauE5WcnJOD5MEGe1gI57IYJCB61KWuEbAFHm1uIPDkI26aqElyBB57SlE2GGwq2EY5A==
 
-csv@^5.1.3:
-  version "5.1.3"
-  resolved "https://registry.yarnpkg.com/csv/-/csv-5.1.3.tgz#0ba228854f03769711cc45d71f771276d2ccbdbb"
-  integrity sha512-uHPF5nxxFgcBQ/Mkicjh+IcQJeooIcN8gS/5mnvIdIccLh3Qf792jXE00ovdYDmABhE0yTMNCZgx3ZsBrR2GoQ==
+csv@^5.3.0:
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/csv/-/csv-5.3.0.tgz#d1ff56847b81d75e91986a08266adc877add4356"
+  integrity sha512-Q4Kid1hhScm0ciMVhMMl3gMZaIk0YNJnnpfp7LNXGnvnntjf4BMhB9h15v6A4ftNh7QRc/wPBot9pQgManKAuQ==
   dependencies:
     csv-generate "^3.2.3"
-    csv-parse "^4.4.6"
+    csv-parse "^4.8.0"
     csv-stringify "^5.3.3"
     stream-transform "^2.0.1"
 
