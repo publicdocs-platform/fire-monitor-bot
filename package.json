@@ -76,7 +76,7 @@
     "sharp": "^0.23.2",
     "sprintf-js": "^1.1.1",
     "staticmaps": "https://github.com/publicdocs-platform/staticmaps#zoom-steps",
-    "title-case": "^2.1.1",
+    "title-case": "^3.0.1",
     "twit": "^2.2.11",
     "us-cities-db": "https://github.com/publicdocs-platform/us-cities-db",
     "winston": "^3.2.1",
