@@ -732,10 +732,10 @@
     retry-request "^4.0.0"
     teeny-request "^5.2.1"
 
-"@google-cloud/firestore@^2.6.0":
-  version "2.6.0"
-  resolved "https://registry.yarnpkg.com/@google-cloud/firestore/-/firestore-2.6.0.tgz#9d60bc405212a6460f748fe3efdfbd2b6c1cbbe6"
-  integrity sha512-5bpC7KZA+dCc+4Byp9yA7uvmM1kmVaXm6QiSQbf2Zz/rWftTr0N23f+5BKe9OXyY/nT44l2ygZjmP4Aw3ngLFg==
+"@google-cloud/firestore@^2.6.1":
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/@google-cloud/firestore/-/firestore-2.6.1.tgz#d1383d181fa0c41d6c62557315fd4a211e6f590e"
+  integrity sha512-ZzjaNn8TLji2HpC/h4uDuOb+h7lf1YCiNRiHhLkCUuEp+xAt1uPAkLFLAamGYW26v9VIe+9H/3l27pkplFsybQ==
   dependencies:
     bun "^0.0.12"
     deep-equal "^1.0.1"
