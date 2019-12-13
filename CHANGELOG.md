@@ -1,3 +1,10 @@
+## [3.7.4](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.7.3...v3.7.4) (2019-12-13)
+
+
+### Bug Fixes
+
+* **deps:** [security] bump npm from 6.10.2 to 6.13.4 ([#283](https://github.com/publicdocs-platform/fire-monitor-bot/issues/283)) ([bf23ac3](https://github.com/publicdocs-platform/fire-monitor-bot/commit/bf23ac3))
+
 ## [3.7.3](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.7.2...v3.7.3) (2019-11-04)
 
 
