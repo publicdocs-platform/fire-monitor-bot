@@ -1,3 +1,10 @@
+## [3.7.5](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.7.4...v3.7.5) (2019-12-17)
+
+
+### Bug Fixes
+
+* **deps:** [security] bump https-proxy-agent from 2.2.2 to 2.2.4 ([#241](https://github.com/publicdocs-platform/fire-monitor-bot/issues/241)) ([5989925](https://github.com/publicdocs-platform/fire-monitor-bot/commit/5989925))
+
 ## [3.7.4](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.7.3...v3.7.4) (2019-12-13)
 
 
