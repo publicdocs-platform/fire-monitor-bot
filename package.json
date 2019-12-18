@@ -82,7 +82,7 @@
     "winston": "^3.2.1",
     "xmldom": "^0.1.27",
     "yargs": "^14.2.0",
-    "snyk": "^1.262.1"
+    "snyk": "^1.262.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.6.4",
