@@ -88,7 +88,7 @@
     "@babel/cli": "^7.6.4",
     "@babel/core": "^7.6.4",
     "@babel/preset-env": "^7.6.3",
-    "@semantic-release/changelog": "^3.0.5",
+    "@semantic-release/changelog": "^3.0.6",
     "@semantic-release/commit-analyzer": "^6.3.2",
     "@semantic-release/git": "^7.0.17",
     "@semantic-release/github": "^5.5.5",
