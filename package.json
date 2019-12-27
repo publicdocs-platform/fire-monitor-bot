@@ -74,6 +74,7 @@
     "rimraf": "^3.0.0",
     "serve-index": "^1.9.1",
     "sharp": "^0.23.2",
+    "snyk": "^1.262.1",
     "sprintf-js": "^1.1.1",
     "staticmaps": "https://github.com/publicdocs-platform/staticmaps#zoom-steps",
     "title-case": "^2.1.1",
@@ -81,8 +82,7 @@
     "us-cities-db": "https://github.com/publicdocs-platform/us-cities-db",
     "winston": "^3.2.1",
     "xmldom": "^0.1.27",
-    "yargs": "^14.2.0",
-    "snyk": "^1.262.1"
+    "yargs": "^14.2.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.6.4",
