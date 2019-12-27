@@ -1,3 +1,11 @@
+## [3.7.7](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.7.6...v3.7.7) (2019-12-27)
+
+
+### Bug Fixes
+
+* **deps:** [security] bump handlebars from 4.1.2 to 4.5.3 ([#307](https://github.com/publicdocs-platform/fire-monitor-bot/issues/307)) ([e4cd65d](https://github.com/publicdocs-platform/fire-monitor-bot/commit/e4cd65d4908fbaf68b3fe6041ce4e1ca86aed747))
+* **deps:** [security] update @babel/cli@7.7.7, @babel/core@7.7.7, @babel/preset-env@7.7.7, @semantic-release/changelog@3.0.6, [@semantic-relea](https://github.com/semantic-relea) ([#308](https://github.com/publicdocs-platform/fire-monitor-bot/issues/308)) ([2a32ead](https://github.com/publicdocs-platform/fire-monitor-bot/commit/2a32ead4a8db04bc059f30d416ac58e464ecc856))
+
 ## [3.7.6](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.7.5...v3.7.6) (2019-12-18)
 
 
