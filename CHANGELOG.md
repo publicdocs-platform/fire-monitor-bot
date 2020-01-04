@@ -1,3 +1,10 @@
+## [3.7.13](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.7.12...v3.7.13) (2020-01-04)
+
+
+### Bug Fixes
+
+* **deps:** bump @google-cloud/logging-winston from 3.0.2 to 3.0.3 ([570b665](https://github.com/publicdocs-platform/fire-monitor-bot/commit/570b665186a846a1395796f3cd4a983b7b120f8c))
+
 ## [3.7.12](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.7.11...v3.7.12) (2020-01-03)
 
 
