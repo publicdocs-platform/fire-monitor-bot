@@ -1,3 +1,10 @@
+## [3.7.30](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.7.29...v3.7.30) (2020-02-09)
+
+
+### Bug Fixes
+
+* **deps:** bump rimraf from 3.0.1 to 3.0.2 ([54214aa](https://github.com/publicdocs-platform/fire-monitor-bot/commit/54214aa0cde2be046132117042b6db02f0a4b2a1))
+
 ## [3.7.29](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.7.28...v3.7.29) (2020-02-06)
 
 
