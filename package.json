@@ -68,7 +68,7 @@
     "pug": "^2.0.4",
     "puppeteer": "^2.1.1",
     "qrcode": "^1.4.2",
-    "request": "^2.88.0",
+    "request": "^2.88.2",
     "request-promise": "^4.2.5",
     "requizzle": "^0.2.1",
     "rimraf": "^3.0.2",
