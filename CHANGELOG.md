@@ -1,3 +1,10 @@
+## [3.7.32](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.7.31...v3.7.32) (2020-02-11)
+
+
+### Bug Fixes
+
+* **deps:** bump request from 2.88.0 to 2.88.2 ([f31bf33](https://github.com/publicdocs-platform/fire-monitor-bot/commit/f31bf33c205523cbb5b674ccd248d70f3cdecc06))
+
 ## [3.7.31](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.7.30...v3.7.31) (2020-02-11)
 
 
