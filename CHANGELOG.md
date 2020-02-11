@@ -1,3 +1,10 @@
+## [3.7.31](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.7.30...v3.7.31) (2020-02-11)
+
+
+### Bug Fixes
+
+* **deps:** bump snyk from 1.290.2 to 1.291.0 ([72864a2](https://github.com/publicdocs-platform/fire-monitor-bot/commit/72864a2d473578838ec6ddd96d54cc80f6035fcd))
+
 ## [3.7.30](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.7.29...v3.7.30) (2020-02-09)
 
 
