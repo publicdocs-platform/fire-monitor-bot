@@ -987,13 +987,13 @@
     shimmer "^1.2.0"
     uuid "^3.2.1"
 
-"@opencensus/exporter-stackdriver@^0.0.18":
-  version "0.0.18"
-  resolved "https://registry.yarnpkg.com/@opencensus/exporter-stackdriver/-/exporter-stackdriver-0.0.18.tgz#b1a8a75cded26e533ae599632f70afb59e871a93"
-  integrity sha512-AOKxLezKFNxm7TwamFBnfp1U3GAtdAg2o3AztzC779FRxghxnaKkRNPJ5wv2FwRXXqRoVp3Q+c5xM3wgB8XfLw==
+"@opencensus/exporter-stackdriver@^0.0.19":
+  version "0.0.19"
+  resolved "https://registry.yarnpkg.com/@opencensus/exporter-stackdriver/-/exporter-stackdriver-0.0.19.tgz#99c9d98afa51e37f2500a3c40c2b2c8f44dea8f3"
+  integrity sha512-tbcHtXKsEP5y9eg7J7o02ZztvRlshSwjkXsUEJopUXMkKcASGh/3W230jGjzpFttC+n/s2Z73prelQERfneQqQ==
   dependencies:
-    "@opencensus/core" "^0.0.18"
-    "@opencensus/resource-util" "^0.0.18"
+    "@opencensus/core" "^0.0.19"
+    "@opencensus/resource-util" "^0.0.19"
     google-auth-library "^4.0.0"
     googleapis "^40.0.0"
 
@@ -1006,13 +1006,13 @@
     hex2dec "^1.0.1"
     uuid "^3.2.1"
 
-"@opencensus/resource-util@^0.0.18":
-  version "0.0.18"
-  resolved "https://registry.yarnpkg.com/@opencensus/resource-util/-/resource-util-0.0.18.tgz#e81afae816eeb6fb5be90290b9e531318c6b2404"
-  integrity sha512-vUbW1b8+j6Pp5NN+ISEv9BTg2NZQpPgxUtmG9zR8bb9yg2HP3ZsLkKe8YRvLxgPjg4JKyvVFq0a4Hnp3L/SOkw==
+"@opencensus/resource-util@^0.0.19":
+  version "0.0.19"
+  resolved "https://registry.yarnpkg.com/@opencensus/resource-util/-/resource-util-0.0.19.tgz#fa6bf6c47570a2315cbbb85da819833b41bb11d9"
+  integrity sha512-Kk+siUemJDixAN1hXVrw93jfJVNzS+EouASqhscm5E0XCnZ93nyIrf3Fzes/Da0MioiHJMBCbzp467TbChhqDQ==
   dependencies:
-    "@opencensus/core" "^0.0.18"
-    gcp-metadata "^2.0.0"
+    "@opencensus/core" "^0.0.19"
+    gcp-metadata "^3.0.0"
 
 "@protobufjs/aspromise@^1.1.1", "@protobufjs/aspromise@^1.1.2":
   version "1.1.2"
@@ -4201,6 +4201,14 @@ gcp-metadata@^2.0.0:
   integrity sha512-nrbLj5O1MurvpLC/doFwzdTfKnmYGDYXlY/v7eQ4tJNVIvQXbOK672J9UFbradbtmuTkyHzjpzD8HD0Djz0LWw==
   dependencies:
     gaxios "^2.0.0"
+    json-bigint "^0.3.0"
+
+gcp-metadata@^3.0.0:
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/gcp-metadata/-/gcp-metadata-3.3.1.tgz#1c5c05591e7a9c1613463b05dab9642319f08f1f"
+  integrity sha512-RrASg1HaVAxoB9Q/8sYfJ++v9PMiiqIgOrOxZeagMgS4osZtICT1lKBx2uvzYgwetxj8i6K99Z0iuKMg7WraTg==
+  dependencies:
+    gaxios "^2.1.0"
     json-bigint "^0.3.0"
 
 gcp-metadata@^3.1.0, gcp-metadata@^3.2.0:
