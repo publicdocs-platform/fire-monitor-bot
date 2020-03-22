@@ -1,3 +1,10 @@
+## [3.7.45](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.7.44...v3.7.45) (2020-03-22)
+
+
+### Bug Fixes
+
+* **deps:** bump csv from 5.3.1 to 5.3.2 ([fadb4cc](https://github.com/publicdocs-platform/fire-monitor-bot/commit/fadb4ccf8019f18ae5dcd90c039cb6a555d22266))
+
 ## [3.7.44](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.7.43...v3.7.44) (2020-03-22)
 
 
