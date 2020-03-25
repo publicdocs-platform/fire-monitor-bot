@@ -1,3 +1,10 @@
+## [3.7.50](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.7.49...v3.7.50) (2020-03-25)
+
+
+### Bug Fixes
+
+* **deps:** bump luxon from 1.22.0 to 1.22.2 ([4693b87](https://github.com/publicdocs-platform/fire-monitor-bot/commit/4693b87f5cfcf289a8817990a00fa6ea4cdf8f98))
+
 ## [3.7.49](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.7.48...v3.7.49) (2020-03-25)
 
 
