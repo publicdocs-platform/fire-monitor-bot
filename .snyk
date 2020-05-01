@@ -1,5 +1,5 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
-version: v1.13.5
+version: v1.14.1
 ignore: {}
 # patches apply the minimum changes required to fix a vulnerability
 patch:
@@ -28,3 +28,54 @@ patch:
         patched: '2019-10-04T03:42:52.274Z'
     - '@opencensus/exporter-stackdriver > googleapis > googleapis-common > google-auth-library > gtoken > gaxios > https-proxy-agent':
         patched: '2019-10-04T03:42:52.274Z'
+  SNYK-JS-LODASH-567746:
+    - lodash:
+        patched: '2020-05-01T03:43:08.614Z'
+    - cheerio > lodash:
+        patched: '2020-05-01T03:43:08.614Z'
+    - requizzle > lodash:
+        patched: '2020-05-01T03:43:08.614Z'
+    - snyk > lodash:
+        patched: '2020-05-01T03:43:08.614Z'
+    - request-promise > request-promise-core > lodash:
+        patched: '2020-05-01T03:43:08.614Z'
+    - snyk > @snyk/dep-graph > lodash:
+        patched: '2020-05-01T03:43:08.614Z'
+    - snyk > inquirer > lodash:
+        patched: '2020-05-01T03:43:08.614Z'
+    - snyk > snyk-config > lodash:
+        patched: '2020-05-01T03:43:08.614Z'
+    - snyk > snyk-mvn-plugin > lodash:
+        patched: '2020-05-01T03:43:08.614Z'
+    - snyk > snyk-nodejs-lockfile-parser > lodash:
+        patched: '2020-05-01T03:43:08.614Z'
+    - snyk > snyk-nuget-plugin > lodash:
+        patched: '2020-05-01T03:43:08.614Z'
+    - winston > async > lodash:
+        patched: '2020-05-01T03:43:08.614Z'
+    - staticmaps > request-promise > request-promise-core > lodash:
+        patched: '2020-05-01T03:43:08.614Z'
+    - snyk > @snyk/dep-graph > graphlib > lodash:
+        patched: '2020-05-01T03:43:08.614Z'
+    - snyk > snyk-go-plugin > graphlib > lodash:
+        patched: '2020-05-01T03:43:08.614Z'
+    - snyk > snyk-nodejs-lockfile-parser > graphlib > lodash:
+        patched: '2020-05-01T03:43:08.614Z'
+    - snyk > @snyk/snyk-cocoapods-plugin > @snyk/dep-graph > lodash:
+        patched: '2020-05-01T03:43:08.614Z'
+    - snyk > snyk-nuget-plugin > dotnet-deps-parser > lodash:
+        patched: '2020-05-01T03:43:08.614Z'
+    - snyk > snyk-php-plugin > @snyk/composer-lockfile-parser > lodash:
+        patched: '2020-05-01T03:43:08.614Z'
+    - pug > pug-code-gen > constantinople > babel-types > lodash:
+        patched: '2020-05-01T03:43:08.614Z'
+    - pug > pug-filters > constantinople > babel-types > lodash:
+        patched: '2020-05-01T03:43:08.614Z'
+    - snyk > @snyk/snyk-cocoapods-plugin > @snyk/dep-graph > graphlib > lodash:
+        patched: '2020-05-01T03:43:08.614Z'
+    - snyk > @snyk/snyk-cocoapods-plugin > @snyk/cocoapods-lockfile-parser > @snyk/ruby-semver > lodash:
+        patched: '2020-05-01T03:43:08.614Z'
+    - pug > pug-code-gen > pug-attrs > constantinople > babel-types > lodash:
+        patched: '2020-05-01T03:43:08.614Z'
+    - snyk > @snyk/snyk-cocoapods-plugin > @snyk/cocoapods-lockfile-parser > @snyk/dep-graph > graphlib > lodash:
+        patched: '2020-05-01T03:43:08.614Z'
