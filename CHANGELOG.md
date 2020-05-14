@@ -1,3 +1,10 @@
+## [3.7.52](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.7.51...v3.7.52) (2020-05-14)
+
+
+### Bug Fixes
+
+* **deps:** bump proj4 from 2.6.0 to 2.6.1 ([1baed5f](https://github.com/publicdocs-platform/fire-monitor-bot/commit/1baed5f89ef30a76682b828f9407faae3bba44a6))
+
 ## [3.7.51](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.7.50...v3.7.51) (2020-05-14)
 
 
