@@ -1,3 +1,10 @@
+## [3.7.53](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.7.52...v3.7.53) (2020-05-16)
+
+
+### Bug Fixes
+
+* **deps:** [security] bump handlebars from 4.5.3 to 4.7.6 ([dcdfe9a](https://github.com/publicdocs-platform/fire-monitor-bot/commit/dcdfe9a33ac30b47c18bfe1d00250ca0d103fa00))
+
 ## [3.7.52](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.7.51...v3.7.52) (2020-05-14)
 
 
