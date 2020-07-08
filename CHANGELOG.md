@@ -1,3 +1,10 @@
+## [3.7.59](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.7.58...v3.7.59) (2020-07-08)
+
+
+### Bug Fixes
+
+* **deps:** bump js-yaml from 3.13.1 to 3.14.0 ([5b178e5](https://github.com/publicdocs-platform/fire-monitor-bot/commit/5b178e548ad60aaef64ff7827becd6f32fe3fcb6))
+
 ## [3.7.58](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.7.57...v3.7.58) (2020-07-07)
 
 
