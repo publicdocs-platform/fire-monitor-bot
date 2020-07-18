@@ -1,3 +1,10 @@
+## [3.7.60](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.7.59...v3.7.60) (2020-07-18)
+
+
+### Bug Fixes
+
+* **deps:** bump puppeteer from 2.1.1 to 5.2.0 ([#616](https://github.com/publicdocs-platform/fire-monitor-bot/issues/616)) ([9495647](https://github.com/publicdocs-platform/fire-monitor-bot/commit/9495647e8f4f1744e3945e62aa387a429c632fe3))
+
 ## [3.7.59](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.7.58...v3.7.59) (2020-07-08)
 
 
