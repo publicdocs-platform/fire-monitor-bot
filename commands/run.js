@@ -385,7 +385,7 @@ exports.handler = (argv) => {
     logger.info('Updating ' + globalUpdateId);
     const diffGlobal = deepDiff(previousDb, currentDb) || [];
     const diffsGlobal = yaml.safeDump(diffGlobal, {skipInvalid: true});
-    fs.writeFileSync(argv.outputdir + '/data/GLOBAL-DIFF-' + globalUpdateId + '.yaml', diffsGlobal);
+    fs.writeFileSync(argv.outputdir + '/data/GLOBAL-DIFF-' + globalUpdateId.replace(/:/g, "-") + '.yaml', diffsGlobal);
 
     const perims1 = await failOrEmptyDict(geomac.getPerimeters(argv.userAgent, false), argv.requireGeomacPerims);
     const perims2 = await failOrEmptyDict(geomac.getPerimeters(argv.userAgent, true), argv.requireGeomacPerims);
