@@ -60,7 +60,7 @@
     "jszip": "^3.2.2",
     "lodash": "^4.17.19",
     "luxon": "^1.24.1",
-    "mkdirp": "^0.5.1",
+    "mkdirp": "^1.0.4",
     "nearby-cities": "^1.1.0",
     "numeral": "^2.0.6",
     "ol-helpers": "https://github.com/publicdocs-platform/ol-helpers",
