@@ -385,7 +385,7 @@ exports.handler = (argv) => {
     logger.info('Updating ' + globalUpdateId);
     const diffGlobal = deepDiff(previousDb, currentDb) || [];
     const diffsGlobal = yaml.safeDump(diffGlobal, {skipInvalid: true});
-    fs.writeFileSync(argv.outputdir + '/data/GLOBAL-DIFF-' + globalUpdateId.replace(/:/g, "-") + '.yaml', diffsGlobal);
+    fs.writeFileSync(argv.outputdir + '/data/GLOBAL-DIFF-' + globalUpdateId + '.yaml', diffsGlobal);
 
     const perims1 = await failOrEmptyDict(geomac.getPerimeters(argv.userAgent, false), argv.requireGeomacPerims);
     const perims2 = await failOrEmptyDict(geomac.getPerimeters(argv.userAgent, true), argv.requireGeomacPerims);
@@ -530,7 +530,7 @@ exports.handler = (argv) => {
 
         logger.debug('    - Material update.', {diff: oneDiff});
 
-        const diffPath = (argv.outputdir + '/data/DIFF-' + updateId + '.yaml').replace(/:/g, "-");
+        const diffPath = argv.outputdir + '/data/DIFF-' + updateId + '.yaml';
 
         if (fs.existsSync(diffPath)) {
           logger.error('    $$$$ ANOMALY DETECTED - REPEATING UPDATE %s - SKIPPED', updateId, {
