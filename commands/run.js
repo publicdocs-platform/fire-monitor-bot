@@ -530,7 +530,7 @@ exports.handler = (argv) => {
 
         logger.debug('    - Material update.', {diff: oneDiff});
 
-        const diffPath = argv.outputdir + '/data/DIFF-' + updateId + '.yaml';
+        const diffPath = (argv.outputdir + '/data/DIFF-' + updateId + '.yaml').replace(/:/g, "-");
 
         if (fs.existsSync(diffPath)) {
           logger.error('    $$$$ ANOMALY DETECTED - REPEATING UPDATE %s - SKIPPED', updateId, {
