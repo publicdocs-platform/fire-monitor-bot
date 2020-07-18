@@ -34,7 +34,6 @@ jobs:
         run: |
           export PATH="$(yarn global bin):$PATH"
           sudo apt-get install fonts-roboto
-          yarn global add codecov
           yarn global add percy
       - run: |
           yarn
