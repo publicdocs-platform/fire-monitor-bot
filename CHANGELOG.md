@@ -1,3 +1,10 @@
+## [3.7.61](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.7.60...v3.7.61) (2020-07-18)
+
+
+### Bug Fixes
+
+* **deps:** bump lodash from 4.17.15 to 4.17.19 ([#604](https://github.com/publicdocs-platform/fire-monitor-bot/issues/604)) ([e8ce242](https://github.com/publicdocs-platform/fire-monitor-bot/commit/e8ce242d082091170de647032c12230a78f9b554))
+
 ## [3.7.60](https://github.com/publicdocs-platform/fire-monitor-bot/compare/v3.7.59...v3.7.60) (2020-07-18)
 
 
