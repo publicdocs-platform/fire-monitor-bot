@@ -40,15 +40,22 @@ jobs:
           yarn
       - run: |
           yarn test-coverage
-      - uses: codecov/codecov-action@v1
+      - name: Report unit tests to codecov
+        uses: codecov/codecov-action@v1
         with:
-          # token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
-          file: ./coverage/coverage-final.json # optional
+          file: ./coverage/coverage-final.json
           flags: unit # optional
-          #name: codecov-umbrella # optional
-          #fail_ci_if_error: true # optional (default = false)
       - run: |
           yarn e2e-test-coverage-visualdiff
+      - uses: actions/upload-artifact@v2
+        with:
+          name: e2e-test-output
+          path: output/
+      - name: Report e2e tests to codecov
+        uses: codecov/codecov-action@v1
+        with:
+          file: ./coverage/coverage-final.json
+          flags: e2e
 
 
 
