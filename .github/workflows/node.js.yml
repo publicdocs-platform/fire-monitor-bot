@@ -3,6 +3,13 @@
 
 name: Node.js CI
 
+env:
+  FAKE_HOSTNAME: travis-box
+
+defaults:
+  run:
+    shell: bash
+
 on:
   push:
     branches: [ master ]
@@ -12,17 +19,27 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node-version: [12.x]
-
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2-beta
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: yarn --version
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: yarn --version
+      - name: Install tools
+        run: |
+          export PATH="$(yarn global bin):$PATH"
+          sudo apt-get install fonts-roboto
+          yarn global add codecov
+          yarn global add percy
+      - run: |
+          yarn
+      - run: |
+          yarn test-coverage && yarn e2e-test-coverage-visualdiff
+
+
+
