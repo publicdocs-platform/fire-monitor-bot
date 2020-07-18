@@ -39,7 +39,16 @@ jobs:
       - run: |
           yarn
       - run: |
-          yarn test-coverage && yarn e2e-test-coverage-visualdiff
+          yarn test-coverage
+      - uses: codecov/codecov-action@v1
+        with:
+          # token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+          file: ./coverage/coverage-final.json # optional
+          flags: unit # optional
+          #name: codecov-umbrella # optional
+          #fail_ci_if_error: true # optional (default = false)
+      - run: |
+          yarn e2e-test-coverage-visualdiff
 
 
 
