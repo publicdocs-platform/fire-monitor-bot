@@ -1,0 +1,62 @@
+# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Node.js CI
+
+env:
+  FAKE_HOSTNAME: travis-box
+
+defaults:
+  run:
+    shell: bash
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: yarn --version
+      - name: Install tools
+        run: |
+          export PATH="$(yarn global bin):$PATH"
+          sudo apt-get install fonts-roboto
+          yarn global add percy
+      - run: |
+          yarn
+      - run: |
+          yarn test-coverage
+      - name: Report unit tests to codecov
+        uses: codecov/codecov-action@v1
+        with:
+          file: ./coverage/coverage-final.json
+          flags: unit # optional
+      - run: |
+          yarn e2e-test-coverage-visualdiff
+      - run: |
+          zip -r out.zip output/
+      - uses: actions/upload-artifact@v2
+        with:
+          name: e2e-test-output
+          path: out.zip
+      - name: Report e2e tests to codecov
+        uses: codecov/codecov-action@v1
+        with:
+          file: ./coverage/coverage-final.json
+          flags: e2e
+
+
+
