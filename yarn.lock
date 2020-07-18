@@ -1067,13 +1067,24 @@
     shimmer "^1.2.0"
     uuid "^3.2.1"
 
-"@opencensus/exporter-stackdriver@^0.0.18":
-  version "0.0.18"
-  resolved "https://registry.yarnpkg.com/@opencensus/exporter-stackdriver/-/exporter-stackdriver-0.0.18.tgz#b1a8a75cded26e533ae599632f70afb59e871a93"
-  integrity sha512-AOKxLezKFNxm7TwamFBnfp1U3GAtdAg2o3AztzC779FRxghxnaKkRNPJ5wv2FwRXXqRoVp3Q+c5xM3wgB8XfLw==
+"@opencensus/core@^0.0.22":
+  version "0.0.22"
+  resolved "https://registry.yarnpkg.com/@opencensus/core/-/core-0.0.22.tgz#dad55faf24825e7ed5e9f3d7a7795aafe15eb021"
+  integrity sha512-ErazJtivjceNoOZI1bG9giQ6cWS45J4i6iPUtlp7dLNu58OLs/v+CD0FsaPCh47XgPxAI12vbBE8Ec09ViwHNA==
   dependencies:
-    "@opencensus/core" "^0.0.18"
-    "@opencensus/resource-util" "^0.0.18"
+    continuation-local-storage "^3.2.1"
+    log-driver "^1.2.7"
+    semver "^7.0.0"
+    shimmer "^1.2.0"
+    uuid "^8.0.0"
+
+"@opencensus/exporter-stackdriver@^0.0.22":
+  version "0.0.22"
+  resolved "https://registry.yarnpkg.com/@opencensus/exporter-stackdriver/-/exporter-stackdriver-0.0.22.tgz#b8c4e4e1fd00f183b6a23c282db4ebaeae2d719d"
+  integrity sha512-m0LmhyxkTv8GbdL/CNNAUmI41TdRY/UnTAZHE7nUrAilTK7JlK0SND1XWHZ3OHe3Pg36xVUFve8/E6cLreffBQ==
+  dependencies:
+    "@opencensus/core" "^0.0.22"
+    "@opencensus/resource-util" "^0.0.22"
     google-auth-library "^4.0.0"
     googleapis "^40.0.0"
 
@@ -1086,13 +1097,13 @@
     hex2dec "^1.0.1"
     uuid "^3.2.1"
 
-"@opencensus/resource-util@^0.0.18":
-  version "0.0.18"
-  resolved "https://registry.yarnpkg.com/@opencensus/resource-util/-/resource-util-0.0.18.tgz#e81afae816eeb6fb5be90290b9e531318c6b2404"
-  integrity sha512-vUbW1b8+j6Pp5NN+ISEv9BTg2NZQpPgxUtmG9zR8bb9yg2HP3ZsLkKe8YRvLxgPjg4JKyvVFq0a4Hnp3L/SOkw==
+"@opencensus/resource-util@^0.0.22":
+  version "0.0.22"
+  resolved "https://registry.yarnpkg.com/@opencensus/resource-util/-/resource-util-0.0.22.tgz#85486e009e0654c02d1f9e76a3ded17c42f5ff49"
+  integrity sha512-EycsoNukaSUF+jUeYDScVF7vsvR9MbZczThHBSf2giY+zswWB7Npv8VZp9li27inBttBW6q747QVvo478Q7ehQ==
   dependencies:
-    "@opencensus/core" "^0.0.18"
-    gcp-metadata "^2.0.0"
+    "@opencensus/core" "^0.0.22"
+    gcp-metadata "^3.0.0"
 
 "@protobufjs/aspromise@^1.1.1", "@protobufjs/aspromise@^1.1.2":
   version "1.1.2"
@@ -4459,6 +4470,14 @@ gcp-metadata@^2.0.0:
   integrity sha512-nrbLj5O1MurvpLC/doFwzdTfKnmYGDYXlY/v7eQ4tJNVIvQXbOK672J9UFbradbtmuTkyHzjpzD8HD0Djz0LWw==
   dependencies:
     gaxios "^2.0.0"
+    json-bigint "^0.3.0"
+
+gcp-metadata@^3.0.0:
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/gcp-metadata/-/gcp-metadata-3.5.0.tgz#6d28343f65a6bbf8449886a0c0e4a71c77577055"
+  integrity sha512-ZQf+DLZ5aKcRpLzYUyBS3yo3N0JSa82lNDO8rj3nMSlovLcz2riKFBsYgDzeXcv75oo5eqB2lx+B14UvPoCRnA==
+  dependencies:
+    gaxios "^2.1.0"
     json-bigint "^0.3.0"
 
 gcp-metadata@^3.1.0, gcp-metadata@^3.2.0:
@@ -10711,6 +10730,11 @@ uuid@^3.0.1, uuid@^3.2.1, uuid@^3.3.2, uuid@^3.3.3:
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.4.0.tgz#b23e4358afa8a202fe7a100af1f5f883f02007ee"
   integrity sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==
+
+uuid@^8.0.0:
+  version "8.2.0"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.2.0.tgz#cb10dd6b118e2dada7d0cd9730ba7417c93d920e"
+  integrity sha512-CYpGiFTUrmI6OBMkAdjSDM0k5h8SkkiTP4WAjQgDgNB1S3Ou9VBEvr6q0Kv2H1mMk7IWfxYGpMH5sd5AvcIV2Q==
 
 v8-compile-cache@^2.0.3:
   version "2.1.0"
