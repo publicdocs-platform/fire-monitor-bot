@@ -46,10 +46,12 @@ jobs:
           flags: unit # optional
       - run: |
           yarn e2e-test-coverage-visualdiff
+      - run: |
+          zip -r out.zip output/
       - uses: actions/upload-artifact@v2
         with:
           name: e2e-test-output
-          path: output/
+          path: out.zip
       - name: Report e2e tests to codecov
         uses: codecov/codecov-action@v1
         with:
