@@ -45,7 +45,7 @@
     "@opencensus/exporter-stackdriver": "^0.0.18",
     "@publicdocs/togeojson": "https://github.com/publicdocs-platform/togeojson",
     "@turf/bearing": "^6.0.1",
-    "@turf/circle": "^6.0.1",
+    "@turf/circle": "^6.3.0",
     "@turf/distance": "^6.0.1",
     "all-the-cities": "https://github.com/publicdocs-platform/us-cities-db",
     "cheerio": "^1.0.0-rc.3",
