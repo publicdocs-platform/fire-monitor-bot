@@ -46,7 +46,7 @@
     "@publicdocs/togeojson": "https://github.com/publicdocs-platform/togeojson",
     "@turf/bearing": "^6.0.1",
     "@turf/circle": "^6.0.1",
-    "@turf/distance": "^6.0.1",
+    "@turf/distance": "^6.4.0",
     "all-the-cities": "https://github.com/publicdocs-platform/us-cities-db",
     "cheerio": "^1.0.0-rc.3",
     "csv": "^5.3.2",
