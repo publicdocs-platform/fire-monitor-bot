@@ -1067,6 +1067,17 @@
     shimmer "^1.2.0"
     uuid "^3.2.1"
 
+"@opencensus/core@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@opencensus/core/-/core-0.1.0.tgz#dbb06007f9b924ab5d58411bb39d43fa1cb153e3"
+  integrity sha512-Bdbi5vi44a1fwyHNyKh6bwzuFZJeZJPhzdwogk/Kw5juoEeRGPworK1sgtB3loeR8cqLyi5us0mz9h0xqINiSQ==
+  dependencies:
+    continuation-local-storage "^3.2.1"
+    log-driver "^1.2.7"
+    semver "^7.0.0"
+    shimmer "^1.2.0"
+    uuid "^8.0.0"
+
 "@opencensus/exporter-stackdriver@^0.0.18":
   version "0.0.18"
   resolved "https://registry.yarnpkg.com/@opencensus/exporter-stackdriver/-/exporter-stackdriver-0.0.18.tgz#b1a8a75cded26e533ae599632f70afb59e871a93"
@@ -10716,6 +10727,11 @@ uuid@^3.0.1, uuid@^3.2.1, uuid@^3.3.2, uuid@^3.3.3:
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.4.0.tgz#b23e4358afa8a202fe7a100af1f5f883f02007ee"
   integrity sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==
+
+uuid@^8.0.0:
+  version "8.3.2"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
+  integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
 
 v8-compile-cache@^2.0.3:
   version "2.1.0"

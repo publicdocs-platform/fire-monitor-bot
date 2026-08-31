@@ -41,7 +41,7 @@
     "prepublish": "yarn run snyk-protect"
   },
   "dependencies": {
-    "@opencensus/core": "^0.0.18",
+    "@opencensus/core": "^0.1.0",
     "@opencensus/exporter-stackdriver": "^0.0.18",
     "@publicdocs/togeojson": "https://github.com/publicdocs-platform/togeojson",
     "@turf/bearing": "^6.0.1",
