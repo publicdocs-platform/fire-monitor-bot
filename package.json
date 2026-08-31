@@ -76,7 +76,7 @@
     "sharp": "^0.23.2",
     "snyk": "^1.324.0",
     "sprintf-js": "^1.1.1",
-    "staticmaps": "https://github.com/publicdocs-platform/staticmaps#zoom-steps",
+    "staticmaps": "1.10.0",
     "title-case": "^2.1.1",
     "twit": "^2.2.11",
     "us-cities-db": "https://github.com/publicdocs-platform/us-cities-db",
