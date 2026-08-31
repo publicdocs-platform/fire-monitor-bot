@@ -67,7 +67,7 @@
     "proj4": "^2.6.1",
     "pug": "^2.0.4",
     "puppeteer": "^5.2.0",
-    "qrcode": "^1.4.2",
+    "qrcode": "^1.5.0",
     "request": "^2.88.2",
     "request-promise": "^4.2.5",
     "requizzle": "^0.2.1",
