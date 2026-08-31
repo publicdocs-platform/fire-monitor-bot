@@ -81,7 +81,7 @@
     "twit": "^2.2.11",
     "us-cities-db": "https://github.com/publicdocs-platform/us-cities-db",
     "winston": "^3.2.1",
-    "xmldom": "^0.1.27",
+    "xmldom": "^0.6.0",
     "yargs": "^14.2.0"
   },
   "devDependencies": {
