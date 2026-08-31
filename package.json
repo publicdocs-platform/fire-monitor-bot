@@ -64,7 +64,7 @@
     "nearby-cities": "^1.1.0",
     "numeral": "^2.0.6",
     "ol-helpers": "https://github.com/publicdocs-platform/ol-helpers",
-    "proj4": "^2.6.1",
+    "proj4": "^2.7.5",
     "pug": "^2.0.4",
     "puppeteer": "^5.2.0",
     "qrcode": "^1.4.2",
